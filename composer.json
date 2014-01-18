@@ -1,0 +1,22 @@
+{
+    "name": "scheb/yahoo-finance-api",
+    "type": "library",
+    "description": "PHP library for accessing Yahoo Finance data",
+    "keywords": ["yahoo", "finance", "stock", "api"],
+    "homepage": "https://github.com/scheb/yahoo-finance-api",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Christian Scheb",
+            "email": "me@christianscheb.de"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Scheb\\YahooFinanceApi\\": ""
+        }
+    }
+}
