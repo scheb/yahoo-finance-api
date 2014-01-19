@@ -8,6 +8,38 @@ class ApiClient
 {
 
     /**
+     * Search for stocks
+     * @param string $searchTerm
+     * @return array
+     * @throws \Scheb\YahooFinanceApi\Exception\ApiException
+     */
+    public function search($searchTerm)
+    {
+        $url = "http://autoc.finance.yahoo.com/autoc?query=".urlencode($searchTerm)."&callback=YAHOO.Finance.SymbolSuggest.ssCallback";
+        try
+        {
+            $client = new HttpClient($url);
+            $response = $client->execute();
+        }
+        catch (HttpException $e)
+        {
+            throw new ApiException("Yahoo Search API is not available.", ApiException::UNAVIALABLE, $e);
+        }
+
+        //Remove callback function from response
+        $response = preg_replace("#^YAHOO\\.Finance\\.SymbolSuggest\\.ssCallback\\((.*)\\)$#", "$1", $response);
+
+        $decoded = json_decode($response, true);
+        if (!isset($decoded['ResultSet']['Result']))
+        {
+            throw new ApiException("Yahoo Search API returned an invalid result.", ApiException::INVALID_RESULT);
+        }
+        return $decoded;
+    }
+
+
+
+    /**
      * Get historical data for a symbol
      *
      * @param string $symbol
