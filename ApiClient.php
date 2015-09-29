@@ -6,6 +6,23 @@ use Scheb\YahooFinanceApi\Exception\ApiException;
 
 class ApiClient
 {
+    /**
+     * @var int $timeout
+     */
+    private $timeout;
+
+
+
+    /**
+     * ApiClient constructor.
+     * @param int $timeout
+     */
+    public function __construct($timeout = 5)
+    {
+        $this->timeout = $timeout;
+    }
+
+
 
     /**
      * Search for stocks
@@ -18,7 +35,7 @@ class ApiClient
         $url = "http://autoc.finance.yahoo.com/autoc?query=".urlencode($searchTerm)."&callback=YAHOO.Finance.SymbolSuggest.ssCallback";
         try
         {
-            $client = new HttpClient($url);
+            $client = new HttpClient($url, $this->timeout);
             $response = $client->execute();
         }
         catch (HttpException $e)
@@ -93,17 +110,18 @@ class ApiClient
     }
 
 
-
     /**
      * Execute the query
      * @param string $query
+     * @return array
+     * @throws \Scheb\YahooFinanceApi\Exception\ApiException
      */
     private function execQuery($query)
     {
         try
         {
             $url = $this->createUrl($query);
-            $client = new HttpClient($url);
+            $client = new HttpClient($url, $this->timeout);
             $response = $client->execute();
         }
         catch (HttpException $e)
