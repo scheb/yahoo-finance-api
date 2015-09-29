@@ -31,7 +31,7 @@ class HttpClient
         $ch = curl_init($this->url);
         curl_setopt_array($ch, array(
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_TIMEOUT => 5,
+            CURLOPT_TIMEOUT => 30,
         ));
 
         $response = curl_exec($ch);
