@@ -86,7 +86,7 @@ class ApiClient
         {
             $symbols = array($symbols);
         }
-        $query = "select * from yahoo.finance.quotes where symbol in ('".implode("','", $symbols)."')";
+        $query = "select * from yahoo.finance.quote where symbol in ('".implode("','", $symbols)."')";
         return $this->execQuery($query);
     }
 
@@ -146,7 +146,7 @@ class ApiClient
     private function createUrl($query)
     {
         $params = array(
-            'env' => "http://datatables.org/alltables.env",
+            'env' => "store://datatables.org/alltableswithkeys",
             'format' => "json",
             'q' => $query,
         );
