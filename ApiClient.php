@@ -10,7 +10,7 @@ class ApiClient
      * @var int $timeout
      */
     private $timeout;
-
+    private $query;
 
 
     /**
@@ -27,12 +27,14 @@ class ApiClient
     /**
      * Search for stocks
      * @param string $searchTerm
+     * @param string $region
+     * @param string $lang
      * @return array
      * @throws \Scheb\YahooFinanceApi\Exception\ApiException
      */
-    public function search($searchTerm)
+    public function search($searchTerm, $region = '', $lang = '')
     {
-        $url = "http://autoc.finance.yahoo.com/autoc?query=".urlencode($searchTerm)."&callback=YAHOO.Finance.SymbolSuggest.ssCallback";
+        $url = "http://autoc.finance.yahoo.com/autoc?query=".urlencode($searchTerm)."&region=".$region."&lang=".$lang."&callback=YAHOO.Finance.SymbolSuggest.ssCallback";
         try
         {
             $client = new HttpClient($url, $this->timeout);
@@ -86,7 +88,7 @@ class ApiClient
         {
             $symbols = array($symbols);
         }
-        $query = "select * from yahoo.finance.quote where symbol in ('".implode("','", $symbols)."')";
+        $query = "select * from yahoo.finance.quotes where symbol in ('".implode("','", $symbols)."')";
         return $this->execQuery($query);
     }
 
@@ -110,6 +112,25 @@ class ApiClient
     }
 
 
+
+    /**
+     * Retrieves currency exchange rate data for given pair(s). Accepts concatenated ISO 4217 currency codes such as "GBPUSD".
+     *
+     * @param array|string $pairs
+     * @return array
+     * @throws \Scheb\YahooFinanceApi\Exception\ApiException
+     */
+    public function getCurrenciesExchangeRate($pairs)
+    {
+        if (is_string($pairs))
+        {
+            $pairs = array($pairs);
+        }
+        $query = "select * from yahoo.finance.xchange where pair in ('".implode("','", $pairs)."')";
+        return $this->execQuery($query);
+    }
+
+
     /**
      * Execute the query
      * @param string $query
@@ -118,6 +139,7 @@ class ApiClient
      */
     private function execQuery($query)
     {
+        $this->query = $query;
         try
         {
             $url = $this->createUrl($query);
@@ -151,6 +173,16 @@ class ApiClient
             'q' => $query,
         );
         return "http://query.yahooapis.com/v1/public/yql?".http_build_query($params);
+    }
+
+    /**
+     * Return the last executed query
+     * @return string
+     */
+
+    public function getLastQuery()
+    {
+        return $this->query;
     }
 
 }
