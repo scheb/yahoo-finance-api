@@ -18,7 +18,7 @@ Alternatively you can also add the bundle directly to composer.json:
 ```js
 {
     "require": {
-        "scheb/yahoo-finance-api": "dev-master"
+        "scheb/yahoo-finance-api": "^2.0"
     }
 }
 ```
@@ -32,30 +32,11 @@ php composer.phar update scheb/yahoo-finance-api
 ## Usage
 
 ```php
-$client = new \Scheb\YahooFinanceApi\ApiClient();
+$client = \Scheb\YahooFinanceApi\ApiClientFactory::createApiClient();
 
-//Fetch basic data
-$data = $client->getQuotesList("YHOO"); //Single stock
-$data = $client->getQuotesList(array("YHOO", "GOOG")); //Multiple stocks at once
+// Or use your own Guzzle client and pass it in
+// $guzzleClient = new \GuzzleHttp\Client($options);
+// $client = \Scheb\YahooFinanceApi\ApiClientFactory::createApiClient($guzzleClient);
 
-//Fetch full data set
-$data = $client->getQuotes("YHOO"); //Single stock
-$data = $client->getQuotes(array("YHOO", "GOOG")); //Multiple stocks at once
-
-//Get historical data
-$data = $client->getHistoricalData("YHOO", \DateTime $startDate, \DateTime $endDate);
-
-//Search stocks
-$data = $client->search("Yahoo");
-
-//Get currency exchange rates
-$data = $client->getCurrenciesExchangeRate("GBPUSD"); //Single rate
-$data = $client->getCurrenciesExchangeRate(array("GBPUSD", "USDEUR")); // Multiple rates at once
+// TDB
 ```
-
-Each function returns the decoded JSON response as an associative array. See the following examples:
-
-  - [getQuotesList](http://query.yahooapis.com/v1/public/yql?env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&format=json&q=select+*+from+yahoo.finance.quoteslist+where+symbol+in+%28%27YHOO%27,%27GOOG%27%29) for Yahoo and Google
-  - [getQuotes](http://query.yahooapis.com/v1/public/yql?env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&format=json&q=select+*+from+yahoo.finance.quotes+where+symbol+in+%28%27YHOO%27,%27GOOG%27%29) for Yahoo and Google
-  - [getHistoricalData](http://query.yahooapis.com/v1/public/yql?env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&format=json&q=select%20*%20from%20yahoo.finance.historicaldata%20where%20startDate=%272014-01-01%27%20and%20endDate=%272014-01-10%27%20and%20symbol=%27YHOO%27) for Yahoo
-  - [search](http://autoc.finance.yahoo.com/autoc?query=Yahoo&region=&lang=&callback=YAHOO.Finance.SymbolSuggest.ssCallback) for Yahoo
