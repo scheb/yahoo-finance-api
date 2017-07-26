@@ -1,7 +1,11 @@
 scheb/yahoo-finance-api
 =======================
 
-This is a PHP client for Yahoo Finance API. It provides easy access to stock quotes via Yahoo's [YQL API] (http://developer.yahoo.com/yql/).
+This is a PHP client for Yahoo Finance API.
+
+It provides easy access to stock quotes via Yahoo's [YQL API] (http://developer.yahoo.com/yql/) and other non-official APIs.
+
+**WARNING:** The non-official APIs (search, historical data) cannot be assumed stable and might break any time. So use them at your own risk.
 
 ## Installation
 
@@ -15,7 +19,7 @@ When being asked for the version use dev-master or any different version you wan
 
 Alternatively you can also add the bundle directly to composer.json:
 
-```js
+```json
 {
     "require": {
         "scheb/yahoo-finance-api": "^2.0"
