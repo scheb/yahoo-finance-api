@@ -2,3 +2,8 @@
 .settings/
 .project
 .buildpath
+bin
+# PhpStorm
+.idea/
+vendor/
+composer.lock
