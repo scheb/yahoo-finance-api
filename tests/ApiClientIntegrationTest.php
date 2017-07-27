@@ -4,13 +4,19 @@ namespace Scheb\YahooFinanceApi\Tests;
 use PHPUnit\Framework\TestCase;
 use Scheb\YahooFinanceApi\ApiClient;
 use Scheb\YahooFinanceApi\ApiClientFactory;
+use Scheb\YahooFinanceApi\Results\ExchangeRate;
 use Scheb\YahooFinanceApi\Results\HistoricalData;
+use Scheb\YahooFinanceApi\Results\Quote;
 use Scheb\YahooFinanceApi\Results\SearchResult;
 
 class ApiClientIntegrationTest extends TestCase
 {
     const APPLE_NAME = 'Apple';
     const APPLE_SYMBOL = 'AAPL';
+    const GOOGLE_SYMBOL = 'GOOG';
+
+    const CURRENCY_USD = 'USD';
+    const CURRENCY_EUR = 'EUR';
 
     /**
      * @var ApiClient
@@ -74,5 +80,76 @@ class ApiClientIntegrationTest extends TestCase
             [ApiClient::INTERVAL_1_WEEK, new \DateTime('-8 weeks'), new \DateTime('today')],
             [ApiClient::INTERVAL_1_MONTH, new \DateTime('-12 months'), new \DateTime('today')],
         ];
+    }
+
+    /**
+     * @test
+     */
+    public function getQuote_singleSymbol_returnQuote()
+    {
+        $returnValue = $this->client->getQuote(self::APPLE_SYMBOL);
+
+        $this->assertInstanceOf(Quote::class, $returnValue);
+        $this->assertAppleQuote($returnValue);
+    }
+
+    /**
+     * @test
+     */
+    public function getQuotes_multipleSymbols_returnListOfQuotes()
+    {
+        $returnValue = $this->client->getQuotes([self::APPLE_SYMBOL, self::GOOGLE_SYMBOL]);
+
+        $this->assertInternalType('array', $returnValue);
+        $this->assertCount(2, $returnValue);
+        $this->assertContainsOnlyInstancesOf(Quote::class, $returnValue);
+
+        $appleQuote = $returnValue[0];
+        $this->assertAppleQuote($appleQuote);
+    }
+
+    private function assertAppleQuote(Quote $quote)
+    {
+        $this->assertEquals('AAPL', $quote->getSymbol());
+    }
+
+    /**
+     * @test
+     */
+    public function getExchangeRate_singleRate_returnExchangeRate()
+    {
+        $returnValue = $this->client->getExchangeRate(self::CURRENCY_USD, self::CURRENCY_EUR);
+
+        $this->assertInstanceOf(ExchangeRate::class, $returnValue);
+        $this->assertUsdEurExchangeRate($returnValue);
+    }
+
+    /**
+     * @test
+     */
+    public function getExchangeRates_multipleOnes_returnListOfExchangeRates()
+    {
+        $query = [
+            [self::CURRENCY_USD, self::CURRENCY_EUR],
+            [self::CURRENCY_EUR, self::CURRENCY_USD],
+        ];
+        $returnValue = $this->client->getExchangeRates($query);
+
+        $this->assertInternalType('array', $returnValue);
+        $this->assertCount(2, $returnValue);
+        $this->assertContainsOnlyInstancesOf(ExchangeRate::class, $returnValue);
+
+        $exchangeRate = $returnValue[0];
+        $this->assertUsdEurExchangeRate($exchangeRate);
+    }
+
+    private function assertUsdEurExchangeRate(ExchangeRate $exchangeRate)
+    {
+        $this->assertEquals(self::CURRENCY_USD . self::CURRENCY_EUR, $exchangeRate->getId());
+        $this->assertEquals(self::CURRENCY_USD . '/' . self::CURRENCY_EUR, $exchangeRate->getName());
+        $this->assertInstanceOf(\DateTime::class, $exchangeRate->getDateTime());
+        $this->assertInternalType('float', $exchangeRate->getRate());
+        $this->assertInternalType('float', $exchangeRate->getAsk());
+        $this->assertInternalType('float', $exchangeRate->getBid());
     }
 }

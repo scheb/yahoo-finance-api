@@ -4,7 +4,9 @@ namespace Scheb\YahooFinanceApi;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Cookie\CookieJar;
 use Scheb\YahooFinanceApi\Exception\ApiException;
+use Scheb\YahooFinanceApi\Results\ExchangeRate;
 use Scheb\YahooFinanceApi\Results\HistoricalData;
+use Scheb\YahooFinanceApi\Results\Quote;
 use Scheb\YahooFinanceApi\Results\SearchResult;
 
 class ApiClient
@@ -79,6 +81,85 @@ class ApiClient
         $responseBody = (string)$this->client->request('GET', $dataUrl, ['cookies' => $cookieJar])->getBody();
 
         return $this->resultDecoder->transformHistoricalDataResult($responseBody);
+    }
+
+    /**
+     * Get quote for a single symbol
+     *
+     * @param string $symbol
+     *
+     * @return Quote|null
+     */
+    public function getQuote($symbol)
+    {
+        $list = $this->getQuotes([$symbol]);
+        return isset($list[0]) ? $list[0] : null;
+    }
+
+    /**
+     * Get quotes for one or multiple symbols
+     *
+     * @param array $symbols
+     *
+     * @return array|Quote[]
+     */
+    public function getQuotes(array $symbols)
+    {
+        $query = "select * from yahoo.finance.quotes where symbol in ('" . implode("','", $symbols) . "')";
+        $result = $this->executeYqlQuery($query);
+        return $this->resultDecoder->transformQuotes($result);
+    }
+
+    /**
+     * Get exchange rate for two currencies. Accepts concatenated ISO 4217 currency codes.
+     *
+     * @param string $currency1
+     * @param string $currency2
+     *
+     * @return ExchangeRate|null
+     */
+    public function getExchangeRate($currency1, $currency2)
+    {
+        $list = $this->getExchangeRates([[$currency1, $currency2]]);
+        return isset($list[0]) ? $list[0] : null;
+    }
+
+    /**
+     * Retrieves currency exchange rates. Accepts concatenated ISO 4217 currency codes such as "GBPUSD".
+     *
+     * @param array $currencyPairs List of pairs of currencies
+     *
+     * @return array
+     */
+    public function getExchangeRates(array $currencyPairs)
+    {
+        $currencyPairs = array_map(function (array $currencies) {
+            return implode($currencies);
+        }, $currencyPairs);
+
+        $query = "select * from yahoo.finance.xchange where pair in ('" . implode("','", $currencyPairs) . "')";
+        $result = $this->executeYqlQuery($query);
+        return $this->resultDecoder->transformExchangeRates($result);
+    }
+
+    /**
+     * Execute a YQL query
+     *
+     * @param string $query
+     *
+     * @return array
+     * @throws ApiException
+     */
+    private function executeYqlQuery($query)
+    {
+        $params = array(
+            'env' => "store://datatables.org/alltableswithkeys",
+            'format' => "json",
+            'q' => $query,
+        );
+        $url = "http://query.yahooapis.com/v1/public/yql?" . http_build_query($params);
+
+        return (string)$this->client->request('GET', $url)->getBody();
     }
 }
 
