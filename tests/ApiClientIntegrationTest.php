@@ -1,7 +1,6 @@
 <?php
 namespace Scheb\YahooFinanceApi\Tests;
 
-use PHPUnit\Framework\TestCase;
 use Scheb\YahooFinanceApi\ApiClient;
 use Scheb\YahooFinanceApi\ApiClientFactory;
 use Scheb\YahooFinanceApi\Results\ExchangeRate;
@@ -9,7 +8,7 @@ use Scheb\YahooFinanceApi\Results\HistoricalData;
 use Scheb\YahooFinanceApi\Results\Quote;
 use Scheb\YahooFinanceApi\Results\SearchResult;
 
-class ApiClientIntegrationTest extends TestCase
+class ApiClientIntegrationTest extends \PHPUnit_Framework_TestCase
 {
     const APPLE_NAME = 'Apple';
     const APPLE_SYMBOL = 'AAPL';
