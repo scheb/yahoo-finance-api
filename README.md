@@ -11,14 +11,12 @@ Download via Composer:
 php composer.phar require scheb/yahoo-finance-api
 ```
 
-When being asked for the version use dev-master or any different version you want.
-
 Alternatively you can also add the bundle directly to composer.json:
 
 ```js
 {
     "require": {
-        "scheb/yahoo-finance-api": "dev-master"
+        "scheb/yahoo-finance-api": "^1.0"
     }
 }
 ```
