@@ -2,7 +2,10 @@
 namespace Scheb\YahooFinanceApi\Tests;
 
 use Scheb\YahooFinanceApi\ResultDecoder;
+use Scheb\YahooFinanceApi\Results\ExchangeRate;
+use Scheb\YahooFinanceApi\Results\HistoricalData;
 use Scheb\YahooFinanceApi\Results\Quote;
+use Scheb\YahooFinanceApi\Results\SearchResult;
 
 class ResultDecoderTest extends \PHPUnit_Framework_TestCase
 {
@@ -19,11 +22,87 @@ class ResultDecoderTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function transformQuotes_singleResult_createQuote()
+    public function transformSearchResult_jsonGiven_createArrayOfSearchResult()
+    {
+        $returnedResult = $this->resultDecoder->transformSearchResult(file_get_contents(__DIR__ . '/fixtures/searchResult.json'));
+
+        $this->assertInternalType('array', $returnedResult);
+        $this->assertContainsOnlyInstancesOf(SearchResult::class, $returnedResult);
+        $this->assertCount(10, $returnedResult);
+
+        $expectedItem = new SearchResult(
+            "AAPL",
+            "Apple Inc.",
+            "NAS",
+            "S",
+            "NASDAQ",
+            "Equity"
+        );
+        $this->assertEquals($expectedItem, $returnedResult[0]);
+    }
+
+    /**
+     * @test
+     */
+    public function extractCrumb_lookupPage_returnCrumbValue()
+    {
+        $returnedResult = $this->resultDecoder->extractCrumb(file_get_contents(__DIR__ . '/fixtures/lookupPage.html'));
+        $this->assertEquals('kWZQDiqqBck', $returnedResult);
+    }
+
+    /**
+     * @test
+     */
+    public function transformHistoricalDataResult_csvGiven_returnArrayOfHistoricalData()
+    {
+        $returnedResult = $this->resultDecoder->transformHistoricalDataResult(file_get_contents(__DIR__ . '/fixtures/historicalData.csv'));
+
+        $this->assertInternalType('array', $returnedResult);
+        $this->assertContainsOnlyInstancesOf(HistoricalData::class, $returnedResult);
+
+        $expectedExchangeRate = new HistoricalData(
+            new \DateTime('2017-07-11'),
+            144.729996,
+            145.850006,
+            144.380005,
+            145.529999,
+            145.529999,
+            19781800
+        );
+        $this->assertEquals($expectedExchangeRate, $returnedResult[0]);
+    }
+
+    /**
+     * @test
+     */
+    public function transformExchangeRates_jsonGiven_returnListOfExchangeRate()
+    {
+        $returnedResult = $this->resultDecoder->transformExchangeRates(file_get_contents(__DIR__ . '/fixtures/exchangeRate.json'));
+
+        $this->assertInternalType('array', $returnedResult);
+        $this->assertCount(1, $returnedResult);
+        $this->assertContainsOnlyInstancesOf(ExchangeRate::class, $returnedResult);
+
+        $expectedExchangeRate = new ExchangeRate(
+            'EURUSD',
+            'EUR/USD',
+            1.1730,
+            new \DateTime('2017-08-10 06:34:00'),
+            1.1731,
+            1.1730
+        );
+        $this->assertEquals($expectedExchangeRate, $returnedResult[0]);
+    }
+
+    /**
+     * @test
+     */
+    public function transformQuotes_jsonGiven_createArrayOfQuote()
     {
         $returnedResult = $this->resultDecoder->transformQuotes(file_get_contents(__DIR__ . '/fixtures/quote.json'));
 
         $this->assertInternalType('array', $returnedResult);
+        $this->assertCount(1, $returnedResult);
         $this->assertContainsOnlyInstancesOf(Quote::class, $returnedResult);
 
         $expectedQuoteData = [
@@ -76,7 +155,6 @@ class ResultDecoderTest extends \PHPUnit_Framework_TestCase
         ];
 
         $expectedQuote = new Quote($expectedQuoteData);
-        $returnedQuote = $returnedResult[0];
-        $this->assertEquals($expectedQuote, $returnedQuote);
+        $this->assertEquals($expectedQuote, $returnedResult[0]);
     }
 }
