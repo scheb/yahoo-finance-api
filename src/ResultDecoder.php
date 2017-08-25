@@ -137,7 +137,7 @@ class ResultDecoder
         }
 
         for ($i = 1; $i <= 6; $i++) {
-            if (!is_numeric($columns[$i])) {
+            if (!is_numeric($columns[$i]) && $columns[$i] != 'null') {
                 throw new ApiException('Not a number in column "' . self::HISTORICAL_DATA_HEADER_LINE[$i] . '": ' . $columns[$i], ApiException::INVALID_VALUE);
             }
         }
