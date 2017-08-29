@@ -1,7 +1,7 @@
 <?php
 namespace Scheb\YahooFinanceApi\Results;
 
-class Quote
+class Quote implements \JsonSerializable
 {
     private $averageDailyVolume;
     private $bookValue;
@@ -58,6 +58,14 @@ class Quote
         foreach ($values as $property => $value) {
             $this->{$property} = $value;
         }
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return get_object_vars($this);
     }
 
     /**

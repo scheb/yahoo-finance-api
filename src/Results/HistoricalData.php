@@ -1,7 +1,7 @@
 <?php
 namespace Scheb\YahooFinanceApi\Results;
 
-class HistoricalData
+class HistoricalData implements \JsonSerializable
 {
     /**
      * @var \DateTime
@@ -56,6 +56,14 @@ class HistoricalData
         $this->close = $close;
         $this->adjClose = $adjClose;
         $this->volume = $volume;
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return get_object_vars($this);
     }
 
     /**

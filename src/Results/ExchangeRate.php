@@ -1,7 +1,7 @@
 <?php
 namespace Scheb\YahooFinanceApi\Results;
 
-class ExchangeRate
+class ExchangeRate implements \JsonSerializable
 {
     /**
      * @var string
@@ -49,6 +49,14 @@ class ExchangeRate
         $this->dateTime = $dateTime;
         $this->ask = $ask;
         $this->bid = $bid;
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return get_object_vars($this);
     }
 
     /**

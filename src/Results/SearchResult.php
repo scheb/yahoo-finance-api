@@ -1,7 +1,7 @@
 <?php
 namespace Scheb\YahooFinanceApi\Results;
 
-class SearchResult
+class SearchResult implements \JsonSerializable
 {
     /**
      * @var string
@@ -41,6 +41,14 @@ class SearchResult
         $this->type = $type;
         $this->exchDisp = $exchDisp;
         $this->typeDisp = $typeDisp;
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return get_object_vars($this);
     }
 
     /**
