@@ -165,9 +165,12 @@ class ResultDecoder
         if (isset($results['symbol'])) {
             return [$this->createQuote($results)];
         } else {
-            return array_map(function ($item) {
-                return $this->createQuote($item);
-            }, $results);
+            if (is_array($results)) {
+                return array_map(function ($item) {
+                    return $this->createQuote($item);
+                }, $results);
+            }
+            throw new ApiException('Yahoo Search API return null result', ApiException::INVALID_VALUE);
         }
     }
 
