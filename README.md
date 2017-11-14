@@ -3,9 +3,9 @@ scheb/yahoo-finance-api
 
 This is a PHP client for Yahoo Finance API.
 
-It provides easy access to stock quotes via Yahoo's [YQL API] (http://developer.yahoo.com/yql/) and other non-official APIs.
+Since YQL APIs have been discontinued in November 2017, this client is using non-official API endpoints for quotes, search and historical data.
 
-**WARNING:** The non-official APIs (search, historical data) cannot be assumed stable and might break any time. So use them at your own risk.
+**WARNING:** These non-official APIs cannot be assumed stable and might break any time. Also, you might violate Yahoo's terms of service. So use them at your own risk.
 
 [![Build Status](https://travis-ci.org/scheb/yahoo-finance-api.svg?branch=master)](https://travis-ci.org/scheb/yahoo-finance-api)
 [![PHP 7 ready](http://php7ready.timesplinter.ch/scheb/yahoo-finance-api/badge.svg)](https://travis-ci.org/scheb/yahoo-finance-api)
