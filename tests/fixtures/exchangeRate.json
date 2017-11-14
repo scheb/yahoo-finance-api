@@ -1,18 +1,53 @@
 {
-  "query": {
-    "count": 1,
-    "created": "2017-08-10T19:44:06Z",
-    "lang": "en-US",
-    "results": {
-      "rate": {
-        "id": "EURUSD",
-        "Name": "EUR/USD",
-        "Rate": "1.1730",
-        "Date": "8/10/2017",
-        "Time": "6:34am",
-        "Ask": "1.1731",
-        "Bid": "1.1730"
+  "quoteResponse": {
+    "result": [
+      {
+        "language": "en-US",
+        "quoteType": "CURRENCY",
+        "currency": "USD",
+        "regularMarketPrice": 1.1799409,
+        "regularMarketChange": 0.013079762,
+        "regularMarketOpen": 1.1668612,
+        "regularMarketDayHigh": 1.180777,
+        "regularMarketDayLow": 1.1664529,
+        "fiftyDayAverage": 1.1725038,
+        "twoHundredDayAverage": 1.1541362,
+        "fiftyTwoWeekLow": 1.0347682,
+        "fiftyTwoWeekHigh": 1.209336,
+        "regularMarketChangePercent": 1.12094,
+        "regularMarketPreviousClose": 1.1668612,
+        "bid": 1.1799409,
+        "ask": 1.1792454,
+        "shortName": "EUR/USD",
+        "regularMarketTime": 1510697460,
+        "regularMarketVolume": 0,
+        "fiftyDayAverageChange": -0.0053756833,
+        "fiftyDayAverageChangePercent": -0.0045847897,
+        "twoHundredDayAverageChange": -0.018948853,
+        "twoHundredDayAverageChangePercent": -0.016418213,
+        "sourceInterval": 15,
+        "exchangeTimezoneName": "Europe/London",
+        "exchangeTimezoneShortName": "GMT",
+        "gmtOffSetMilliseconds": 0,
+        "tradeable": false,
+        "fiftyTwoWeekLowChange": 0.02060002,
+        "fiftyTwoWeekLowChangePercent": 0.01990786,
+        "priceHint": 4,
+        "fiftyTwoWeekHighChange": -0.1189,
+        "fiftyTwoWeekHighChangePercent": -0.09831841,
+        "bidSize": 0,
+        "askSize": 0,
+        "messageBoardId": "finmb_EUR_X",
+        "fullExchangeName": "CCY",
+        "averageDailyVolume3Month": 0,
+        "averageDailyVolume10Day": 0,
+        "market": "ccy_market",
+        "exchangeDataDelayedBy": 0,
+        "exchange": "CCY",
+        "marketState": "REGULAR",
+        "symbol": "EURUSD=X"
       }
-    }
+    ],
+    "error": null
   }
 }

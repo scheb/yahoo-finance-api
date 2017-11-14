@@ -2,7 +2,6 @@
 namespace Scheb\YahooFinanceApi\Tests;
 
 use Scheb\YahooFinanceApi\ResultDecoder;
-use Scheb\YahooFinanceApi\Results\ExchangeRate;
 use Scheb\YahooFinanceApi\Results\HistoricalData;
 use Scheb\YahooFinanceApi\Results\Quote;
 use Scheb\YahooFinanceApi\Results\SearchResult;
@@ -75,28 +74,6 @@ class ResultDecoderTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function transformExchangeRates_jsonGiven_returnListOfExchangeRate()
-    {
-        $returnedResult = $this->resultDecoder->transformExchangeRates(file_get_contents(__DIR__ . '/fixtures/exchangeRate.json'));
-
-        $this->assertInternalType('array', $returnedResult);
-        $this->assertCount(1, $returnedResult);
-        $this->assertContainsOnlyInstancesOf(ExchangeRate::class, $returnedResult);
-
-        $expectedExchangeRate = new ExchangeRate(
-            'EURUSD',
-            'EUR/USD',
-            1.1730,
-            new \DateTime('2017-08-10 06:34:00'),
-            1.1731,
-            1.1730
-        );
-        $this->assertEquals($expectedExchangeRate, $returnedResult[0]);
-    }
-
-    /**
-     * @test
-     */
     public function transformQuotes_jsonGiven_createArrayOfQuote()
     {
         $returnedResult = $this->resultDecoder->transformQuotes(file_get_contents(__DIR__ . '/fixtures/quote.json'));
@@ -106,52 +83,71 @@ class ResultDecoderTest extends \PHPUnit_Framework_TestCase
         $this->assertContainsOnlyInstancesOf(Quote::class, $returnedResult);
 
         $expectedQuoteData = [
-            'averageDailyVolume' => 27365600,
-            'bookValue' => 25.76,
-            'change' => 7.09,
+            'language' => 'en-US',
+            'quoteType' => 'EQUITY',
+            'quoteSourceName' => 'Nasdaq Real Time Price',
             'currency' => 'USD',
-            'dividendShare' => 2.52,
-            'earningsShare' => 8.52,
-            'epsEstimateCurrentYear' => 8.87,
-            'epsEstimateNextYear' => 10.67,
-            'epsEstimateNextQuarter' => 1.81,
-            'dayLow' => 156.16,
-            'dayHigh' => 159.75,
-            'yearLow' => 102.53,
-            'yearHigh' => 159.75,
-            'marketCapitalization' => '819.30B',
-            'ebitda' => '69.72B',
-            'changeFromYearLow' => 54.61,
-            'percentChangeFromYearLow' => 53.26,
-            'changeFromYearHigh' => -2.61,
-            'percentChangeFromYearHigh' => -1.63,
-            'lastTradePrice' => 157.14,
-            'fiftyDayMovingAverage' => 147.04,
-            'twoHundredDayMovingAverage' => 142.6,
-            'changeFromTwoHundredDayMovingAverage' => 14.54,
-            'percentChangeFromTwoHundredDayMovingAverage' => 10.2,
-            'changeFromFiftyDayMovingAverage' => 10.1,
-            'percentChangeFromFiftyDayMovingAverage' => 6.87,
-            'name' => 'Apple Inc.',
-            'open' => 159.28,
-            'previousClose' => 150.05,
-            'changeInPercent' => 4.73,
-            'priceSales' => 3.55,
-            'priceBook' => 5.83,
-            'exDividendDate' => new \DateTime('2017-05-11 00:00:00'),
-            'peRatio' => 18.44,
-            'dividendPayDate' => new \DateTime('2017-05-18 00:00:00'),
-            'pegRatio' => 1.48,
-            'priceEpsEstimateCurrentYear' => 17.72,
-            'priceEpsEstimateNextYear' => 14.73,
-            'symbol' => 'AAPL',
-            'shortRatio' => 1.38,
-            'oneYearTargetPrice' => 160.75,
-            'volume' => 69936800,
-            'stockExchange' => 'NMS',
-            'dividendYield' => 1.69,
-            'percentChange' => 4.73,
-            'lastTradeDateTime' => new \DateTime('2017-08-02 16:00:00'),
+            'market' => 'us_market',
+            'postMarketChangePercent' => -0.029183526,
+            'postMarketTime' => new \DateTime('@1510698033'),
+            'postMarketPrice' => 171.29,
+            'postMarketChange' => -0.05000305,
+            'regularMarketChangePercent' => -1.5117577,
+            'regularMarketTime' => new \DateTime('@1510693202'),
+            'regularMarketChange' => -2.630005,
+            'regularMarketOpen' => 173.04,
+            'regularMarketDayHigh' => 173.48,
+            'regularMarketDayLow' => 171.18,
+            'regularMarketVolume' => 22673604,
+            'exchange' => 'NMS',
+            'twoHundredDayAverage' => 155.03525,
+            'twoHundredDayAverageChange' => 16.304749,
+            'twoHundredDayAverageChangePercent' => 0.10516801,
+            'marketCap' => 879712665600,
+            'forwardPE' => 15.339301,
+            'shortName' => 'Apple Inc.',
+            'sharesOutstanding' => 5134309888,
+            'bookValue' => 25.615,
+            'fiftyDayAverage' => 160.96167,
+            'fiftyDayAverageChange' => 10.378326,
+            'fiftyDayAverageChangePercent' => 0.064477004,
+            'marketState' => 'POST',
+            'priceToBook' => 6.6890492,
+            'sourceInterval' => 15,
+            'exchangeTimezoneName' => 'America/New_York',
+            'exchangeTimezoneShortName' => 'EST',
+            'gmtOffSetMilliseconds' => -18000000,
+            'tradeable' => true,
+            'priceHint' => 2,
+            'regularMarketPrice' => 171.34,
+            'exchangeDataDelayedBy' => 0,
+            'regularMarketPreviousClose' => 173.97,
+            'bid' => 171.1,
+            'ask' => 171.15,
+            'bidSize' => 50,
+            'askSize' => 3,
+            'messageBoardId' => 'finmb_24937',
+            'fullExchangeName' => 'NasdaqGS',
+            'longName' => 'Apple Inc.',
+            'financialCurrency' => 'USD',
+            'averageDailyVolume3Month' => 28164953,
+            'averageDailyVolume10Day' => 25880733,
+            'trailingAnnualDividendYield' => 0.013450595,
+            'epsTrailingTwelveMonths' => 8.808,
+            'epsForward' => 11.17,
+            'fiftyTwoWeekLowChange' => 65.17999,
+            'fiftyTwoWeekLowChangePercent' => 0.6139788,
+            'fiftyTwoWeekHighChange' => -4.900009,
+            'fiftyTwoWeekHighChangePercent' => -0.027803047,
+            'fiftyTwoWeekLow' => 106.16,
+            'fiftyTwoWeekHigh' => 176.24,
+            'dividendDate' => new \DateTime('@1510790400'),
+            'earningsTimestamp' => new \DateTime('@1509652800'),
+            'earningsTimestampStart' => new \DateTime('@1517259600'),
+            'earningsTimestampEnd' => new \DateTime('@1517605200'),
+            'trailingAnnualDividendRate' => 2.34,
+            'trailingPE' => 19.45277,
+            'symbol' => 'AAPL'
         ];
 
         $expectedQuote = new Quote($expectedQuoteData);

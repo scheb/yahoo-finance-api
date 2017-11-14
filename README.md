@@ -58,10 +58,10 @@ $searchResult = $client->search("Apple");
 // Returns an array of Scheb\YahooFinanceApi\Results\HistoricalData
 $historicalData = $client->getHistoricalData("AAPL", ApiClient::INTERVAL_1_DAY, new \DateTime("-14 days"), new \DateTime("today"));
 
-// Returns Scheb\YahooFinanceApi\Results\ExchangeRate
+// Returns Scheb\YahooFinanceApi\Results\Quote
 $exchangeRate = $client->getExchangeRate("USD", "EUR");
 
-// Returns an array of Scheb\YahooFinanceApi\Results\ExchangeRate
+// Returns an array of Scheb\YahooFinanceApi\Results\Quote
 $exchangeRates = $client->getExchangeRates([
     ["USD", "EUR"],
     ["EUR", "USD"],

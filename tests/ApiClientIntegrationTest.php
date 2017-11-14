@@ -3,7 +3,6 @@ namespace Scheb\YahooFinanceApi\Tests;
 
 use Scheb\YahooFinanceApi\ApiClient;
 use Scheb\YahooFinanceApi\ApiClientFactory;
-use Scheb\YahooFinanceApi\Results\ExchangeRate;
 use Scheb\YahooFinanceApi\Results\HistoricalData;
 use Scheb\YahooFinanceApi\Results\Quote;
 use Scheb\YahooFinanceApi\Results\SearchResult;
@@ -119,7 +118,7 @@ class ApiClientIntegrationTest extends \PHPUnit_Framework_TestCase
     {
         $returnValue = $this->client->getExchangeRate(self::CURRENCY_USD, self::CURRENCY_EUR);
 
-        $this->assertInstanceOf(ExchangeRate::class, $returnValue);
+        $this->assertInstanceOf(Quote::class, $returnValue);
         $this->assertUsdEurExchangeRate($returnValue);
     }
 
@@ -136,18 +135,21 @@ class ApiClientIntegrationTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInternalType('array', $returnValue);
         $this->assertCount(2, $returnValue);
-        $this->assertContainsOnlyInstancesOf(ExchangeRate::class, $returnValue);
+        $this->assertContainsOnlyInstancesOf(Quote::class, $returnValue);
 
         $exchangeRate = $returnValue[0];
         $this->assertUsdEurExchangeRate($exchangeRate);
     }
 
-    private function assertUsdEurExchangeRate(ExchangeRate $exchangeRate)
+    private function assertUsdEurExchangeRate(Quote $exchangeRate)
     {
-        $this->assertEquals(self::CURRENCY_USD . self::CURRENCY_EUR, $exchangeRate->getId());
-        $this->assertEquals(self::CURRENCY_USD . '/' . self::CURRENCY_EUR, $exchangeRate->getName());
-        $this->assertInstanceOf(\DateTime::class, $exchangeRate->getDateTime());
-        $this->assertInternalType('float', $exchangeRate->getRate());
+        $expectedSymbol = self::CURRENCY_USD . self::CURRENCY_EUR . ApiClient::CURRENCY_SYMBOL_SUFFIX;
+        $expectedName = self::CURRENCY_USD . '/' . self::CURRENCY_EUR;
+
+        $this->assertEquals($expectedSymbol, $exchangeRate->getSymbol());
+        $this->assertEquals($expectedName, $exchangeRate->getShortName());
+        $this->assertInstanceOf(\DateTime::class, $exchangeRate->getRegularMarketTime());
+        $this->assertInternalType('float', $exchangeRate->getRegularMarketPrice());
         $this->assertInternalType('float', $exchangeRate->getAsk());
         $this->assertInternalType('float', $exchangeRate->getBid());
     }

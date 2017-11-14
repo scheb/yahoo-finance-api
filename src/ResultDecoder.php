@@ -2,7 +2,6 @@
 namespace Scheb\YahooFinanceApi;
 
 use Scheb\YahooFinanceApi\Exception\ApiException;
-use Scheb\YahooFinanceApi\Results\ExchangeRate;
 use Scheb\YahooFinanceApi\Results\HistoricalData;
 use Scheb\YahooFinanceApi\Results\Quote;
 use Scheb\YahooFinanceApi\Results\SearchResult;
@@ -13,51 +12,71 @@ class ResultDecoder
     const SEARCH_RESULT_FIELDS = ['symbol', 'name', 'exch', 'type', 'exchDisp', 'typeDisp'];
     const EXCHANGE_RATE_FIELDS = ['Name', 'Rate', 'Date', 'Time', 'Ask', 'Bid'];
     const QUOTE_FIELDS_MAP = [
-        'AverageDailyVolume' => ['averageDailyVolume', 'int'],
-        'BookValue' => ['bookValue', 'float'],
-        'Change' => ['change', 'float'],
-        'Currency' => ['currency', 'string'],
-        'DividendShare' => ['dividendShare', 'float'],
-        'EarningsShare' => ['earningsShare', 'float'],
-        'EPSEstimateCurrentYear' => ['epsEstimateCurrentYear', 'float'],
-        'EPSEstimateNextYear' => ['epsEstimateNextYear', 'float'],
-        'EPSEstimateNextQuarter' => ['epsEstimateNextQuarter', 'float'],
-        'DaysLow' => ['dayLow', 'float'],
-        'DaysHigh' => ['dayHigh', 'float'],
-        'YearLow' => ['yearLow', 'float'],
-        'YearHigh' => ['yearHigh', 'float'],
-        'MarketCapitalization' => ['marketCapitalization', 'string'],
-        'EBITDA' => ['ebitda', 'string'],
-        'ChangeFromYearLow' => ['changeFromYearLow', 'float'],
-        'PercentChangeFromYearLow' => ['percentChangeFromYearLow', 'percent'],
-        'ChangeFromYearHigh' => ['changeFromYearHigh', 'float'],
-        'PercebtChangeFromYearHigh' => ['percentChangeFromYearHigh', 'percent'],
-        'LastTradePriceOnly' => ['lastTradePrice', 'float'],
-        'FiftydayMovingAverage' => ['fiftyDayMovingAverage', 'float'],
-        'TwoHundreddayMovingAverage' => ['twoHundredDayMovingAverage', 'float'],
-        'ChangeFromTwoHundreddayMovingAverage' => ['changeFromTwoHundredDayMovingAverage', 'float'],
-        'PercentChangeFromTwoHundreddayMovingAverage' => ['percentChangeFromTwoHundredDayMovingAverage', 'percent'],
-        'ChangeFromFiftydayMovingAverage' => ['changeFromFiftyDayMovingAverage', 'float'],
-        'PercentChangeFromFiftydayMovingAverage' => ['percentChangeFromFiftyDayMovingAverage', 'percent'],
-        'Name' => ['name', 'string'],
-        'Open' => ['open', 'float'],
-        'PreviousClose' => ['previousClose', 'float'],
-        'ChangeinPercent' => ['changeInPercent', 'percent'],
-        'PriceSales' => ['priceSales', 'float'],
-        'PriceBook' => ['priceBook', 'float'],
-        'ExDividendDate' => ['exDividendDate', 'date'],
-        'PERatio' => ['peRatio', 'float'],
-        'DividendPayDate' => ['dividendPayDate', 'date'],
-        'PEGRatio' => ['pegRatio', 'float'],
-        'PriceEPSEstimateCurrentYear' => ['priceEpsEstimateCurrentYear', 'float'],
-        'PriceEPSEstimateNextYear' => ['priceEpsEstimateNextYear', 'float'],
-        'Symbol' => ['symbol', 'string'],
-        'ShortRatio' => ['shortRatio', 'float'],
-        'OneyrTargetPrice' => ['oneYearTargetPrice', 'float'],
-        'Volume' => ['volume', 'int'],
-        'StockExchange' => ['stockExchange', 'string'],
-        'DividendYield' => ['dividendYield', 'float'],
-        'PercentChange' => ['percentChange', 'percent'],
+        'ask' => 'float',
+        'askSize' => 'int',
+        'averageDailyVolume10Day' => 'int',
+        'averageDailyVolume3Month' => 'int',
+        'bid' => 'float',
+        'bidSize' => 'int',
+        'bookValue' => 'float',
+        'currency' => 'string',
+        'dividendDate' => 'date',
+        'earningsTimestamp' => 'date',
+        'earningsTimestampStart' => 'date',
+        'earningsTimestampEnd' => 'date',
+        'epsForward' => 'float',
+        'epsTrailingTwelveMonths' => 'float',
+        'exchange' => 'string',
+        'exchangeDataDelayedBy' => 'int',
+        'exchangeTimezoneName' => 'string',
+        'exchangeTimezoneShortName' => 'string',
+        'fiftyDayAverage' => 'float',
+        'fiftyDayAverageChange' => 'float',
+        'fiftyDayAverageChangePercent' => 'float',
+        'fiftyTwoWeekHigh' => 'float',
+        'fiftyTwoWeekHighChange' => 'float',
+        'fiftyTwoWeekHighChangePercent' => 'float',
+        'fiftyTwoWeekLow' => 'float',
+        'fiftyTwoWeekLowChange' => 'float',
+        'fiftyTwoWeekLowChangePercent' => 'float',
+        'financialCurrency' => 'string',
+        'forwardPE' => 'float',
+        'fullExchangeName' => 'string',
+        'gmtOffSetMilliseconds' => 'int',
+        'language' => 'string',
+        'longName' => 'string',
+        'market' => 'string',
+        'marketCap' => 'int',
+        'marketState' => 'string',
+        'messageBoardId' => 'string',
+        'postMarketChange' => 'float',
+        'postMarketChangePercent' => 'float',
+        'postMarketPrice' => 'float',
+        'postMarketTime' => 'date',
+        'priceHint' => 'int',
+        'priceToBook' => 'float',
+        'quoteSourceName' => 'string',
+        'quoteType' => 'string',
+        'regularMarketChange' => 'float',
+        'regularMarketChangePercent' => 'float',
+        'regularMarketDayHigh' => 'float',
+        'regularMarketDayLow' => 'float',
+        'regularMarketOpen' => 'float',
+        'regularMarketPreviousClose' => 'float',
+        'regularMarketPrice' => 'float',
+        'regularMarketTime' => 'date',
+        'regularMarketVolume' => 'int',
+        'sharesOutstanding' => 'int',
+        'shortName' => 'string',
+        'sourceInterval' => 'int',
+        'symbol' => 'string',
+        'tradeable' => 'bool',
+        'trailingAnnualDividendRate' => 'float',
+        'trailingAnnualDividendYield' => 'float',
+        'trailingPE' => 'float',
+        'twoHundredDayAverage' => 'float',
+        'twoHundredDayAverageChange' => 'float',
+        'twoHundredDayAverageChangePercent' => 'float',
     ];
 
     /**
@@ -112,7 +131,7 @@ class ResultDecoder
 
     public function transformHistoricalDataResult($responseBody)
     {
-        $lines = explode("\n", trim($responseBody));
+        $lines = array_map('trim', explode("\n", trim($responseBody)));
         $headerLine = array_shift($lines);
         $expectedHeaderLine = implode(',', self::HISTORICAL_DATA_HEADER_LINE);
         if ($headerLine !== $expectedHeaderLine) {
@@ -155,40 +174,26 @@ class ResultDecoder
     public function transformQuotes($responseBody)
     {
         $decoded = json_decode($responseBody, true);
-        if (!isset($decoded['query']['results']['quote']) && is_array($decoded['query']['results']['quote'])) {
+        if (!isset($decoded['quoteResponse']['result']) && is_array($decoded['quoteResponse']['result'])) {
             throw new ApiException("Yahoo Search API returned an invalid result.", ApiException::INVALID_RESPONSE);
         }
 
-        $results = $decoded['query']['results']['quote'];
+        $results = $decoded['quoteResponse']['result'];
 
         // Single element is returned directly in "quote"
-        if (isset($results['symbol'])) {
-            return [$this->createQuote($results)];
-        } else {
-            return array_map(function ($item) {
-                return $this->createQuote($item);
-            }, $results);
-        }
+        return array_map(function ($item) {
+            return $this->createQuote($item);
+        }, $results);
     }
 
     private function createQuote(array $json)
     {
-        $missingFields = array_diff($this->quoteFields, array_keys($json));
-        if ($missingFields) {
-            throw new ApiException('Quote is missing fields: ' . implode(', ', $missingFields), ApiException::INVALID_RESPONSE);
-        }
-
         $mappedValues = [];
         foreach ($json as $field => $value) {
             if (array_key_exists($field, self::QUOTE_FIELDS_MAP)) {
-                list($mappedField, $type) = self::QUOTE_FIELDS_MAP[$field];
-                $mappedValues[$mappedField] = $this->mapValue($field, $value, $type);
+                $type = self::QUOTE_FIELDS_MAP[$field];
+                $mappedValues[$field] = $this->mapValue($field, $value, $type);
             }
-        }
-
-        if ($json['LastTradeDate'] && $json['LastTradeTime']) {
-            $dateTimeString = $json['LastTradeDate'] . ' ' . $json['LastTradeTime'];
-            $mappedValues['lastTradeDateTime'] = $this->mapDateValue('LastTradeDate/LastTradeTime', $dateTimeString);
         }
 
         return new Quote($mappedValues);
@@ -211,8 +216,10 @@ class ResultDecoder
                 return $this->mapDateValue($field, $rawValue);
             case 'string':
                 return (string)$rawValue;
+            case 'bool':
+                return $this->mapBoolValue($rawValue);
             default:
-                throw new \InvalidArgumentException('Invalid data type ' . $type);
+                throw new \InvalidArgumentException('Invalid data type ' . $type . ' for field ' . $field);
         }
     }
 
@@ -246,52 +253,17 @@ class ResultDecoder
         return (int)$rawValue;
     }
 
+    private function mapBoolValue($rawValue)
+    {
+        return !!$rawValue;
+    }
+
     private function mapDateValue($field, $rawValue)
     {
         try {
-            return new \DateTime($rawValue);
+            return new \DateTime('@' . $rawValue);
         } catch (\Exception $e) {
             throw new ApiException('Not a date in field "' . $field . '": ' . $rawValue, ApiException::INVALID_VALUE);
         }
-    }
-
-    public function transformExchangeRates($responseBody)
-    {
-        $decoded = json_decode($responseBody, true);
-        if (!isset($decoded['query']['results']['rate']) && is_array($decoded['query']['results']['rate'])) {
-            throw new ApiException("Yahoo Search API returned an invalid result", ApiException::INVALID_RESPONSE);
-        }
-
-        $results = $decoded['query']['results']['rate'];
-
-        // Single element is returned directly in "quote"
-        if (isset($results['id'])) {
-            return [$this->createExchangeRate($results)];
-        } else {
-            return array_map(function ($item) {
-                return $this->createExchangeRate($item);
-            }, $results);
-        }
-    }
-
-    private function createExchangeRate(array $json)
-    {
-        $missingFields = array_diff(self::EXCHANGE_RATE_FIELDS, array_keys($json));
-        if ($missingFields) {
-            throw new ApiException('Search result is missing fields: ' . implode(', ', $missingFields), ApiException::INVALID_RESPONSE);
-        }
-
-        $dateTimeString = $json['Date'] . ' ' . $json['Time'];
-        try {
-            $dateTime = new \DateTime($dateTimeString);
-        } catch (\Exception $e) {
-            throw new ApiException('Not a date in field "Date": ' . $dateTimeString, ApiException::INVALID_VALUE);
-        }
-
-        $rate = (float)$json['Rate'];
-        $ask = (float)$json['Ask'];
-        $bid = (float)$json['Bid'];
-
-        return new ExchangeRate($json['id'], $json['Name'], $rate, $dateTime, $ask, $bid);
     }
 }

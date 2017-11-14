@@ -3,52 +3,71 @@ namespace Scheb\YahooFinanceApi\Results;
 
 class Quote implements \JsonSerializable
 {
-    private $averageDailyVolume;
+    private $ask;
+    private $askSize;
+    private $averageDailyVolume10Day;
+    private $averageDailyVolume3Month;
+    private $bid;
+    private $bidSize;
     private $bookValue;
-    private $change;
     private $currency;
-    private $dividendShare;
-    private $earningsShare;
-    private $epsEstimateCurrentYear;
-    private $epsEstimateNextYear;
-    private $epsEstimateNextQuarter;
-    private $dayLow;
-    private $dayHigh;
-    private $yearLow;
-    private $yearHigh;
-    private $marketCapitalization;
-    private $ebitda;
-    private $changeFromYearLow;
-    private $percentChangeFromYearLow;
-    private $changeFromYearHigh;
-    private $percentChangeFromYearHigh;
-    private $lastTradePrice;
-    private $fiftyDayMovingAverage;
-    private $twoHundredDayMovingAverage;
-    private $changeFromTwoHundredDayMovingAverage;
-    private $percentChangeFromTwoHundredDayMovingAverage;
-    private $changeFromFiftyDayMovingAverage;
-    private $percentChangeFromFiftyDayMovingAverage;
-    private $name;
-    private $open;
-    private $previousClose;
-    private $changeInPercent;
-    private $priceSales;
-    private $priceBook;
-    private $exDividendDate;
-    private $peRatio;
-    private $dividendPayDate;
-    private $pegRatio;
-    private $priceEpsEstimateCurrentYear;
-    private $priceEpsEstimateNextYear;
+    private $dividendDate;
+    private $earningsTimestamp;
+    private $earningsTimestampStart;
+    private $earningsTimestampEnd;
+    private $epsForward;
+    private $epsTrailingTwelveMonths;
+    private $exchange;
+    private $exchangeDataDelayedBy;
+    private $exchangeTimezoneName;
+    private $exchangeTimezoneShortName;
+    private $fiftyDayAverage;
+    private $fiftyDayAverageChange;
+    private $fiftyDayAverageChangePercent;
+    private $fiftyTwoWeekHigh;
+    private $fiftyTwoWeekHighChange;
+    private $fiftyTwoWeekHighChangePercent;
+    private $fiftyTwoWeekLow;
+    private $fiftyTwoWeekLowChange;
+    private $fiftyTwoWeekLowChangePercent;
+    private $financialCurrency;
+    private $forwardPE;
+    private $fullExchangeName;
+    private $gmtOffSetMilliseconds;
+    private $language;
+    private $longName;
+    private $market;
+    private $marketCap;
+    private $marketState;
+    private $messageBoardId;
+    private $postMarketChange;
+    private $postMarketChangePercent;
+    private $postMarketPrice;
+    private $postMarketTime;
+    private $priceHint;
+    private $priceToBook;
+    private $quoteSourceName;
+    private $quoteType;
+    private $regularMarketChange;
+    private $regularMarketChangePercent;
+    private $regularMarketDayHigh;
+    private $regularMarketDayLow;
+    private $regularMarketOpen;
+    private $regularMarketPreviousClose;
+    private $regularMarketPrice;
+    private $regularMarketTime;
+    private $regularMarketVolume;
+    private $sharesOutstanding;
+    private $shortName;
+    private $sourceInterval;
     private $symbol;
-    private $shortRatio;
-    private $oneYearTargetPrice;
-    private $volume;
-    private $stockExchange;
-    private $dividendYield;
-    private $percentChange;
-    private $lastTradeDateTime;
+    private $tradeable;
+    private $trailingAnnualDividendRate;
+    private $trailingAnnualDividendYield;
+    private $trailingPE;
+    private $twoHundredDayAverage;
+    private $twoHundredDayAverageChange;
+    private $twoHundredDayAverageChangePercent;
 
     /**
      * @param array $values
@@ -69,11 +88,51 @@ class Quote implements \JsonSerializable
     }
 
     /**
+     * @return float
+     */
+    public function getAsk()
+    {
+        return $this->ask;
+    }
+
+    /**
      * @return int
      */
-    public function getAverageDailyVolume()
+    public function getAskSize()
     {
-        return $this->averageDailyVolume;
+        return $this->askSize;
+    }
+
+    /**
+     * @return int
+     */
+    public function getAverageDailyVolume10Day()
+    {
+        return $this->averageDailyVolume10Day;
+    }
+
+    /**
+     * @return int
+     */
+    public function getAverageDailyVolume3Month()
+    {
+        return $this->averageDailyVolume3Month;
+    }
+
+    /**
+     * @return float
+     */
+    public function getBid()
+    {
+        return $this->bid;
+    }
+
+    /**
+     * @return int
+     */
+    public function getBidSize()
+    {
+        return $this->bidSize;
     }
 
     /**
@@ -85,14 +144,6 @@ class Quote implements \JsonSerializable
     }
 
     /**
-     * @return float
-     */
-    public function getChange()
-    {
-        return $this->change;
-    }
-
-    /**
      * @return string
      */
     public function getCurrency()
@@ -101,275 +152,395 @@ class Quote implements \JsonSerializable
     }
 
     /**
-     * @return float
+     * @return \DateTime
      */
-    public function getDividendShare()
+    public function getDividendDate()
     {
-        return $this->dividendShare;
-    }
-
-    /**
-     * @return float
-     */
-    public function getEarningsShare()
-    {
-        return $this->earningsShare;
-    }
-
-    /**
-     * @return float
-     */
-    public function getEpsEstimateCurrentYear()
-    {
-        return $this->epsEstimateCurrentYear;
-    }
-
-    /**
-     * @return float
-     */
-    public function getEpsEstimateNextYear()
-    {
-        return $this->epsEstimateNextYear;
-    }
-
-    /**
-     * @return float
-     */
-    public function getEpsEstimateNextQuarter()
-    {
-        return $this->epsEstimateNextQuarter;
-    }
-
-    /**
-     * @return float
-     */
-    public function getDayLow()
-    {
-        return $this->dayLow;
-    }
-
-    /**
-     * @return float
-     */
-    public function getDayHigh()
-    {
-        return $this->dayHigh;
-    }
-
-    /**
-     * @return float
-     */
-    public function getYearLow()
-    {
-        return $this->yearLow;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getYearHigh()
-    {
-        return $this->yearHigh;
-    }
-
-    /**
-     * @return string
-     */
-    public function getMarketCapitalization()
-    {
-        return $this->marketCapitalization;
-    }
-
-    /**
-     * @return string
-     */
-    public function getEbitda()
-    {
-        return $this->ebitda;
-    }
-
-    /**
-     * @return float
-     */
-    public function getChangeFromYearLow()
-    {
-        return $this->changeFromYearLow;
-    }
-
-    /**
-     * @return float
-     */
-    public function getPercentChangeFromYearLow()
-    {
-        return $this->percentChangeFromYearLow;
-    }
-
-    /**
-     * @return float
-     */
-    public function getChangeFromYearHigh()
-    {
-        return $this->changeFromYearHigh;
-    }
-
-    /**
-     * @return float
-     */
-    public function getPercentChangeFromYearHigh()
-    {
-        return $this->percentChangeFromYearHigh;
-    }
-
-    /**
-     * @return float
-     */
-    public function getLastTradePrice()
-    {
-        return $this->lastTradePrice;
-    }
-
-    /**
-     * @return float
-     */
-    public function getFiftyDayMovingAverage()
-    {
-        return $this->fiftyDayMovingAverage;
-    }
-
-    /**
-     * @return float
-     */
-    public function getTwoHundredDayMovingAverage()
-    {
-        return $this->twoHundredDayMovingAverage;
-    }
-
-    /**
-     * @return float
-     */
-    public function getChangeFromTwoHundredDayMovingAverage()
-    {
-        return $this->changeFromTwoHundredDayMovingAverage;
-    }
-
-    /**
-     * @return float
-     */
-    public function getPercentChangeFromTwoHundredDayMovingAverage()
-    {
-        return $this->percentChangeFromTwoHundredDayMovingAverage;
-    }
-
-    /**
-     * @return float
-     */
-    public function getChangeFromFiftyDayMovingAverage()
-    {
-        return $this->changeFromFiftyDayMovingAverage;
-    }
-
-    /**
-     * @return float
-     */
-    public function getPercentChangeFromFiftyDayMovingAverage()
-    {
-        return $this->percentChangeFromFiftyDayMovingAverage;
-    }
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * @return float
-     */
-    public function getOpen()
-    {
-        return $this->open;
-    }
-
-    /**
-     * @return float
-     */
-    public function getPreviousClose()
-    {
-        return $this->previousClose;
-    }
-
-    /**
-     * @return float
-     */
-    public function getChangeInPercent()
-    {
-        return $this->changeInPercent;
-    }
-
-    /**
-     * @return float
-     */
-    public function getPriceSales()
-    {
-        return $this->priceSales;
-    }
-
-    /**
-     * @return float
-     */
-    public function getPriceBook()
-    {
-        return $this->priceBook;
+        return $this->dividendDate;
     }
 
     /**
      * @return \DateTime
      */
-    public function getExDividendDate()
+    public function getEarningsTimestamp()
     {
-        return $this->exDividendDate;
-    }
-
-    /**
-     * @return float
-     */
-    public function getPeRatio()
-    {
-        return $this->peRatio;
+        return $this->earningsTimestamp;
     }
 
     /**
      * @return \DateTime
      */
-    public function getDividendPayDate()
+    public function getEarningsTimestampStart()
     {
-        return $this->dividendPayDate;
+        return $this->earningsTimestampStart;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getEarningsTimestampEnd()
+    {
+        return $this->earningsTimestampEnd;
     }
 
     /**
      * @return float
      */
-    public function getPegRatio()
+    public function getEpsForward()
     {
-        return $this->pegRatio;
+        return $this->epsForward;
     }
 
     /**
      * @return float
      */
-    public function getPriceEpsEstimateCurrentYear()
+    public function getEpsTrailingTwelveMonths()
     {
-        return $this->priceEpsEstimateCurrentYear;
+        return $this->epsTrailingTwelveMonths;
+    }
+
+    /**
+     * @return string
+     */
+    public function getExchange()
+    {
+        return $this->exchange;
+    }
+
+    /**
+     * @return int
+     */
+    public function getExchangeDataDelayedBy()
+    {
+        return $this->exchangeDataDelayedBy;
+    }
+
+    /**
+     * @return string
+     */
+    public function getExchangeTimezoneName()
+    {
+        return $this->exchangeTimezoneName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getExchangeTimezoneShortName()
+    {
+        return $this->exchangeTimezoneShortName;
     }
 
     /**
      * @return float
      */
-    public function getPriceEpsEstimateNextYear()
+    public function getFiftyDayAverage()
     {
-        return $this->priceEpsEstimateNextYear;
+        return $this->fiftyDayAverage;
+    }
+
+    /**
+     * @return float
+     */
+    public function getFiftyDayAverageChange()
+    {
+        return $this->fiftyDayAverageChange;
+    }
+
+    /**
+     * @return float
+     */
+    public function getFiftyDayAverageChangePercent()
+    {
+        return $this->fiftyDayAverageChangePercent;
+    }
+
+    /**
+     * @return float
+     */
+    public function getFiftyTwoWeekHigh()
+    {
+        return $this->fiftyTwoWeekHigh;
+    }
+
+    /**
+     * @return float
+     */
+    public function getFiftyTwoWeekHighChange()
+    {
+        return $this->fiftyTwoWeekHighChange;
+    }
+
+    /**
+     * @return float
+     */
+    public function getFiftyTwoWeekHighChangePercent()
+    {
+        return $this->fiftyTwoWeekHighChangePercent;
+    }
+
+    /**
+     * @return float
+     */
+    public function getFiftyTwoWeekLow()
+    {
+        return $this->fiftyTwoWeekLow;
+    }
+
+    /**
+     * @return float
+     */
+    public function getFiftyTwoWeekLowChange()
+    {
+        return $this->fiftyTwoWeekLowChange;
+    }
+
+    /**
+     * @return float
+     */
+    public function getFiftyTwoWeekLowChangePercent()
+    {
+        return $this->fiftyTwoWeekLowChangePercent;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFinancialCurrency()
+    {
+        return $this->financialCurrency;
+    }
+
+    /**
+     * @return float
+     */
+    public function getForwardPE()
+    {
+        return $this->forwardPE;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFullExchangeName()
+    {
+        return $this->fullExchangeName;
+    }
+
+    /**
+     * @return int
+     */
+    public function getGmtOffSetMilliseconds()
+    {
+        return $this->gmtOffSetMilliseconds;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLanguage()
+    {
+        return $this->language;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLongName()
+    {
+        return $this->longName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMarket()
+    {
+        return $this->market;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMarketCap()
+    {
+        return $this->marketCap;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMarketState()
+    {
+        return $this->marketState;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMessageBoardId()
+    {
+        return $this->messageBoardId;
+    }
+
+    /**
+     * @return float
+     */
+    public function getPostMarketChange()
+    {
+        return $this->postMarketChange;
+    }
+
+    /**
+     * @return float
+     */
+    public function getPostMarketChangePercent()
+    {
+        return $this->postMarketChangePercent;
+    }
+
+    /**
+     * @return float
+     */
+    public function getPostMarketPrice()
+    {
+        return $this->postMarketPrice;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getPostMarketTime()
+    {
+        return $this->postMarketTime;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPriceHint()
+    {
+        return $this->priceHint;
+    }
+
+    /**
+     * @return float
+     */
+    public function getPriceToBook()
+    {
+        return $this->priceToBook;
+    }
+
+    /**
+     * @return string
+     */
+    public function getQuoteSourceName()
+    {
+        return $this->quoteSourceName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getQuoteType()
+    {
+        return $this->quoteType;
+    }
+
+    /**
+     * @return float
+     */
+    public function getRegularMarketChange()
+    {
+        return $this->regularMarketChange;
+    }
+
+    /**
+     * @return float
+     */
+    public function getRegularMarketChangePercent()
+    {
+        return $this->regularMarketChangePercent;
+    }
+
+    /**
+     * @return float
+     */
+    public function getRegularMarketDayHigh()
+    {
+        return $this->regularMarketDayHigh;
+    }
+
+    /**
+     * @return float
+     */
+    public function getRegularMarketDayLow()
+    {
+        return $this->regularMarketDayLow;
+    }
+
+    /**
+     * @return float
+     */
+    public function getRegularMarketOpen()
+    {
+        return $this->regularMarketOpen;
+    }
+
+    /**
+     * @return float
+     */
+    public function getRegularMarketPreviousClose()
+    {
+        return $this->regularMarketPreviousClose;
+    }
+
+    /**
+     * @return float
+     */
+    public function getRegularMarketPrice()
+    {
+        return $this->regularMarketPrice;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getRegularMarketTime()
+    {
+        return $this->regularMarketTime;
+    }
+
+    /**
+     * @return int
+     */
+    public function getRegularMarketVolume()
+    {
+        return $this->regularMarketVolume;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSharesOutstanding()
+    {
+        return $this->sharesOutstanding;
+    }
+
+    /**
+     * @return string
+     */
+    public function getShortName()
+    {
+        return $this->shortName;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSourceInterval()
+    {
+        return $this->sourceInterval;
     }
 
     /**
@@ -381,58 +552,58 @@ class Quote implements \JsonSerializable
     }
 
     /**
-     * @return float
+     * @return bool
      */
-    public function getShortRatio()
+    public function getTradeable()
     {
-        return $this->shortRatio;
+        return $this->tradeable;
     }
 
     /**
      * @return float
      */
-    public function getOneYearTargetPrice()
+    public function getTrailingAnnualDividendRate()
     {
-        return $this->oneYearTargetPrice;
-    }
-
-    /**
-     * @return int
-     */
-    public function getVolume()
-    {
-        return $this->volume;
-    }
-
-    /**
-     * @return string
-     */
-    public function getStockExchange()
-    {
-        return $this->stockExchange;
+        return $this->trailingAnnualDividendRate;
     }
 
     /**
      * @return float
      */
-    public function getDividendYield()
+    public function getTrailingAnnualDividendYield()
     {
-        return $this->dividendYield;
+        return $this->trailingAnnualDividendYield;
     }
 
     /**
      * @return float
      */
-    public function getPercentChange()
+    public function getTrailingPE()
     {
-        return $this->percentChange;
+        return $this->trailingPE;
     }
 
     /**
-     * @return \DateTime
+     * @return float
      */
-    public function getLastTradeDateTime()
+    public function getTwoHundredDayAverage()
     {
-        return $this->lastTradeDateTime;
+        return $this->twoHundredDayAverage;
+    }
+
+    /**
+     * @return float
+     */
+    public function getTwoHundredDayAverageChange()
+    {
+        return $this->twoHundredDayAverageChange;
+    }
+
+    /**
+     * @return float
+     */
+    public function getTwoHundredDayAverageChangePercent()
+    {
+        return $this->twoHundredDayAverageChangePercent;
     }
 }
