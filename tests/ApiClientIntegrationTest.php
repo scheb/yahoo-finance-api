@@ -40,13 +40,21 @@ class ApiClientIntegrationTest extends \PHPUnit_Framework_TestCase
         $expectedItem = new SearchResult(
             self::APPLE_SYMBOL,
             "Apple Inc.",
-            "NAS",
+            "NMS",
             "S",
             "NASDAQ",
             "Equity"
         );
 
-        $this->assertContains($expectedItem, $returnValue, 'Search result must contain AAPL', false, false);
+        $appleRecord = null;
+        foreach ($returnValue as $record) {
+            if ($record->getSymbol() === self::APPLE_SYMBOL) {
+                $appleRecord = $record;
+                break;
+            }
+        }
+
+        $this->assertEquals($expectedItem, $appleRecord, 'Search result must contain AAPL');
     }
 
     /**
