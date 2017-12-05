@@ -47,7 +47,6 @@ class ApiClient
         $responseBody = (string)$this->client->request('GET', $url)->getBody();
 
         return $this->resultDecoder->transformSearchResult($responseBody);
-
     }
 
     /**
