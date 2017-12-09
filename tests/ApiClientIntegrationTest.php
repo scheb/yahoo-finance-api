@@ -37,24 +37,37 @@ class ApiClientIntegrationTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(10, $returnValue);
         $this->assertContainsOnlyInstancesOf(SearchResult::class, $returnValue);
 
-        $expectedItem = new SearchResult(
-            self::APPLE_SYMBOL,
-            "Apple Inc.",
-            "NMS",
-            "S",
-            "NASDAQ",
-            "Equity"
-        );
+        $aaplStock = $this->findAAPL($returnValue);
+        $this->assertNotNull($aaplStock, 'Search result must contain AAPL');
 
-        $appleRecord = null;
-        foreach ($returnValue as $record) {
-            if ($record->getSymbol() === self::APPLE_SYMBOL) {
-                $appleRecord = $record;
-                break;
+        $this->assertEquals("Apple Inc.", $aaplStock->getName());
+        $this->assertEquals("S", $aaplStock->getType());
+        $this->assertEquals("NASDAQ", $aaplStock->getExchDisp());
+        $this->assertEquals("Equity", $aaplStock->getTypeDisp());
+
+        // Can be either NAS or NMS
+        $this->assertThat(
+            $aaplStock->getExch(),
+            $this->logicalOr(
+                $this->equalTo("NAS"),
+                $this->equalTo("NMS")
+            )
+        );
+    }
+
+    /**
+     * @param SearchResult[] $searchResult
+     *
+     * @return SearchResult|null
+     */
+    private function findAAPL($searchResult)
+    {
+        foreach ($searchResult as $result) {
+            if ($result->getSymbol() === self::APPLE_SYMBOL) {
+                return $result;
             }
         }
-
-        $this->assertEquals($expectedItem, $appleRecord, 'Search result must contain AAPL');
+        return null;
     }
 
     /**
