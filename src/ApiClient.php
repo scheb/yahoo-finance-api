@@ -72,7 +72,7 @@ class ApiClient
 
         $cookieJar = new CookieJar();
 
-        $initialUrl = 'https://finance.yahoo.com/lookup?s=' . urlencode($symbol);
+        $initialUrl = 'https://finance.yahoo.com/quote/' . urlencode($symbol) . '/history?p=' . urlencode($symbol);
         $responseBody = (string)$this->client->request('GET', $initialUrl, ['cookies' => $cookieJar])->getBody();
         $crumb = $this->resultDecoder->extractCrumb($responseBody);
 
