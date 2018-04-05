@@ -26,7 +26,7 @@ Alternatively you can also add the bundle directly to composer.json:
 ```json
 {
     "require": {
-        "scheb/yahoo-finance-api": "^2.0"
+        "scheb/yahoo-finance-api": "^3.0"
     }
 }
 ```
