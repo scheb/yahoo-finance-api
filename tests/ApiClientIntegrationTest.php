@@ -6,8 +6,9 @@ use Scheb\YahooFinanceApi\ApiClientFactory;
 use Scheb\YahooFinanceApi\Results\HistoricalData;
 use Scheb\YahooFinanceApi\Results\Quote;
 use Scheb\YahooFinanceApi\Results\SearchResult;
+use PHPUnit\Framework\TestCase;
 
-class ApiClientIntegrationTest extends \PHPUnit_Framework_TestCase
+class ApiClientIntegrationTest extends TestCase
 {
     const APPLE_NAME = 'Apple';
     const APPLE_SYMBOL = 'AAPL';
@@ -90,6 +91,26 @@ class ApiClientIntegrationTest extends \PHPUnit_Framework_TestCase
         $this->assertInternalType('float', $historicalData->getClose());
         $this->assertInternalType('float', $historicalData->getAdjClose());
         $this->assertInternalType('int', $historicalData->getVolume());
+    }
+
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Interval must be one of: 1d, 1wk, 1mo
+     */
+    public function getHistoricalData_valuesForInvalidInterval_throwInvalidArgumentException()
+    {
+        $this->client->getHistoricalData(self::APPLE_SYMBOL, 'invalid_interval', new \DateTime('-7 days'), new \DateTime('today'));
+    }
+
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Start date must be before end date
+     */
+    public function getHistoricalData_startDateIsGreaterThanEndDate_throwInvalidArgumentException()
+    {
+        $this->client->getHistoricalData(self::APPLE_SYMBOL, ApiClient::INTERVAL_1_DAY, new \DateTime('7 days'), new \DateTime('today'));
     }
 
     public function getTestDataForHistoricalData()

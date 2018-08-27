@@ -5,8 +5,9 @@ use Scheb\YahooFinanceApi\ResultDecoder;
 use Scheb\YahooFinanceApi\Results\HistoricalData;
 use Scheb\YahooFinanceApi\Results\Quote;
 use Scheb\YahooFinanceApi\Results\SearchResult;
+use PHPUnit\Framework\TestCase;
 
-class ResultDecoderTest extends \PHPUnit_Framework_TestCase
+class ResultDecoderTest extends TestCase
 {
     /**
      * @var ResultDecoder
