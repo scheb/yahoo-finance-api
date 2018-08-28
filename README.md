@@ -73,3 +73,18 @@ $quote = $client->getQuote("AAPL");
 // Returns an array of Scheb\YahooFinanceApi\Results\Quote
 $quotes = $client->getQuotes(["AAPL", "GOOG"]);
 ```
+
+Contribute
+----------
+You're welcome to [contribute](https://github.com/scheb/yahoo-finance-api/graphs/contributors) to this library by
+creating a pull requests or feature request in the issues section. For pull requests, please follow these guidelines:
+
+- Symfony code style
+- Please add/update test cases
+- Test methods should be named `[method]_[scenario]_[expected result]`
+
+To run the test suite install the dependencies with `composer install` and then execute `bin/phpunit`.
+
+License
+-------
+This bundle is available under the [MIT license](LICENSE).
