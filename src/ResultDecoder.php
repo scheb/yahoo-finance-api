@@ -94,7 +94,7 @@ class ResultDecoder
     public function transformSearchResult($responseBody)
     {
         $decoded = json_decode($responseBody, true);
-        if (!isset($decoded['data']['items']) && is_array($decoded['data']['items'])) {
+        if (!isset($decoded['data']['items']) || !is_array($decoded['data']['items'])) {
             throw new ApiException("Yahoo Search API returned an invalid response", ApiException::INVALID_RESPONSE);
         }
 
@@ -174,7 +174,7 @@ class ResultDecoder
     public function transformQuotes($responseBody)
     {
         $decoded = json_decode($responseBody, true);
-        if (!isset($decoded['quoteResponse']['result']) && is_array($decoded['quoteResponse']['result'])) {
+        if (!isset($decoded['quoteResponse']['result']) || !is_array($decoded['quoteResponse']['result'])) {
             throw new ApiException("Yahoo Search API returned an invalid result.", ApiException::INVALID_RESPONSE);
         }
 
