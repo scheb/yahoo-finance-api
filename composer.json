@@ -28,5 +28,8 @@
         "psr-4": {
             "Scheb\\YahooFinanceApi\\Tests\\": "tests/"
         }
+    },
+    "config": {
+        "bin-dir": "bin"
     }
 }
