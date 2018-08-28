@@ -1,5 +1,6 @@
 <?php
-require(__DIR__ . "/../vendor/autoload.php");
+
+require __DIR__.'/../vendor/autoload.php';
 
 use Scheb\YahooFinanceApi\ApiClient;
 use Scheb\YahooFinanceApi\ApiClientFactory;
@@ -14,22 +15,22 @@ $guzzleClient = new Client($options);
 $client = ApiClientFactory::createApiClient($guzzleClient);
 
 // Returns an array of Scheb\YahooFinanceApi\Results\SearchResult
-$searchResult = $client->search("Apple");
+$searchResult = $client->search('Apple');
 
 // Returns an array of Scheb\YahooFinanceApi\Results\HistoricalData
-$historicalData = $client->getHistoricalData("AAPL", ApiClient::INTERVAL_1_DAY, new \DateTime("-14 days"), new \DateTime("today"));
+$historicalData = $client->getHistoricalData('AAPL', ApiClient::INTERVAL_1_DAY, new \DateTime('-14 days'), new \DateTime('today'));
 
 // Returns Scheb\YahooFinanceApi\Results\Quote
-$exchangeRate = $client->getExchangeRate("USD", "EUR");
+$exchangeRate = $client->getExchangeRate('USD', 'EUR');
 
 // Returns an array of Scheb\YahooFinanceApi\Results\Quote
 $exchangeRates = $client->getExchangeRates([
-    ["USD", "EUR"],
-    ["EUR", "USD"],
+    ['USD', 'EUR'],
+    ['EUR', 'USD'],
 ]);
 
 // Returns Scheb\YahooFinanceApi\Results\Quote
-$quote = $client->getQuote("AAPL");
+$quote = $client->getQuote('AAPL');
 
 // Returns an array of Scheb\YahooFinanceApi\Results\Quote
-$quotes = $client->getQuotes(["AAPL", "GOOG"]);
+$quotes = $client->getQuotes(['AAPL', 'GOOG']);

@@ -1,4 +1,5 @@
 <?php
+
 namespace Scheb\YahooFinanceApi;
 
 use Scheb\YahooFinanceApi\Exception\ApiException;
@@ -87,15 +88,15 @@ class ResultDecoder
     public function __construct()
     {
         $this->quoteFields = array_keys(self::QUOTE_FIELDS_MAP);
-        $this->quoteFields[] = "LastTradeDate";
-        $this->quoteFields[] = "LastTradeDate";
+        $this->quoteFields[] = 'LastTradeDate';
+        $this->quoteFields[] = 'LastTradeDate';
     }
 
     public function transformSearchResult($responseBody)
     {
         $decoded = json_decode($responseBody, true);
         if (!isset($decoded['data']['items']) || !is_array($decoded['data']['items'])) {
-            throw new ApiException("Yahoo Search API returned an invalid response", ApiException::INVALID_RESPONSE);
+            throw new ApiException('Yahoo Search API returned an invalid response', ApiException::INVALID_RESPONSE);
         }
 
         return array_map(function ($item) {
@@ -107,7 +108,7 @@ class ResultDecoder
     {
         $missingFields = array_diff(self::SEARCH_RESULT_FIELDS, array_keys($json));
         if ($missingFields) {
-            throw new ApiException('Search result is missing fields: ' . implode(', ', $missingFields), ApiException::INVALID_RESPONSE);
+            throw new ApiException('Search result is missing fields: '.implode(', ', $missingFields), ApiException::INVALID_RESPONSE);
         }
 
         return new SearchResult(
@@ -123,7 +124,7 @@ class ResultDecoder
     public function extractCrumb($responseBody)
     {
         if (preg_match('#CrumbStore":{"crumb":"(?<crumb>.+?)"}#', $responseBody, $match)) {
-            return json_decode('"' . $match['crumb'] . '"');
+            return json_decode('"'.$match['crumb'].'"');
         } else {
             throw new ApiException('Could not extract crumb from response', ApiException::MISSING_CRUMB);
         }
@@ -135,7 +136,7 @@ class ResultDecoder
         $headerLine = array_shift($lines);
         $expectedHeaderLine = implode(',', self::HISTORICAL_DATA_HEADER_LINE);
         if ($headerLine !== $expectedHeaderLine) {
-            throw new ApiException('CSV header line did not match expected header line, given: ' . $headerLine . ', expected: ' . $expectedHeaderLine, ApiException::INVALID_RESPONSE);
+            throw new ApiException('CSV header line did not match expected header line, given: '.$headerLine.', expected: '.$expectedHeaderLine, ApiException::INVALID_RESPONSE);
         }
 
         return array_map(function ($line) {
@@ -145,28 +146,28 @@ class ResultDecoder
 
     private function createHistoricalData(array $columns)
     {
-        if (count($columns) !== 7) {
+        if (7 !== count($columns)) {
             throw new ApiException('CSV did not contain correct number of columns', ApiException::INVALID_RESPONSE);
         }
 
         try {
             $date = new \DateTime($columns[0], new \DateTimeZone('UTC'));
         } catch (\Exception $e) {
-            throw new ApiException('Not a date in column "Date":' . $columns[0], ApiException::INVALID_VALUE);
+            throw new ApiException('Not a date in column "Date":'.$columns[0], ApiException::INVALID_VALUE);
         }
 
-        for ($i = 1; $i <= 6; $i++) {
-            if (!is_numeric($columns[$i]) && $columns[$i] != 'null') {
-                throw new ApiException('Not a number in column "' . self::HISTORICAL_DATA_HEADER_LINE[$i] . '": ' . $columns[$i], ApiException::INVALID_VALUE);
+        for ($i = 1; $i <= 6; ++$i) {
+            if (!is_numeric($columns[$i]) && 'null' != $columns[$i]) {
+                throw new ApiException('Not a number in column "'.self::HISTORICAL_DATA_HEADER_LINE[$i].'": '.$columns[$i], ApiException::INVALID_VALUE);
             }
         }
 
-        $open = (float)$columns[1];
-        $high = (float)$columns[2];
-        $low = (float)$columns[3];
-        $close = (float)$columns[4];
-        $adjClose = (float)$columns[5];
-        $volume = (int)$columns[6];
+        $open = (float) $columns[1];
+        $high = (float) $columns[2];
+        $low = (float) $columns[3];
+        $close = (float) $columns[4];
+        $adjClose = (float) $columns[5];
+        $volume = (int) $columns[6];
 
         return new HistoricalData($date, $open, $high, $low, $close, $adjClose, $volume);
     }
@@ -175,7 +176,7 @@ class ResultDecoder
     {
         $decoded = json_decode($responseBody, true);
         if (!isset($decoded['quoteResponse']['result']) || !is_array($decoded['quoteResponse']['result'])) {
-            throw new ApiException("Yahoo Search API returned an invalid result.", ApiException::INVALID_RESPONSE);
+            throw new ApiException('Yahoo Search API returned an invalid result.', ApiException::INVALID_RESPONSE);
         }
 
         $results = $decoded['quoteResponse']['result'];
@@ -201,7 +202,7 @@ class ResultDecoder
 
     private function mapValue($field, $rawValue, $type)
     {
-        if ($rawValue === null) {
+        if (null === $rawValue) {
             return null;
         }
 
@@ -215,55 +216,57 @@ class ResultDecoder
             case 'date':
                 return $this->mapDateValue($field, $rawValue);
             case 'string':
-                return (string)$rawValue;
+                return (string) $rawValue;
             case 'bool':
                 return $this->mapBoolValue($rawValue);
             default:
-                throw new \InvalidArgumentException('Invalid data type ' . $type . ' for field ' . $field);
+                throw new \InvalidArgumentException('Invalid data type '.$type.' for field '.$field);
         }
     }
 
     private function mapFloatValue($field, $rawValue)
     {
         if (!is_numeric($rawValue)) {
-            throw new ApiException('Not a number in field "' . $field . '": ' . $rawValue, ApiException::INVALID_VALUE);
+            throw new ApiException('Not a number in field "'.$field.'": '.$rawValue, ApiException::INVALID_VALUE);
         }
-        return (float)$rawValue;
+
+        return (float) $rawValue;
     }
 
     private function mapPercentValue($field, $rawValue)
     {
-        if (substr($rawValue, -1, 1) !== '%') {
-            throw new ApiException('Not a percent in field "' . $field . '": ' . $rawValue, ApiException::INVALID_VALUE);
+        if ('%' !== substr($rawValue, -1, 1)) {
+            throw new ApiException('Not a percent in field "'.$field.'": '.$rawValue, ApiException::INVALID_VALUE);
         }
 
         $numericPart = substr($rawValue, 0, strlen($rawValue) - 1);
         if (!is_numeric($numericPart)) {
-            throw new ApiException('Not a percent in field "' . $field . '": ' . $rawValue, ApiException::INVALID_VALUE);
+            throw new ApiException('Not a percent in field "'.$field.'": '.$rawValue, ApiException::INVALID_VALUE);
         }
 
-        return (float)$numericPart;
+        return (float) $numericPart;
     }
 
     private function mapIntValue($field, $rawValue)
     {
         if (!is_numeric($rawValue)) {
-            throw new ApiException('Not a number in field "' . $field . '": ' . $rawValue, ApiException::INVALID_VALUE);
+            throw new ApiException('Not a number in field "'.$field.'": '.$rawValue, ApiException::INVALID_VALUE);
         }
-        return (int)$rawValue;
+
+        return (int) $rawValue;
     }
 
     private function mapBoolValue($rawValue)
     {
-        return !!$rawValue;
+        return (bool) $rawValue;
     }
 
     private function mapDateValue($field, $rawValue)
     {
         try {
-            return new \DateTime('@' . $rawValue);
+            return new \DateTime('@'.$rawValue);
         } catch (\Exception $e) {
-            throw new ApiException('Not a date in field "' . $field . '": ' . $rawValue, ApiException::INVALID_VALUE);
+            throw new ApiException('Not a date in field "'.$field.'": '.$rawValue, ApiException::INVALID_VALUE);
         }
     }
 }

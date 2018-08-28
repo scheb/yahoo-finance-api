@@ -1,4 +1,5 @@
 <?php
+
 namespace Scheb\YahooFinanceApi\Results;
 
 class HistoricalData implements \JsonSerializable
@@ -40,12 +41,12 @@ class HistoricalData implements \JsonSerializable
 
     /**
      * @param \DateTime $date
-     * @param float $open
-     * @param float $high
-     * @param float $low
-     * @param float $close
-     * @param float $adjClose
-     * @param int $volume
+     * @param float     $open
+     * @param float     $high
+     * @param float     $low
+     * @param float     $close
+     * @param float     $adjClose
+     * @param int       $volume
      */
     public function __construct(\DateTime $date, $open, $high, $low, $close, $adjClose, $volume)
     {

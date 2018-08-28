@@ -1,4 +1,5 @@
 <?php
+
 namespace Scheb\YahooFinanceApi\Results;
 
 class SearchResult implements \JsonSerializable

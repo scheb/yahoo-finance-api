@@ -1,4 +1,5 @@
 <?php
+
 namespace Scheb\YahooFinanceApi\Tests;
 
 use Scheb\YahooFinanceApi\ApiClient;
@@ -41,17 +42,17 @@ class ApiClientIntegrationTest extends TestCase
         $aaplStock = $this->findAAPL($returnValue);
         $this->assertNotNull($aaplStock, 'Search result must contain AAPL');
 
-        $this->assertEquals("Apple Inc.", $aaplStock->getName());
-        $this->assertEquals("S", $aaplStock->getType());
-        $this->assertEquals("NASDAQ", $aaplStock->getExchDisp());
-        $this->assertEquals("Equity", $aaplStock->getTypeDisp());
+        $this->assertEquals('Apple Inc.', $aaplStock->getName());
+        $this->assertEquals('S', $aaplStock->getType());
+        $this->assertEquals('NASDAQ', $aaplStock->getExchDisp());
+        $this->assertEquals('Equity', $aaplStock->getTypeDisp());
 
         // Can be either NAS or NMS
         $this->assertThat(
             $aaplStock->getExch(),
             $this->logicalOr(
-                $this->equalTo("NAS"),
-                $this->equalTo("NMS")
+                $this->equalTo('NAS'),
+                $this->equalTo('NMS')
             )
         );
     }
@@ -64,10 +65,11 @@ class ApiClientIntegrationTest extends TestCase
     private function findAAPL($searchResult)
     {
         foreach ($searchResult as $result) {
-            if ($result->getSymbol() === self::APPLE_SYMBOL) {
+            if (self::APPLE_SYMBOL === $result->getSymbol()) {
                 return $result;
             }
         }
+
         return null;
     }
 
@@ -185,8 +187,8 @@ class ApiClientIntegrationTest extends TestCase
 
     private function assertUsdEurExchangeRate(Quote $exchangeRate)
     {
-        $expectedSymbol = self::CURRENCY_USD . self::CURRENCY_EUR . ApiClient::CURRENCY_SYMBOL_SUFFIX;
-        $expectedName = self::CURRENCY_USD . '/' . self::CURRENCY_EUR;
+        $expectedSymbol = self::CURRENCY_USD.self::CURRENCY_EUR.ApiClient::CURRENCY_SYMBOL_SUFFIX;
+        $expectedName = self::CURRENCY_USD.'/'.self::CURRENCY_EUR;
 
         $this->assertEquals($expectedSymbol, $exchangeRate->getSymbol());
         $this->assertEquals($expectedName, $exchangeRate->getShortName());

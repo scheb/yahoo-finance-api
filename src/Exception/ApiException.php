@@ -1,4 +1,5 @@
 <?php
+
 namespace Scheb\YahooFinanceApi\Exception;
 
 class ApiException extends \Exception

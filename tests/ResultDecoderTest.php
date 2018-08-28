@@ -1,4 +1,5 @@
 <?php
+
 namespace Scheb\YahooFinanceApi\Tests;
 
 use Scheb\YahooFinanceApi\ResultDecoder;
@@ -24,19 +25,19 @@ class ResultDecoderTest extends TestCase
      */
     public function transformSearchResult_jsonGiven_createArrayOfSearchResult()
     {
-        $returnedResult = $this->resultDecoder->transformSearchResult(file_get_contents(__DIR__ . '/fixtures/searchResult.json'));
+        $returnedResult = $this->resultDecoder->transformSearchResult(file_get_contents(__DIR__.'/fixtures/searchResult.json'));
 
         $this->assertInternalType('array', $returnedResult);
         $this->assertContainsOnlyInstancesOf(SearchResult::class, $returnedResult);
         $this->assertCount(10, $returnedResult);
 
         $expectedItem = new SearchResult(
-            "AAPL",
-            "Apple Inc.",
-            "NAS",
-            "S",
-            "NASDAQ",
-            "Equity"
+            'AAPL',
+            'Apple Inc.',
+            'NAS',
+            'S',
+            'NASDAQ',
+            'Equity'
         );
         $this->assertEquals($expectedItem, $returnedResult[0]);
     }
@@ -46,7 +47,7 @@ class ResultDecoderTest extends TestCase
      */
     public function extractCrumb_lookupPage_returnCrumbValue()
     {
-        $returnedResult = $this->resultDecoder->extractCrumb(file_get_contents(__DIR__ . '/fixtures/lookupPage.html'));
+        $returnedResult = $this->resultDecoder->extractCrumb(file_get_contents(__DIR__.'/fixtures/lookupPage.html'));
         $this->assertEquals('kWZQDiqqBck', $returnedResult);
     }
 
@@ -67,7 +68,7 @@ class ResultDecoderTest extends TestCase
      */
     public function transformHistoricalDataResult_csvGiven_returnArrayOfHistoricalData()
     {
-        $returnedResult = $this->resultDecoder->transformHistoricalDataResult(file_get_contents(__DIR__ . '/fixtures/historicalData.csv'));
+        $returnedResult = $this->resultDecoder->transformHistoricalDataResult(file_get_contents(__DIR__.'/fixtures/historicalData.csv'));
 
         $this->assertInternalType('array', $returnedResult);
         $this->assertContainsOnlyInstancesOf(HistoricalData::class, $returnedResult);
@@ -103,7 +104,7 @@ class ResultDecoderTest extends TestCase
      */
     public function transformHistoricalDataResult_invalidColumnsCsvGiven_throwApiException()
     {
-        $this->resultDecoder->transformHistoricalDataResult(file_get_contents(__DIR__ . '/fixtures/invalidColumnsHistoricalData.csv'));
+        $this->resultDecoder->transformHistoricalDataResult(file_get_contents(__DIR__.'/fixtures/invalidColumnsHistoricalData.csv'));
     }
 
     /**
@@ -113,7 +114,7 @@ class ResultDecoderTest extends TestCase
      */
     public function transformHistoricalDataResult_invalidDateTimeFormatCsvGiven_throwApiException()
     {
-        $this->resultDecoder->transformHistoricalDataResult(file_get_contents(__DIR__ . '/fixtures/invalidDateTimeFormatHistoricalData.csv'));
+        $this->resultDecoder->transformHistoricalDataResult(file_get_contents(__DIR__.'/fixtures/invalidDateTimeFormatHistoricalData.csv'));
     }
 
     /**
@@ -123,7 +124,7 @@ class ResultDecoderTest extends TestCase
      */
     public function transformHistoricalDataResult_invalidNumericStringCsvGiven_throwApiException()
     {
-        $this->resultDecoder->transformHistoricalDataResult(file_get_contents(__DIR__ . '/fixtures/invalidNumericStringHistoricalData.csv'));
+        $this->resultDecoder->transformHistoricalDataResult(file_get_contents(__DIR__.'/fixtures/invalidNumericStringHistoricalData.csv'));
     }
 
     /**
@@ -131,7 +132,7 @@ class ResultDecoderTest extends TestCase
      */
     public function transformQuotes_jsonGiven_createArrayOfQuote()
     {
-        $returnedResult = $this->resultDecoder->transformQuotes(file_get_contents(__DIR__ . '/fixtures/quote.json'));
+        $returnedResult = $this->resultDecoder->transformQuotes(file_get_contents(__DIR__.'/fixtures/quote.json'));
 
         $this->assertInternalType('array', $returnedResult);
         $this->assertCount(1, $returnedResult);
@@ -202,7 +203,7 @@ class ResultDecoderTest extends TestCase
             'earningsTimestampEnd' => new \DateTime('@1517605200'),
             'trailingAnnualDividendRate' => 2.34,
             'trailingPE' => 19.45277,
-            'symbol' => 'AAPL'
+            'symbol' => 'AAPL',
         ];
 
         $expectedQuote = new Quote($expectedQuoteData);
@@ -214,7 +215,7 @@ class ResultDecoderTest extends TestCase
      */
     public function transformQuotes_jsonWithNullGiven_createArrayOfQuote()
     {
-        $returnedResult = $this->resultDecoder->transformQuotes(file_get_contents(__DIR__ . '/fixtures/nullQuote.json'));
+        $returnedResult = $this->resultDecoder->transformQuotes(file_get_contents(__DIR__.'/fixtures/nullQuote.json'));
 
         $this->assertInternalType('array', $returnedResult);
         $this->assertCount(1, $returnedResult);
@@ -285,7 +286,7 @@ class ResultDecoderTest extends TestCase
             'earningsTimestampEnd' => new \DateTime('@1517605200'),
             'trailingAnnualDividendRate' => 2.34,
             'trailingPE' => 19.45277,
-            'symbol' => 'AAPL'
+            'symbol' => 'AAPL',
         ];
 
         $expectedQuote = new Quote($expectedQuoteData);
@@ -299,7 +300,7 @@ class ResultDecoderTest extends TestCase
      */
     public function transformQuotes_jsonWithInvalidFloatGiven_createArrayOfQuote()
     {
-        $this->resultDecoder->transformQuotes(file_get_contents(__DIR__ . '/fixtures/invalidFloatQuote.json'));
+        $this->resultDecoder->transformQuotes(file_get_contents(__DIR__.'/fixtures/invalidFloatQuote.json'));
     }
 
     /**
@@ -309,7 +310,7 @@ class ResultDecoderTest extends TestCase
      */
     public function transformQuotes_jsonWithInvalidDateTimeGiven_createArrayOfQuote()
     {
-        $this->resultDecoder->transformQuotes(file_get_contents(__DIR__ . '/fixtures/invalidDateTimeQuote.json'));
+        $this->resultDecoder->transformQuotes(file_get_contents(__DIR__.'/fixtures/invalidDateTimeQuote.json'));
     }
 
     /**
@@ -319,7 +320,7 @@ class ResultDecoderTest extends TestCase
      */
     public function transformQuotes_jsonWithInvalidIntegerGiven_createArrayOfQuote()
     {
-        $this->resultDecoder->transformQuotes(file_get_contents(__DIR__ . '/fixtures/invalidIntegerQuote.json'));
+        $this->resultDecoder->transformQuotes(file_get_contents(__DIR__.'/fixtures/invalidIntegerQuote.json'));
     }
 
     /**

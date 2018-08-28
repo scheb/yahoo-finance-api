@@ -1,4 +1,5 @@
 <?php
+
 namespace Scheb\YahooFinanceApi;
 
 use GuzzleHttp\Client;
