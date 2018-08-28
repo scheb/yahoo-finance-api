@@ -1,17 +1,18 @@
 scheb/yahoo-finance-api
 =======================
 
+[![Build Status](https://travis-ci.org/scheb/yahoo-finance-api.svg?branch=master)](https://travis-ci.org/scheb/yahoo-finance-api)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/scheb/yahoo-finance-api/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/scheb/yahoo-finance-api/?branch=master)
+[![Code Coverage](https://scrutinizer-ci.com/g/scheb/yahoo-finance-api/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/scheb/yahoo-finance-api/?branch=master)
+[![Latest Stable Version](https://poser.pugx.org/scheb/yahoo-finance-api/v/stable.svg)](https://packagist.org/packages/scheb/yahoo-finance-api)
+[![Total Downloads](https://poser.pugx.org/scheb/yahoo-finance-api/downloads)](https://packagist.org/packages/scheb/two-factor-bundle)
+[![License](https://poser.pugx.org/scheb/yahoo-finance-api/license.svg)](https://packagist.org/packages/scheb/yahoo-finance-api)
+
 This is a PHP client for Yahoo Finance API.
 
 Since YQL APIs have been discontinued in November 2017, this client is using non-official API endpoints for quotes, search and historical data.
 
 **WARNING:** These non-official APIs cannot be assumed stable and might break any time. Also, you might violate Yahoo's terms of service. So use them at your own risk.
-
-[![Build Status](https://travis-ci.org/scheb/yahoo-finance-api.svg?branch=master)](https://travis-ci.org/scheb/yahoo-finance-api)
-[![PHP 7 ready](http://php7ready.timesplinter.ch/scheb/yahoo-finance-api/badge.svg)](https://travis-ci.org/scheb/yahoo-finance-api)
-[![Coverage Status](https://coveralls.io/repos/scheb/yahoo-finance-api/badge.svg?branch=master&service=github)](https://coveralls.io/github/scheb/yahoo-finance-api?branch=master)
-[![Latest Stable Version](https://poser.pugx.org/scheb/yahoo-finance-api/v/stable.svg)](https://packagist.org/packages/scheb/yahoo-finance-api)
-[![License](https://poser.pugx.org/scheb/yahoo-finance-api/license.svg)](https://packagist.org/packages/scheb/yahoo-finance-api)
 
 ## Installation
 
