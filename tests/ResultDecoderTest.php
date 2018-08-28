@@ -52,7 +52,7 @@ class ResultDecoderTest extends TestCase
 
     /**
      * @test
-     * @expectedException Scheb\YahooFinanceApi\Exception\ApiException
+     * @expectedException \Scheb\YahooFinanceApi\Exception\ApiException
      * @expectedExceptionMessage Could not extract crumb from response
      */
     public function extractCrumb_invalidStringGiven_throwApiException()
@@ -86,7 +86,7 @@ class ResultDecoderTest extends TestCase
 
     /**
      * @test
-     * @expectedException Scheb\YahooFinanceApi\Exception\ApiException
+     * @expectedException \Scheb\YahooFinanceApi\Exception\ApiException
      * @expectedExceptionMessage CSV header line did not match expected header line, given: 12345	1234567, expected: Date,Open,High,Low,Close,Adj Close,Volume
      */
     public function transformHistoricalDataResult_unexpectedHeaderLineCsvGiven_throwApiException()
@@ -98,7 +98,7 @@ class ResultDecoderTest extends TestCase
 
     /**
      * @test
-     * @expectedException Scheb\YahooFinanceApi\Exception\ApiException
+     * @expectedException \Scheb\YahooFinanceApi\Exception\ApiException
      * @expectedExceptionMessage CSV did not contain correct number of columns
      */
     public function transformHistoricalDataResult_invalidColumnsCsvGiven_throwApiException()
@@ -108,7 +108,7 @@ class ResultDecoderTest extends TestCase
 
     /**
      * @test
-     * @expectedException Scheb\YahooFinanceApi\Exception\ApiException
+     * @expectedException \Scheb\YahooFinanceApi\Exception\ApiException
      * @expectedExceptionMessage Not a date in column "Date":2017-07
      */
     public function transformHistoricalDataResult_invalidDateTimeFormatCsvGiven_throwApiException()
@@ -118,7 +118,7 @@ class ResultDecoderTest extends TestCase
 
     /**
      * @test
-     * @expectedException Scheb\YahooFinanceApi\Exception\ApiException
+     * @expectedException \Scheb\YahooFinanceApi\Exception\ApiException
      * @expectedExceptionMessage Not a number in column "High": this_is_not_numeric_string
      */
     public function transformHistoricalDataResult_invalidNumericStringCsvGiven_throwApiException()
@@ -294,7 +294,7 @@ class ResultDecoderTest extends TestCase
 
     /**
      * @test
-     * @expectedException Scheb\YahooFinanceApi\Exception\ApiException
+     * @expectedException \Scheb\YahooFinanceApi\Exception\ApiException
      * @expectedExceptionMessage Not a number in field "trailingPE": 19.45277%
      */
     public function transformQuotes_jsonWithInvalidFloatGiven_createArrayOfQuote()
@@ -324,8 +324,8 @@ class ResultDecoderTest extends TestCase
 
     /**
      * @test
-     * @expectedException Scheb\YahooFinanceApi\Exception\ApiException
-     * @expectedExceptionMessage earch result is missing fields: symbol, name, exch, type, exchDisp, typeDisp
+     * @expectedException \Scheb\YahooFinanceApi\Exception\ApiException
+     * @expectedExceptionMessage Search result is missing fields: symbol, name, exch, type, exchDisp, typeDisp
      */
     public function transformSearchResult_jsonWithMissedFieldGiven_createSearchResultFromJson()
     {
