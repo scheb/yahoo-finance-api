@@ -20,6 +20,35 @@ class ResultDecoderTest extends TestCase
         $this->resultDecoder = new ResultDecoder();
     }
 
+    public function transformInvalidResponse()
+    {
+        return [
+            [
+                [
+                    'data' => null
+                ]
+            ],
+            [
+                [
+                    'data' => [
+                        'items' => null
+                    ]
+                ]
+            ],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider transformInvalidResponse
+     * @expectedException \Scheb\YahooFinanceApi\Exception\ApiException
+     * @expectedExceptionMessage Yahoo Search API returned an invalid response
+     */
+    public function transformSearchResult_jsonGiven_createArrayOfInvalidResponse($responseBody)
+    {
+        $this->resultDecoder->transformSearchResult(json_encode($responseBody));
+    }
+
     /**
      * @test
      */
@@ -125,6 +154,37 @@ class ResultDecoderTest extends TestCase
     public function transformHistoricalDataResult_invalidNumericStringCsvGiven_throwApiException()
     {
         $this->resultDecoder->transformHistoricalDataResult(file_get_contents(__DIR__.'/fixtures/invalidNumericStringHistoricalData.csv'));
+    }
+
+    public function transformQuotesInvalidResult()
+    {
+        return [
+            [
+                [
+                    'quoteResponse' => null
+                ]
+            ],
+            [
+                [
+                    [
+                        'quoteResponse' => [
+                            'result' => null
+                        ]
+                    ]
+                ]
+            ],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider transformQuotesInvalidResult
+     * @expectedException \Scheb\YahooFinanceApi\Exception\ApiException
+     * @expectedExceptionMessage Yahoo Search API returned an invalid result.
+     */
+    public function transformQuotes_jsonGiven_createArrayOfInvalidResult($responseBody)
+    {
+        $this->resultDecoder->transformQuotes(json_encode($responseBody));
     }
 
     /**
