@@ -5,7 +5,7 @@ scheb/yahoo-finance-api
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/scheb/yahoo-finance-api/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/scheb/yahoo-finance-api/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/scheb/yahoo-finance-api/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/scheb/yahoo-finance-api/?branch=master)
 [![Latest Stable Version](https://poser.pugx.org/scheb/yahoo-finance-api/v/stable.svg)](https://packagist.org/packages/scheb/yahoo-finance-api)
-[![Total Downloads](https://poser.pugx.org/scheb/yahoo-finance-api/downloads)](https://packagist.org/packages/scheb/two-factor-bundle)
+[![Total Downloads](https://poser.pugx.org/scheb/yahoo-finance-api/downloads)](https://packagist.org/packages/scheb/yahoo-finance-api)
 [![License](https://poser.pugx.org/scheb/yahoo-finance-api/license.svg)](https://packagist.org/packages/scheb/yahoo-finance-api)
 
 This is a PHP client for Yahoo Finance API.
