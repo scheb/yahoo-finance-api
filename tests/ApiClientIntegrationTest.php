@@ -36,7 +36,6 @@ class ApiClientIntegrationTest extends TestCase
         $returnValue = $this->client->search(self::APPLE_NAME);
 
         $this->assertInternalType('array', $returnValue);
-        $this->assertCount(10, $returnValue);
         $this->assertContainsOnlyInstancesOf(SearchResult::class, $returnValue);
 
         $aaplStock = $this->findAAPL($returnValue);
