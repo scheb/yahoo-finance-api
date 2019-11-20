@@ -45,8 +45,13 @@ class Quote implements \JsonSerializable
     private $postMarketChangePercent;
     private $postMarketPrice;
     private $postMarketTime;
+    private $preMarketChange;
+    private $preMarketChangePercent;
+    private $preMarketPrice;
+    private $preMarketTime;
     private $priceHint;
     private $priceToBook;
+    private $openInterest;
     private $quoteSourceName;
     private $quoteType;
     private $regularMarketChange;
@@ -417,6 +422,38 @@ class Quote implements \JsonSerializable
     }
 
     /**
+     * @return float
+     */
+    public function getPreMarketChange()
+    {
+        return $this->preMarketChange;
+    }
+
+    /**
+     * @return float
+     */
+    public function getPreMarketChangePercent()
+    {
+        return $this->preMarketChangePercent;
+    }
+
+    /**
+     * @return float
+     */
+    public function getPreMarketPrice()
+    {
+        return $this->preMarketPrice;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getPreMarketTime()
+    {
+        return $this->preMarketTime;
+    }
+
+    /**
      * @return int
      */
     public function getPriceHint()
@@ -430,6 +467,14 @@ class Quote implements \JsonSerializable
     public function getPriceToBook()
     {
         return $this->priceToBook;
+    }
+
+    /**
+     * @return float
+     */
+    public function getOpenInterest()
+    {
+        return $this->openInterest;
     }
 
     /**
