@@ -159,10 +159,10 @@ class ApiClientIntegrationTest extends TestCase
      */
     public function getExchangeRate_singleRate_returnExchangeRate()
     {
-        $returnValue = $this->client->getExchangeRate(self::CURRENCY_USD, self::CURRENCY_EUR);
+        $returnValue = $this->client->getExchangeRate(self::CURRENCY_EUR, self::CURRENCY_USD);
 
         $this->assertInstanceOf(Quote::class, $returnValue);
-        $this->assertUsdEurExchangeRate($returnValue);
+        $this->assertEurUsdExchangeRate($returnValue);
     }
 
     /**
@@ -171,8 +171,8 @@ class ApiClientIntegrationTest extends TestCase
     public function getExchangeRates_multipleOnes_returnListOfExchangeRates()
     {
         $query = [
-            [self::CURRENCY_USD, self::CURRENCY_EUR],
             [self::CURRENCY_EUR, self::CURRENCY_USD],
+            [self::CURRENCY_USD, self::CURRENCY_EUR],
         ];
         $returnValue = $this->client->getExchangeRates($query);
 
@@ -181,13 +181,13 @@ class ApiClientIntegrationTest extends TestCase
         $this->assertContainsOnlyInstancesOf(Quote::class, $returnValue);
 
         $exchangeRate = $returnValue[0];
-        $this->assertUsdEurExchangeRate($exchangeRate);
+        $this->assertEurUsdExchangeRate($exchangeRate);
     }
 
-    private function assertUsdEurExchangeRate(Quote $exchangeRate)
+    private function assertEurUsdExchangeRate(Quote $exchangeRate)
     {
-        $expectedSymbol = self::CURRENCY_USD.self::CURRENCY_EUR.ApiClient::CURRENCY_SYMBOL_SUFFIX;
-        $expectedName = self::CURRENCY_USD.'/'.self::CURRENCY_EUR;
+        $expectedSymbol = self::CURRENCY_EUR.self::CURRENCY_USD.ApiClient::CURRENCY_SYMBOL_SUFFIX;
+        $expectedName = self::CURRENCY_EUR.'/'.self::CURRENCY_USD;
 
         $this->assertEquals($expectedSymbol, $exchangeRate->getSymbol());
         $this->assertEquals($expectedName, $exchangeRate->getShortName());
