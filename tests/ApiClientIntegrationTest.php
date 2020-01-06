@@ -2,6 +2,7 @@
 
 namespace Scheb\YahooFinanceApi\Tests;
 
+use GuzzleHttp\Exception\TransferException;
 use Scheb\YahooFinanceApi\ApiClient;
 use Scheb\YahooFinanceApi\ApiClientFactory;
 use Scheb\YahooFinanceApi\Results\HistoricalData;
@@ -17,6 +18,8 @@ class ApiClientIntegrationTest extends TestCase
 
     const CURRENCY_USD = 'USD';
     const CURRENCY_EUR = 'EUR';
+    const TRY_COUNT = 3;
+    const RETRY_SLEEP_SECONDS = 1;
 
     /**
      * @var ApiClient
@@ -195,5 +198,25 @@ class ApiClientIntegrationTest extends TestCase
         $this->assertInternalType('float', $exchangeRate->getRegularMarketPrice());
         $this->assertInternalType('float', $exchangeRate->getAsk());
         $this->assertInternalType('float', $exchangeRate->getBid());
+    }
+
+    public function runBare()
+    {
+        // I'll leave this part to you. PHPUnit supplies methods for parsing annotations.
+        for ($i = 0; $i < self::TRY_COUNT; $i++) {
+            try {
+                parent::runBare();
+                return;
+            } catch (TransferException $e) {
+                // Catch all Guzzle network exceptions for retry
+                if ($i < self::TRY_COUNT - 1) {
+                    sleep(self::RETRY_SLEEP_SECONDS);
+                }
+            }
+        }
+
+        if ($e) {
+            throw $e; // Throw the last exception
+        }
     }
 }
