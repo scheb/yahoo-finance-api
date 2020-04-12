@@ -34,3 +34,6 @@ $quote = $client->getQuote('AAPL');
 
 // Returns an array of Scheb\YahooFinanceApi\Results\Quote
 $quotes = $client->getQuotes(['AAPL', 'GOOG']);
+
+// Returns Scheb\YahooFinanceApi\Results\FundamentalTimeseries
+$fundamentals = $client->getFundamentalTimeseries("AAPL");

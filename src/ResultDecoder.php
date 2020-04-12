@@ -3,6 +3,7 @@
 namespace Scheb\YahooFinanceApi;
 
 use Scheb\YahooFinanceApi\Exception\ApiException;
+use Scheb\YahooFinanceApi\Results\FundamentalTimeseries;
 use Scheb\YahooFinanceApi\Results\HistoricalData;
 use Scheb\YahooFinanceApi\Results\Quote;
 use Scheb\YahooFinanceApi\Results\SearchResult;
@@ -83,6 +84,27 @@ class ResultDecoder
         'twoHundredDayAverage' => 'float',
         'twoHundredDayAverageChange' => 'float',
         'twoHundredDayAverageChangePercent' => 'float',
+    ];
+
+    const FUNDAMENTAL_TIMESERIES_FIELDS_MAP = [
+        'quarterlyPeRatio' => 'float',
+        'quarterlyForwardPeRatio' => 'float',
+        'trailingEnterprisesValueEBITDARatio' => 'float',
+        'quarterlyPegRatio' => 'float',
+        'trailingMarketCap' => 'float',
+        'trailingForwardPeRatio' => 'float',
+        'quarterlyPsRatio' => 'float',
+        'quarterlyMarketCap' => 'float',
+        'trailingEnterpriseValue' => 'float',
+        'quarterlyEnterprisesValueRevenueRatio' => 'float',
+        'quarterlyEnterprisesValueEBITDARatio' => 'float',
+        'trailingPegRatio' => 'float',
+        'trailingPeRatio' => 'float',
+        'quarterlyEnterpriseValue' => 'float',
+        'trailingEnterprisesValueRevenueRatio' => 'float',
+        'quarterlyPbRatio' => 'float',
+        'trailingPbRatio' => 'float',
+        'trailingPsRatio' => 'float',
     ];
 
     /**
@@ -192,6 +214,22 @@ class ResultDecoder
         }, $results);
     }
 
+    public function transformFundamentalTimeseries($responseBody)
+    {
+        $decoded = json_decode($responseBody, true);
+        if (!isset($decoded['timeseries']['result']) || !is_array($decoded['timeseries']['result'])) {
+            throw new ApiException('Yahoo Search API returned an invalid result.', ApiException::INVALID_RESPONSE);
+        }
+
+        $results = $decoded['timeseries']['result'];
+
+        $arrayModels = array_map(function ($item) use ($models) {
+            return $this->createFundamentalTimeseries($item);
+        }, $results);
+
+        return call_user_func_array('array_merge', $arrayModels);
+    }
+
     private function createQuote(array $json)
     {
         $mappedValues = [];
@@ -203,6 +241,37 @@ class ResultDecoder
         }
 
         return new Quote($mappedValues);
+    }
+
+    private function createFundamentalTimeseries(array $json)
+    {
+        $models = [];
+        if (
+            $json['meta'] && $json['meta']['type'] &&
+            isset($json['meta']['type'][0]) &&
+            isset($json[$json['meta']['type'][0]]) &&
+            array_key_exists($json['meta']['type'][0], self::FUNDAMENTAL_TIMESERIES_FIELDS_MAP)
+        ) {
+            $fundamentalType = $json['meta']['type'][0];
+            foreach ($json[$fundamentalType] as $ind => $item) {
+                if (
+                    isset($json['timestamp'][$ind]) &&
+                    isset($json[$fundamentalType][$ind]) &&
+                    isset($json[$fundamentalType][$ind]['periodType']) &&
+                    isset($json[$fundamentalType][$ind]['reportedValue']) &&
+                    isset($json[$fundamentalType][$ind]['reportedValue']['raw'])
+                ) {
+                    $models[] = new FundamentalTimeseries(
+                        $this->mapValue($fundamentalType, $fundamentalType, 'string'),
+                        $this->mapValue($fundamentalType, $json[$fundamentalType][$ind]['reportedValue']['raw'], self::FUNDAMENTAL_TIMESERIES_FIELDS_MAP[$fundamentalType]),
+                        $this->mapValue($fundamentalType, $json['timestamp'][$ind], 'date'),
+                        $this->mapValue($fundamentalType, $json[$fundamentalType][$ind]['periodType'], 'string')
+                    );
+                }
+            }
+        }
+
+        return $models;
     }
 
     private function mapValue($field, $rawValue, $type)
