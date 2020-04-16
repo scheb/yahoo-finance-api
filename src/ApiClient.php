@@ -5,11 +5,13 @@ namespace Scheb\YahooFinanceApi;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Cookie\CookieJar;
 use Scheb\YahooFinanceApi\Exception\ApiException;
+use Scheb\YahooFinanceApi\Results\DividendData;
 use Scheb\YahooFinanceApi\Results\FundamentalTimeseries;
 use Scheb\YahooFinanceApi\Results\HistoricalData;
 use Scheb\YahooFinanceApi\Results\KeyStatistics;
 use Scheb\YahooFinanceApi\Results\Quote;
 use Scheb\YahooFinanceApi\Results\SearchResult;
+use Scheb\YahooFinanceApi\Results\SplitData;
 
 class ApiClient
 {
@@ -86,6 +88,78 @@ class ApiClient
         $responseBody = (string) $this->client->request('GET', $dataUrl, ['cookies' => $cookieJar])->getBody();
 
         return $this->resultDecoder->transformHistoricalDataResult($responseBody);
+    }
+
+    /**
+     * Get dividends data for a symbol.
+     *
+     * @param string    $symbol
+     * @param string    $interval
+     * @param \DateTime $startDate
+     * @param \DateTime $endDate
+     *
+     * @return array|DividendData[]
+     *
+     * @throws ApiException
+     */
+    public function getDividendsData($symbol, $interval, \DateTime $startDate, \DateTime $endDate)
+    {
+        $allowedIntervals = [self::INTERVAL_1_DAY, self::INTERVAL_1_WEEK, self::INTERVAL_1_MONTH];
+        if (!in_array($interval, $allowedIntervals)) {
+            throw new \InvalidArgumentException('Interval must be one of: '.implode(', ', $allowedIntervals));
+        }
+
+        if ($startDate > $endDate) {
+            throw new \InvalidArgumentException('Start date must be before end date');
+        }
+
+        $cookieJar = new CookieJar();
+
+        $initialUrl = 'https://finance.yahoo.com/quote/'.urlencode($symbol).'/history?p='.urlencode($symbol) . '&filter=div';
+        $responseBody = (string) $this->client->request('GET', $initialUrl, ['cookies' => $cookieJar])->getBody();
+        $crumb = $this->resultDecoder->extractCrumb($responseBody);
+
+        $dataUrl = 'https://query1.finance.yahoo.com/v7/finance/download/'.urlencode($symbol).'?period1='.$startDate->getTimestamp().'&period2='.$endDate->getTimestamp().'&interval='.$interval.'&events=div&crumb='.urlencode($crumb);
+        $responseBody = (string) $this->client->request('GET', $dataUrl, ['cookies' => $cookieJar])->getBody();
+
+        return $this->resultDecoder->transformDividendsDataResult($responseBody);
+    }
+
+    /**
+     * Get splits data for a symbol.
+     *
+     * @param  string     $symbol
+     * @param  string     $interval
+     * @param  \DateTime  $startDate
+     * @param  \DateTime  $endDate
+     *
+     * @return array|SplitData[]
+     *
+     * @throws ApiException
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function getSplitsData($symbol, $interval, \DateTime $startDate, \DateTime $endDate)
+    {
+        //@TODO: combine and remove duplicate code for getSplitsData, getDividendsData and getHistoricalData
+        $allowedIntervals = [self::INTERVAL_1_DAY, self::INTERVAL_1_WEEK, self::INTERVAL_1_MONTH];
+        if (!in_array($interval, $allowedIntervals)) {
+            throw new \InvalidArgumentException('Interval must be one of: '.implode(', ', $allowedIntervals));
+        }
+
+        if ($startDate > $endDate) {
+            throw new \InvalidArgumentException('Start date must be before end date');
+        }
+
+        $cookieJar = new CookieJar();
+
+        $initialUrl = 'https://finance.yahoo.com/quote/'.urlencode($symbol).'/history?p='.urlencode($symbol) . '&filter=div';
+        $responseBody = (string) $this->client->request('GET', $initialUrl, ['cookies' => $cookieJar])->getBody();
+        $crumb = $this->resultDecoder->extractCrumb($responseBody);
+
+        $dataUrl = 'https://query1.finance.yahoo.com/v7/finance/download/'.urlencode($symbol).'?period1='.$startDate->getTimestamp().'&period2='.$endDate->getTimestamp().'&interval='.$interval.'&events=split&crumb='.urlencode($crumb);
+        $responseBody = (string) $this->client->request('GET', $dataUrl, ['cookies' => $cookieJar])->getBody();
+
+        return $this->resultDecoder->transformSplitsDataResult($responseBody);
     }
 
     /**

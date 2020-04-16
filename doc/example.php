@@ -40,3 +40,9 @@ $fundamentals = $client->getFundamentalTimeseries("AAPL");
 
 // Returns Scheb\YahooFinanceApi\Results\KeyStatistics
 $keyStatistics = $client->getKeyStatistics("AAPL");
+
+// Returns an array of Scheb\YahooFinanceApi\Results\DividendData
+$dividends = $client->getDividendsData('AAPL', ApiClient::INTERVAL_1_DAY, new \DateTime('-10 years'), new \DateTime('today'));
+
+// Returns an array of Scheb\YahooFinanceApi\Results\SplitData
+$splits = $client->getSplitsData('AAPL', ApiClient::INTERVAL_1_DAY, new \DateTime('-50 years'), new \DateTime('today'));

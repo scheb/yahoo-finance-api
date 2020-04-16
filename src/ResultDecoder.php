@@ -3,15 +3,19 @@
 namespace Scheb\YahooFinanceApi;
 
 use Scheb\YahooFinanceApi\Exception\ApiException;
+use Scheb\YahooFinanceApi\Results\DividendData;
 use Scheb\YahooFinanceApi\Results\FundamentalTimeseries;
 use Scheb\YahooFinanceApi\Results\HistoricalData;
 use Scheb\YahooFinanceApi\Results\KeyStatistics;
 use Scheb\YahooFinanceApi\Results\Quote;
 use Scheb\YahooFinanceApi\Results\SearchResult;
+use Scheb\YahooFinanceApi\Results\SplitData;
 
 class ResultDecoder
 {
     const HISTORICAL_DATA_HEADER_LINE = ['Date', 'Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume'];
+    const DIVIDENDS_DATA_HEADER_LINE = ['Date', 'Dividends'];
+    const SPLITS_DATA_HEADER_LINE = ['Date', 'Stock Splits'];
     const SEARCH_RESULT_FIELDS = ['symbol', 'name', 'exch', 'type', 'exchDisp', 'typeDisp'];
     const EXCHANGE_RATE_FIELDS = ['Name', 'Rate', 'Date', 'Time', 'Ask', 'Bid'];
     const QUOTE_FIELDS_MAP = [
@@ -172,6 +176,34 @@ class ResultDecoder
         }, $lines);
     }
 
+    public function transformDividendsDataResult($responseBody)
+    {
+        $lines = array_map('trim', explode("\n", trim($responseBody)));
+        $headerLine = array_shift($lines);
+        $expectedHeaderLine = implode(',', self::DIVIDENDS_DATA_HEADER_LINE);
+        if ($headerLine !== $expectedHeaderLine) {
+            throw new ApiException('CSV header line did not match expected header line, given: '.$headerLine.', expected: '.$expectedHeaderLine, ApiException::INVALID_RESPONSE);
+        }
+
+        return array_map(function ($line) {
+            return $this->createDividendData(explode(',', $line));
+        }, $lines);
+    }
+
+    public function transformSplitsDataResult($responseBody)
+    {
+        $lines = array_map('trim', explode("\n", trim($responseBody)));
+        $headerLine = array_shift($lines);
+        $expectedHeaderLine = implode(',', self::SPLITS_DATA_HEADER_LINE);
+        if ($headerLine !== $expectedHeaderLine) {
+            throw new ApiException('CSV header line did not match expected header line, given: '.$headerLine.', expected: '.$expectedHeaderLine, ApiException::INVALID_RESPONSE);
+        }
+
+        return array_map(function ($line) {
+            return $this->createSplitData(explode(',', $line));
+        }, $lines);
+    }
+
     private function createHistoricalData(array $columns)
     {
         if (7 !== count($columns)) {
@@ -200,6 +232,46 @@ class ResultDecoder
         return new HistoricalData($date, $open, $high, $low, $close, $adjClose, $volume);
     }
 
+    private function createDividendData(array $columns)
+    {
+        if (2 !== count($columns)) {
+            throw new ApiException('CSV did not contain correct number of columns', ApiException::INVALID_RESPONSE);
+        }
+
+        try {
+            $date = new \DateTime($columns[0], new \DateTimeZone('UTC'));
+        } catch (\Exception $e) {
+            throw new ApiException('Not a date in column "Date":'.$columns[0], ApiException::INVALID_VALUE);
+        }
+
+        if (!is_numeric($columns[1]) && 'null' != $columns[1]) {
+            throw new ApiException('Not a number in column "'.self::HISTORICAL_DATA_HEADER_LINE[$i].'": '.$columns[$i], ApiException::INVALID_VALUE);
+        }
+
+        $dividend = (float) $columns[1];
+
+        return new DividendData($date, $dividend);
+    }
+
+    private function createSplitData(array $columns)
+    {
+        if (2 !== count($columns)) {
+            throw new ApiException('CSV did not contain correct number of columns', ApiException::INVALID_RESPONSE);
+        }
+
+        try {
+            $date = new \DateTime($columns[0], new \DateTimeZone('UTC'));
+        } catch (\Exception $e) {
+            throw new ApiException('Not a date in column "Date":'.$columns[0], ApiException::INVALID_VALUE);
+        }
+
+        if (!is_string($columns[1]) && 'null' != $columns[1]) {
+            throw new ApiException('Not a number in column "'.self::HISTORICAL_DATA_HEADER_LINE[$i].'": '.$columns[$i], ApiException::INVALID_VALUE);
+        }
+
+        return new SplitData($date, $columns[1]);
+    }
+
     public function transformQuotes($responseBody)
     {
         $decoded = json_decode($responseBody, true);
@@ -224,7 +296,7 @@ class ResultDecoder
 
         $results = $decoded['timeseries']['result'];
 
-        $arrayModels = array_map(function ($item) use ($models) {
+        $arrayModels = array_map(function ($item) {
             return $this->createFundamentalTimeseries($item);
         }, $results);
 
