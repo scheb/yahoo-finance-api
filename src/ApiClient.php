@@ -7,6 +7,7 @@ use GuzzleHttp\Cookie\CookieJar;
 use Scheb\YahooFinanceApi\Exception\ApiException;
 use Scheb\YahooFinanceApi\Results\FundamentalTimeseries;
 use Scheb\YahooFinanceApi\Results\HistoricalData;
+use Scheb\YahooFinanceApi\Results\KeyStatistics;
 use Scheb\YahooFinanceApi\Results\Quote;
 use Scheb\YahooFinanceApi\Results\SearchResult;
 
@@ -172,5 +173,20 @@ class ApiClient
         $responseBody = (string) $this->client->request('GET', $url)->getBody();
 
         return $this->resultDecoder->transformFundamentalTimeseries($responseBody);
+    }
+
+    /**
+     * Fetch fundamentals data from API.
+     *
+     * @return array|KeyStatistics
+     * @throws ApiException
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function getKeyStatistics($symbol)
+    {
+        $url = 'https://finance.yahoo.com/quote/' . $symbol . '/key-statistics?p=' . $symbol;
+        $responseBody = (string) $this->client->request('GET', $url)->getBody();
+
+        return $this->resultDecoder->transformKeyStatistics($responseBody);
     }
 }

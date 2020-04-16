@@ -5,6 +5,7 @@ namespace Scheb\YahooFinanceApi;
 use Scheb\YahooFinanceApi\Exception\ApiException;
 use Scheb\YahooFinanceApi\Results\FundamentalTimeseries;
 use Scheb\YahooFinanceApi\Results\HistoricalData;
+use Scheb\YahooFinanceApi\Results\KeyStatistics;
 use Scheb\YahooFinanceApi\Results\Quote;
 use Scheb\YahooFinanceApi\Results\SearchResult;
 
@@ -228,6 +229,39 @@ class ResultDecoder
         }, $results);
 
         return call_user_func_array('array_merge', $arrayModels);
+    }
+
+    public function transformKeyStatistics($responseBody)
+    {
+
+        if (preg_match('#root.App.main = (?<json>.+?);\n#', $responseBody, $match)) {
+            $json = json_decode($match['json'], true);
+        } else {
+            throw new ApiException('Could not extract json from response', ApiException::INVALID_RESPONSE);
+        }
+
+        if (
+            !isset($json["context"]["dispatcher"]["stores"]["QuoteSummaryStore"])
+        ) {
+            throw new ApiException('Yahoo Search API returned an invalid result.', ApiException::INVALID_RESPONSE);
+        }
+
+        return new KeyStatistics($json["context"]["dispatcher"]["stores"]["QuoteSummaryStore"]);
+
+
+
+//        $decoded = json_decode($responseBody, true);
+//        if (!isset($decoded['timeseries']['result']) || !is_array($decoded['timeseries']['result'])) {
+//            throw new ApiException('Yahoo Search API returned an invalid result.', ApiException::INVALID_RESPONSE);
+//        }
+//
+//        $results = $decoded['timeseries']['result'];
+//
+//        $arrayModels = array_map(function ($item) use ($models) {
+//            return $this->createFundamentalTimeseries($item);
+//        }, $results);
+//
+//        return call_user_func_array('array_merge', $arrayModels);
     }
 
     private function createQuote(array $json)
