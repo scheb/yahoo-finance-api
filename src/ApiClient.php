@@ -5,6 +5,7 @@ namespace Scheb\YahooFinanceApi;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Cookie\CookieJar;
 use Scheb\YahooFinanceApi\Exception\ApiException;
+use Scheb\YahooFinanceApi\Results\AssetProfile;
 use Scheb\YahooFinanceApi\Results\DividendData;
 use Scheb\YahooFinanceApi\Results\FundamentalTimeseries;
 use Scheb\YahooFinanceApi\Results\HistoricalData;
@@ -160,6 +161,30 @@ class ApiClient
         $responseBody = (string) $this->client->request('GET', $dataUrl, ['cookies' => $cookieJar])->getBody();
 
         return $this->resultDecoder->transformSplitsDataResult($responseBody);
+    }
+
+    /**
+     * Get asset profile data for a symbol.
+     *
+     * @param  string  $symbol
+     *
+     * @return AssetProfile
+     *
+     * @throws ApiException
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    public function getAssetProfile($symbol)
+    {
+        $cookieJar = new CookieJar();
+
+        $initialUrl = 'https://finance.yahoo.com/quote/'.urlencode($symbol).'/history?p='.urlencode($symbol) . '&filter=div';
+        $responseBody = (string) $this->client->request('GET', $initialUrl, ['cookies' => $cookieJar])->getBody();
+        $crumb = $this->resultDecoder->extractCrumb($responseBody);
+
+        $dataUrl = 'https://query2.finance.yahoo.com/v10/finance/quoteSummary/'.urlencode($symbol).'?formatted=true&crumb='.urlencode($crumb).'&lang=en-US&region=US&modules=assetProfile&corsDomain=finance.yahoo.com';
+        $responseBody = (string) $this->client->request('GET', $dataUrl, ['cookies' => $cookieJar])->getBody();
+
+        return $this->resultDecoder->transformAssetProfileResult($responseBody);
     }
 
     /**

@@ -46,3 +46,6 @@ $dividends = $client->getDividendsData('AAPL', ApiClient::INTERVAL_1_DAY, new \D
 
 // Returns an array of Scheb\YahooFinanceApi\Results\SplitData
 $splits = $client->getSplitsData('AAPL', ApiClient::INTERVAL_1_DAY, new \DateTime('-50 years'), new \DateTime('today'));
+
+// Returns an array of Scheb\YahooFinanceApi\Results\AssetProfile
+$assetProfile = $client->getAssetProfile("AAPL");

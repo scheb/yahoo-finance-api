@@ -3,6 +3,7 @@
 namespace Scheb\YahooFinanceApi;
 
 use Scheb\YahooFinanceApi\Exception\ApiException;
+use Scheb\YahooFinanceApi\Results\AssetProfile;
 use Scheb\YahooFinanceApi\Results\DividendData;
 use Scheb\YahooFinanceApi\Results\FundamentalTimeseries;
 use Scheb\YahooFinanceApi\Results\HistoricalData;
@@ -202,6 +203,22 @@ class ResultDecoder
         return array_map(function ($line) {
             return $this->createSplitData(explode(',', $line));
         }, $lines);
+    }
+
+    public function transformAssetProfileResult($responseBody)
+    {
+        $decoded = json_decode($responseBody, true);
+
+        if (
+        !isset($decoded["quoteSummary"]) &&
+        !isset($decoded["quoteSummary"]["result"]) &&
+        !isset($decoded["quoteSummary"]["result"][0]) &&
+        !isset($decoded["quoteSummary"]["result"][0]["assetProfile"])
+        ) {
+            throw new ApiException('Yahoo Search API returned an invalid result.', ApiException::INVALID_RESPONSE);
+        }
+
+        return new AssetProfile($decoded["quoteSummary"]["result"][0]["assetProfile"]);
     }
 
     private function createHistoricalData(array $columns)
