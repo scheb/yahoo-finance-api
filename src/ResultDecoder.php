@@ -92,27 +92,6 @@ class ResultDecoder
         'twoHundredDayAverageChangePercent' => 'float',
     ];
 
-    const FUNDAMENTAL_TIMESERIES_FIELDS_MAP = [
-        'quarterlyPeRatio' => 'float',
-        'quarterlyForwardPeRatio' => 'float',
-        'trailingEnterprisesValueEBITDARatio' => 'float',
-        'quarterlyPegRatio' => 'float',
-        'trailingMarketCap' => 'float',
-        'trailingForwardPeRatio' => 'float',
-        'quarterlyPsRatio' => 'float',
-        'quarterlyMarketCap' => 'float',
-        'trailingEnterpriseValue' => 'float',
-        'quarterlyEnterprisesValueRevenueRatio' => 'float',
-        'quarterlyEnterprisesValueEBITDARatio' => 'float',
-        'trailingPegRatio' => 'float',
-        'trailingPeRatio' => 'float',
-        'quarterlyEnterpriseValue' => 'float',
-        'trailingEnterprisesValueRevenueRatio' => 'float',
-        'quarterlyPbRatio' => 'float',
-        'trailingPbRatio' => 'float',
-        'trailingPsRatio' => 'float',
-    ];
-
     /**
      * @var array
      */
@@ -372,8 +351,7 @@ class ResultDecoder
         if (
             $json['meta'] && $json['meta']['type'] &&
             isset($json['meta']['type'][0]) &&
-            isset($json[$json['meta']['type'][0]]) &&
-            array_key_exists($json['meta']['type'][0], self::FUNDAMENTAL_TIMESERIES_FIELDS_MAP)
+            isset($json[$json['meta']['type'][0]])
         ) {
             $fundamentalType = $json['meta']['type'][0];
             foreach ($json[$fundamentalType] as $ind => $item) {
@@ -386,7 +364,7 @@ class ResultDecoder
                 ) {
                     $models[] = new FundamentalTimeseries(
                         $this->mapValue($fundamentalType, $fundamentalType, 'string'),
-                        $this->mapValue($fundamentalType, $json[$fundamentalType][$ind]['reportedValue']['raw'], self::FUNDAMENTAL_TIMESERIES_FIELDS_MAP[$fundamentalType]),
+                        $this->mapValue($fundamentalType, $json[$fundamentalType][$ind]['reportedValue']['raw'], 'float'),
                         $this->mapValue($fundamentalType, $json['timestamp'][$ind], 'date'),
                         $this->mapValue($fundamentalType, $json[$fundamentalType][$ind]['periodType'], 'string')
                     );
