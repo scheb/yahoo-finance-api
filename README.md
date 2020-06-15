@@ -12,30 +12,30 @@ This is a PHP client for Yahoo Finance API.
 
 Since YQL APIs have been discontinued in November 2017, this client is using non-official API endpoints for quotes, search and historical data.
 
-**WARNING:** These non-official APIs cannot be assumed stable and might break any time. Also, you might violate Yahoo's terms of service. So use them at your own risk.
+⚠️ **WARNING:** These non-official APIs cannot be assumed stable and might break any time. Also, you might violate Yahoo's terms of service. So use them at your own risk.
 
 ## Installation
 
 Download via Composer:
 
 ```bash
-php composer.phar require scheb/yahoo-finance-api
+composer require scheb/yahoo-finance-api
 ```
 
-Alternatively you can also add the bundle directly to composer.json:
+Alternatively you can also add the package directly to composer.json:
 
 ```json
 {
     "require": {
-        "scheb/yahoo-finance-api": "^3.0"
+        "scheb/yahoo-finance-api": "^4.0"
     }
 }
 ```
 
-and then tell Composer to install the bundle:
+and then tell Composer to install the package:
 
 ```bash
-php composer.phar update scheb/yahoo-finance-api
+composer update scheb/yahoo-finance-api
 ```
 
 ## Usage
@@ -75,16 +75,24 @@ $quote = $client->getQuote("AAPL");
 $quotes = $client->getQuotes(["AAPL", "GOOG"]);
 ```
 
-Contribute
-----------
-You're welcome to [contribute](https://github.com/scheb/yahoo-finance-api/graphs/contributors) to this library by
-creating a pull requests or feature request in the issues section. For pull requests, please follow these guidelines:
+Version Guidance
+----------------
 
-- Symfony code style
-- Please add/update test cases
-- Test methods should be named `[method]_[scenario]_[expected result]`
+| Version        | Status     | PHP Version |
+|----------------|------------|-------------|
+| [1.x][v1-repo] | EOL        |>= 5.3.0     |
+| [2.x][v2-repo] | EOL        |>= 5.6.0     |
+| [3.x][v3-repo] | EOL        |>= 5.6.0     |
+| [4.x][v3-repo] | Maintained |>= 7.1.3     |
 
-To run the test suite install the dependencies with `composer install` and then execute `bin/phpunit`.
+[v1-repo]: https://github.com/scheb/yahoo-finance-api/tree/1.x
+[v2-repo]: https://github.com/scheb/yahoo-finance-api/tree/2.x
+[v3-repo]: https://github.com/scheb/yahoo-finance-api/tree/3.x
+[v4-repo]: https://github.com/scheb/yahoo-finance-api/tree/master
+
+Contributing
+------------
+Want to contribute to this project? See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 License
 -------
