@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Scheb\YahooFinanceApi\Results;
 
 class Quote implements \JsonSerializable
@@ -82,570 +84,357 @@ class Quote implements \JsonSerializable
         }
     }
 
-    /**
-     * @return array
-     */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return get_object_vars($this);
     }
 
-    /**
-     * @return float
-     */
-    public function getAsk()
+    public function getAsk(): ?float
     {
         return $this->ask;
     }
 
-    /**
-     * @return int
-     */
-    public function getAskSize()
+    public function getAskSize(): ?int
     {
         return $this->askSize;
     }
 
-    /**
-     * @return int
-     */
-    public function getAverageDailyVolume10Day()
+    public function getAverageDailyVolume10Day(): ?int
     {
         return $this->averageDailyVolume10Day;
     }
 
-    /**
-     * @return int
-     */
-    public function getAverageDailyVolume3Month()
+    public function getAverageDailyVolume3Month(): ?int
     {
         return $this->averageDailyVolume3Month;
     }
 
-    /**
-     * @return float
-     */
-    public function getBid()
+    public function getBid(): ?float
     {
         return $this->bid;
     }
 
-    /**
-     * @return int
-     */
-    public function getBidSize()
+    public function getBidSize(): ?int
     {
         return $this->bidSize;
     }
 
-    /**
-     * @return float
-     */
-    public function getBookValue()
+    public function getBookValue(): ?float
     {
         return $this->bookValue;
     }
 
-    /**
-     * @return string
-     */
-    public function getCurrency()
+    public function getCurrency(): ?string
     {
         return $this->currency;
     }
 
-    /**
-     * @return \DateTime
-     */
-    public function getDividendDate()
+    public function getDividendDate(): ?\DateTime
     {
         return $this->dividendDate;
     }
 
-    /**
-     * @return \DateTime
-     */
-    public function getEarningsTimestamp()
+    public function getEarningsTimestamp(): ?\DateTime
     {
         return $this->earningsTimestamp;
     }
 
-    /**
-     * @return \DateTime
-     */
-    public function getEarningsTimestampStart()
+    public function getEarningsTimestampStart(): ?\DateTime
     {
         return $this->earningsTimestampStart;
     }
 
-    /**
-     * @return \DateTime
-     */
-    public function getEarningsTimestampEnd()
+    public function getEarningsTimestampEnd(): ?\DateTime
     {
         return $this->earningsTimestampEnd;
     }
 
-    /**
-     * @return float
-     */
-    public function getEpsForward()
+    public function getEpsForward(): ?float
     {
         return $this->epsForward;
     }
 
-    /**
-     * @return float
-     */
-    public function getEpsTrailingTwelveMonths()
+    public function getEpsTrailingTwelveMonths(): ?float
     {
         return $this->epsTrailingTwelveMonths;
     }
 
-    /**
-     * @return string
-     */
-    public function getExchange()
+    public function getExchange(): ?string
     {
         return $this->exchange;
     }
 
-    /**
-     * @return int
-     */
-    public function getExchangeDataDelayedBy()
+    public function getExchangeDataDelayedBy(): ?int
     {
         return $this->exchangeDataDelayedBy;
     }
 
-    /**
-     * @return string
-     */
-    public function getExchangeTimezoneName()
+    public function getExchangeTimezoneName(): ?string
     {
         return $this->exchangeTimezoneName;
     }
 
-    /**
-     * @return string
-     */
-    public function getExchangeTimezoneShortName()
+    public function getExchangeTimezoneShortName(): ?string
     {
         return $this->exchangeTimezoneShortName;
     }
 
-    /**
-     * @return float
-     */
-    public function getFiftyDayAverage()
+    public function getFiftyDayAverage(): ?float
     {
         return $this->fiftyDayAverage;
     }
 
-    /**
-     * @return float
-     */
-    public function getFiftyDayAverageChange()
+    public function getFiftyDayAverageChange(): ?float
     {
         return $this->fiftyDayAverageChange;
     }
 
-    /**
-     * @return float
-     */
-    public function getFiftyDayAverageChangePercent()
+    public function getFiftyDayAverageChangePercent(): ?float
     {
         return $this->fiftyDayAverageChangePercent;
     }
 
-    /**
-     * @return float
-     */
-    public function getFiftyTwoWeekHigh()
+    public function getFiftyTwoWeekHigh(): ?float
     {
         return $this->fiftyTwoWeekHigh;
     }
 
-    /**
-     * @return float
-     */
-    public function getFiftyTwoWeekHighChange()
+    public function getFiftyTwoWeekHighChange(): ?float
     {
         return $this->fiftyTwoWeekHighChange;
     }
 
-    /**
-     * @return float
-     */
-    public function getFiftyTwoWeekHighChangePercent()
+    public function getFiftyTwoWeekHighChangePercent(): ?float
     {
         return $this->fiftyTwoWeekHighChangePercent;
     }
 
-    /**
-     * @return float
-     */
-    public function getFiftyTwoWeekLow()
+    public function getFiftyTwoWeekLow(): ?float
     {
         return $this->fiftyTwoWeekLow;
     }
 
-    /**
-     * @return float
-     */
-    public function getFiftyTwoWeekLowChange()
+    public function getFiftyTwoWeekLowChange(): ?float
     {
         return $this->fiftyTwoWeekLowChange;
     }
 
-    /**
-     * @return float
-     */
-    public function getFiftyTwoWeekLowChangePercent()
+    public function getFiftyTwoWeekLowChangePercent(): ?float
     {
         return $this->fiftyTwoWeekLowChangePercent;
     }
 
-    /**
-     * @return string
-     */
-    public function getFinancialCurrency()
+    public function getFinancialCurrency(): ?string
     {
         return $this->financialCurrency;
     }
 
-    /**
-     * @return float
-     */
-    public function getForwardPE()
+    public function getForwardPE(): ?float
     {
         return $this->forwardPE;
     }
 
-    /**
-     * @return string
-     */
-    public function getFullExchangeName()
+    public function getFullExchangeName(): ?string
     {
         return $this->fullExchangeName;
     }
 
-    /**
-     * @return int
-     */
-    public function getGmtOffSetMilliseconds()
+    public function getGmtOffSetMilliseconds(): ?int
     {
         return $this->gmtOffSetMilliseconds;
     }
 
-    /**
-     * @return string
-     */
-    public function getLanguage()
+    public function getLanguage(): ?string
     {
         return $this->language;
     }
 
-    /**
-     * @return string
-     */
-    public function getLongName()
+    public function getLongName(): ?string
     {
         return $this->longName;
     }
 
-    /**
-     * @return string
-     */
-    public function getMarket()
+    public function getMarket(): ?string
     {
         return $this->market;
     }
 
-    /**
-     * @return int
-     */
-    public function getMarketCap()
+    public function getMarketCap(): ?int
     {
         return $this->marketCap;
     }
 
-    /**
-     * @return string
-     */
-    public function getMarketState()
+    public function getMarketState(): ?string
     {
         return $this->marketState;
     }
 
-    /**
-     * @return string
-     */
-    public function getMessageBoardId()
+    public function getMessageBoardId(): ?string
     {
         return $this->messageBoardId;
     }
 
-    /**
-     * @return float
-     */
-    public function getPostMarketChange()
+    public function getPostMarketChange(): ?float
     {
         return $this->postMarketChange;
     }
 
-    /**
-     * @return float
-     */
-    public function getPostMarketChangePercent()
+    public function getPostMarketChangePercent(): ?float
     {
         return $this->postMarketChangePercent;
     }
 
-    /**
-     * @return float
-     */
-    public function getPostMarketPrice()
+    public function getPostMarketPrice(): ?float
     {
         return $this->postMarketPrice;
     }
 
-    /**
-     * @return \DateTime
-     */
-    public function getPostMarketTime()
+    public function getPostMarketTime(): ?\DateTime
     {
         return $this->postMarketTime;
     }
 
-    /**
-     * @return float
-     */
-    public function getPreMarketChange()
+    public function getPreMarketChange(): ?float
     {
         return $this->preMarketChange;
     }
 
-    /**
-     * @return float
-     */
-    public function getPreMarketChangePercent()
+    public function getPreMarketChangePercent(): ?float
     {
         return $this->preMarketChangePercent;
     }
 
-    /**
-     * @return float
-     */
-    public function getPreMarketPrice()
+    public function getPreMarketPrice(): ?float
     {
         return $this->preMarketPrice;
     }
 
-    /**
-     * @return \DateTime
-     */
-    public function getPreMarketTime()
+    public function getPreMarketTime(): ?\DateTime
     {
         return $this->preMarketTime;
     }
 
-    /**
-     * @return int
-     */
-    public function getPriceHint()
+    public function getPriceHint(): ?int
     {
         return $this->priceHint;
     }
 
-    /**
-     * @return float
-     */
-    public function getPriceToBook()
+    public function getPriceToBook(): ?float
     {
         return $this->priceToBook;
     }
 
-    /**
-     * @return float
-     */
-    public function getOpenInterest()
+    public function getOpenInterest(): ?float
     {
         return $this->openInterest;
     }
 
-    /**
-     * @return string
-     */
-    public function getQuoteSourceName()
+    public function getQuoteSourceName(): ?string
     {
         return $this->quoteSourceName;
     }
 
-    /**
-     * @return string
-     */
-    public function getQuoteType()
+    public function getQuoteType(): ?string
     {
         return $this->quoteType;
     }
 
-    /**
-     * @return float
-     */
-    public function getRegularMarketChange()
+    public function getRegularMarketChange(): ?float
     {
         return $this->regularMarketChange;
     }
 
-    /**
-     * @return float
-     */
-    public function getRegularMarketChangePercent()
+    public function getRegularMarketChangePercent(): ?float
     {
         return $this->regularMarketChangePercent;
     }
 
-    /**
-     * @return float
-     */
-    public function getRegularMarketDayHigh()
+    public function getRegularMarketDayHigh(): ?float
     {
         return $this->regularMarketDayHigh;
     }
 
-    /**
-     * @return float
-     */
-    public function getRegularMarketDayLow()
+    public function getRegularMarketDayLow(): ?float
     {
         return $this->regularMarketDayLow;
     }
 
-    /**
-     * @return float
-     */
-    public function getRegularMarketOpen()
+    public function getRegularMarketOpen(): ?float
     {
         return $this->regularMarketOpen;
     }
 
-    /**
-     * @return float
-     */
-    public function getRegularMarketPreviousClose()
+    public function getRegularMarketPreviousClose(): ?float
     {
         return $this->regularMarketPreviousClose;
     }
 
-    /**
-     * @return float
-     */
-    public function getRegularMarketPrice()
+    public function getRegularMarketPrice(): ?float
     {
         return $this->regularMarketPrice;
     }
 
-    /**
-     * @return \DateTime
-     */
-    public function getRegularMarketTime()
+    public function getRegularMarketTime(): ?\DateTime
     {
         return $this->regularMarketTime;
     }
 
-    /**
-     * @return int
-     */
-    public function getRegularMarketVolume()
+    public function getRegularMarketVolume(): ?int
     {
         return $this->regularMarketVolume;
     }
 
-    /**
-     * @return int
-     */
-    public function getSharesOutstanding()
+    public function getSharesOutstanding(): ?int
     {
         return $this->sharesOutstanding;
     }
 
-    /**
-     * @return string
-     */
-    public function getShortName()
+    public function getShortName(): ?string
     {
         return $this->shortName;
     }
 
-    /**
-     * @return int
-     */
-    public function getSourceInterval()
+    public function getSourceInterval(): ?int
     {
         return $this->sourceInterval;
     }
 
-    /**
-     * @return string
-     */
-    public function getSymbol()
+    public function getSymbol(): ?string
     {
         return $this->symbol;
     }
 
-    /**
-     * @return bool
-     */
-    public function getTradeable()
+    public function getTradeable(): ?bool
     {
         return $this->tradeable;
     }
 
-    /**
-     * @return float
-     */
-    public function getTrailingAnnualDividendRate()
+    public function getTrailingAnnualDividendRate(): ?float
     {
         return $this->trailingAnnualDividendRate;
     }
 
-    /**
-     * @return float
-     */
-    public function getTrailingAnnualDividendYield()
+    public function getTrailingAnnualDividendYield(): ?float
     {
         return $this->trailingAnnualDividendYield;
     }
 
-    /**
-     * @return float
-     */
-    public function getTrailingPE()
+    public function getTrailingPE(): ?float
     {
         return $this->trailingPE;
     }
 
-    /**
-     * @return float
-     */
-    public function getTwoHundredDayAverage()
+    public function getTwoHundredDayAverage(): ?float
     {
         return $this->twoHundredDayAverage;
     }
 
-    /**
-     * @return float
-     */
-    public function getTwoHundredDayAverageChange()
+    public function getTwoHundredDayAverageChange(): ?float
     {
         return $this->twoHundredDayAverageChange;
     }
 
-    /**
-     * @return float
-     */
-    public function getTwoHundredDayAverageChangePercent()
+    public function getTwoHundredDayAverageChangePercent(): ?float
     {
         return $this->twoHundredDayAverageChangePercent;
     }

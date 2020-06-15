@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Scheb\YahooFinanceApi;
 
 use GuzzleHttp\ClientInterface;
@@ -11,10 +13,10 @@ use Scheb\YahooFinanceApi\Results\SearchResult;
 
 class ApiClient
 {
-    const INTERVAL_1_DAY = '1d';
-    const INTERVAL_1_WEEK = '1wk';
-    const INTERVAL_1_MONTH = '1mo';
-    const CURRENCY_SYMBOL_SUFFIX = '=X';
+    public const INTERVAL_1_DAY = '1d';
+    public const INTERVAL_1_WEEK = '1wk';
+    public const INTERVAL_1_MONTH = '1mo';
+    public const CURRENCY_SYMBOL_SUFFIX = '=X';
 
     /**
      * @var ClientInterface
@@ -35,13 +37,11 @@ class ApiClient
     /**
      * Search for stocks.
      *
-     * @param string $searchTerm
-     *
      * @return array|SearchResult[]
      *
      * @throws ApiException
      */
-    public function search($searchTerm)
+    public function search(string $searchTerm): array
     {
         $url = 'https://finance.yahoo.com/_finance_doubledown/api/resource/searchassist;gossipConfig=%7B%22queryKey%22:%22query%22,%22resultAccessor%22:%22ResultSet.Result%22,%22suggestionTitleAccessor%22:%22symbol%22,%22suggestionMeta%22:[%22symbol%22],%22url%22:%7B%22query%22:%7B%22region%22:%22US%22,%22lang%22:%22en-US%22%7D%7D%7D;searchTerm='
             .urlencode($searchTerm)
@@ -54,18 +54,15 @@ class ApiClient
     /**
      * Get historical data for a symbol.
      *
-     * @param string    $symbol
-     * @param string    $interval
-     *
      * @return array|HistoricalData[]
      *
      * @throws ApiException
      */
-    public function getHistoricalData($symbol, $interval, \DateTime $startDate, \DateTime $endDate)
+    public function getHistoricalData(string $symbol, string $interval, \DateTime $startDate, \DateTime $endDate): array
     {
         $allowedIntervals = [self::INTERVAL_1_DAY, self::INTERVAL_1_WEEK, self::INTERVAL_1_MONTH];
         if (!\in_array($interval, $allowedIntervals)) {
-            throw new \InvalidArgumentException('Interval must be one of: '.implode(', ', $allowedIntervals));
+            throw new \InvalidArgumentException(sprintf('Interval must be one of: %s', implode(', ', $allowedIntervals)));
         }
 
         if ($startDate > $endDate) {
@@ -86,12 +83,8 @@ class ApiClient
 
     /**
      * Get quote for a single symbol.
-     *
-     * @param string $symbol
-     *
-     * @return Quote|null
      */
-    public function getQuote($symbol)
+    public function getQuote(string $symbol): ?Quote
     {
         $list = $this->fetchQuotes([$symbol]);
 
@@ -103,20 +96,15 @@ class ApiClient
      *
      * @return array|Quote[]
      */
-    public function getQuotes(array $symbols)
+    public function getQuotes(array $symbols): array
     {
         return $this->fetchQuotes($symbols);
     }
 
     /**
      * Get exchange rate for two currencies. Accepts concatenated ISO 4217 currency codes.
-     *
-     * @param string $currency1
-     * @param string $currency2
-     *
-     * @return Quote|null
      */
-    public function getExchangeRate($currency1, $currency2)
+    public function getExchangeRate(string $currency1, string $currency2): ?Quote
     {
         $list = $this->getExchangeRates([[$currency1, $currency2]]);
 
@@ -130,7 +118,7 @@ class ApiClient
      *
      * @return array|Quote[]
      */
-    public function getExchangeRates(array $currencyPairs)
+    public function getExchangeRates(array $currencyPairs): array
     {
         $currencySymbols = array_map(function (array $currencies) {
             return implode($currencies).self::CURRENCY_SYMBOL_SUFFIX; // Currency pairs are suffixed with "=X"
@@ -144,7 +132,7 @@ class ApiClient
      *
      * @return array|Quote[]
      */
-    private function fetchQuotes(array $symbols)
+    private function fetchQuotes(array $symbols): array
     {
         $url = 'https://query1.finance.yahoo.com/v7/finance/quote?symbols='.urlencode(implode(',', $symbols));
         $responseBody = (string) $this->client->request('GET', $url)->getBody();

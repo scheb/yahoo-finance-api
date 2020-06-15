@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Scheb\YahooFinanceApi\Tests;
 
 use PHPUnit\Framework\TestCase;
+use Scheb\YahooFinanceApi\Exception\ApiException;
 use Scheb\YahooFinanceApi\ResultDecoder;
 use Scheb\YahooFinanceApi\Results\HistoricalData;
 use Scheb\YahooFinanceApi\Results\Quote;
@@ -15,12 +18,12 @@ class ResultDecoderTest extends TestCase
      */
     private $resultDecoder;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->resultDecoder = new ResultDecoder();
     }
 
-    public function transformInvalidResponse()
+    public function transformInvalidResponse(): array
     {
         return [
             [
@@ -41,22 +44,23 @@ class ResultDecoderTest extends TestCase
     /**
      * @test
      * @dataProvider transformInvalidResponse
-     * @expectedException \Scheb\YahooFinanceApi\Exception\ApiException
-     * @expectedExceptionMessage Yahoo Search API returned an invalid response
      */
-    public function transformSearchResult_jsonGiven_createArrayOfInvalidResponse($responseBody)
+    public function transformSearchResult_jsonGiven_createArrayOfInvalidResponse($responseBody): void
     {
+        $this->expectException(ApiException::class);
+        $this->expectExceptionMessage('Yahoo Search API returned an invalid response');
+
         $this->resultDecoder->transformSearchResult(json_encode($responseBody));
     }
 
     /**
      * @test
      */
-    public function transformSearchResult_jsonGiven_createArrayOfSearchResult()
+    public function transformSearchResult_jsonGiven_createArrayOfSearchResult(): void
     {
         $returnedResult = $this->resultDecoder->transformSearchResult(file_get_contents(__DIR__.'/fixtures/searchResult.json'));
 
-        $this->assertInternalType('array', $returnedResult);
+        $this->assertIsArray($returnedResult);
         $this->assertContainsOnlyInstancesOf(SearchResult::class, $returnedResult);
         $this->assertCount(10, $returnedResult);
 
@@ -74,7 +78,7 @@ class ResultDecoderTest extends TestCase
     /**
      * @test
      */
-    public function extractCrumb_lookupPage_returnCrumbValue()
+    public function extractCrumb_lookupPage_returnCrumbValue(): void
     {
         $returnedResult = $this->resultDecoder->extractCrumb(file_get_contents(__DIR__.'/fixtures/lookupPage.html'));
         $this->assertEquals('kWZQDiqqBck', $returnedResult);
@@ -82,12 +86,13 @@ class ResultDecoderTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Scheb\YahooFinanceApi\Exception\ApiException
-     * @expectedExceptionMessage Could not extract crumb from response
      */
-    public function extractCrumb_invalidStringGiven_throwApiException()
+    public function extractCrumb_invalidStringGiven_throwApiException(): void
     {
         $invalidHtmlString = '<html><head></head><body>The CrumbStore is not existed.</body></html>';
+
+        $this->expectException(ApiException::class);
+        $this->expectExceptionMessage('Could not extract crumb from response');
 
         $this->resultDecoder->extractCrumb($invalidHtmlString);
     }
@@ -95,11 +100,11 @@ class ResultDecoderTest extends TestCase
     /**
      * @test
      */
-    public function transformHistoricalDataResult_csvGiven_returnArrayOfHistoricalData()
+    public function transformHistoricalDataResult_csvGiven_returnArrayOfHistoricalData(): void
     {
         $returnedResult = $this->resultDecoder->transformHistoricalDataResult(file_get_contents(__DIR__.'/fixtures/historicalData.csv'));
 
-        $this->assertInternalType('array', $returnedResult);
+        $this->assertIsArray($returnedResult);
         $this->assertContainsOnlyInstancesOf(HistoricalData::class, $returnedResult);
 
         $expectedExchangeRate = new HistoricalData(
@@ -116,47 +121,50 @@ class ResultDecoderTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Scheb\YahooFinanceApi\Exception\ApiException
-     * @expectedExceptionMessage CSV header line did not match expected header line, given: 12345	1234567, expected: Date,Open,High,Low,Close,Adj Close,Volume
      */
-    public function transformHistoricalDataResult_unexpectedHeaderLineCsvGiven_throwApiException()
+    public function transformHistoricalDataResult_unexpectedHeaderLineCsvGiven_throwApiException(): void
     {
-        $invalidCsvString = "12345\t1234567\t";
+        $this->expectException(ApiException::class);
+        $this->expectExceptionMessage('CSV header line did not match expected header line, given: 12345	1234567, expected: Date,Open,High,Low,Close,Adj Close,Volume');
 
+        $invalidCsvString = "12345\t1234567\t";
         $this->resultDecoder->transformHistoricalDataResult($invalidCsvString);
     }
 
     /**
      * @test
-     * @expectedException \Scheb\YahooFinanceApi\Exception\ApiException
-     * @expectedExceptionMessage CSV did not contain correct number of columns
      */
-    public function transformHistoricalDataResult_invalidColumnsCsvGiven_throwApiException()
+    public function transformHistoricalDataResult_invalidColumnsCsvGiven_throwApiException(): void
     {
+        $this->expectException(ApiException::class);
+        $this->expectExceptionMessage('CSV did not contain correct number of columns');
+
         $this->resultDecoder->transformHistoricalDataResult(file_get_contents(__DIR__.'/fixtures/invalidColumnsHistoricalData.csv'));
     }
 
     /**
      * @test
-     * @expectedException \Scheb\YahooFinanceApi\Exception\ApiException
-     * @expectedExceptionMessage Not a date in column "Date":2017-07
      */
-    public function transformHistoricalDataResult_invalidDateTimeFormatCsvGiven_throwApiException()
+    public function transformHistoricalDataResult_invalidDateTimeFormatCsvGiven_throwApiException(): void
     {
+        $this->expectException(ApiException::class);
+        $this->expectExceptionMessage('Not a date in column "Date":2017-07');
+
         $this->resultDecoder->transformHistoricalDataResult(file_get_contents(__DIR__.'/fixtures/invalidDateTimeFormatHistoricalData.csv'));
     }
 
     /**
      * @test
-     * @expectedException \Scheb\YahooFinanceApi\Exception\ApiException
-     * @expectedExceptionMessage Not a number in column "High": this_is_not_numeric_string
      */
-    public function transformHistoricalDataResult_invalidNumericStringCsvGiven_throwApiException()
+    public function transformHistoricalDataResult_invalidNumericStringCsvGiven_throwApiException(): void
     {
+        $this->expectException(ApiException::class);
+        $this->expectExceptionMessage('Not a number in column "High": this_is_not_numeric_string');
+
         $this->resultDecoder->transformHistoricalDataResult(file_get_contents(__DIR__.'/fixtures/invalidNumericStringHistoricalData.csv'));
     }
 
-    public function transformQuotesInvalidResult()
+    public function transformQuotesInvalidResult(): array
     {
         return [
             [
@@ -179,22 +187,23 @@ class ResultDecoderTest extends TestCase
     /**
      * @test
      * @dataProvider transformQuotesInvalidResult
-     * @expectedException \Scheb\YahooFinanceApi\Exception\ApiException
-     * @expectedExceptionMessage Yahoo Search API returned an invalid result.
      */
-    public function transformQuotes_jsonGiven_createArrayOfInvalidResult($responseBody)
+    public function transformQuotes_jsonGiven_createArrayOfInvalidResult($responseBody): void
     {
+        $this->expectException(ApiException::class);
+        $this->expectExceptionMessage('Yahoo Search API returned an invalid result');
+
         $this->resultDecoder->transformQuotes(json_encode($responseBody));
     }
 
     /**
      * @test
      */
-    public function transformQuotes_jsonGiven_createArrayOfQuote()
+    public function transformQuotes_jsonGiven_createArrayOfQuote(): void
     {
         $returnedResult = $this->resultDecoder->transformQuotes(file_get_contents(__DIR__.'/fixtures/quote.json'));
 
-        $this->assertInternalType('array', $returnedResult);
+        $this->assertIsArray($returnedResult);
         $this->assertCount(1, $returnedResult);
         $this->assertContainsOnlyInstancesOf(Quote::class, $returnedResult);
 
@@ -273,11 +282,11 @@ class ResultDecoderTest extends TestCase
     /**
      * @test
      */
-    public function transformQuotes_jsonWithNullGiven_createArrayOfQuote()
+    public function transformQuotes_jsonWithNullGiven_createArrayOfQuote(): void
     {
         $returnedResult = $this->resultDecoder->transformQuotes(file_get_contents(__DIR__.'/fixtures/nullQuote.json'));
 
-        $this->assertInternalType('array', $returnedResult);
+        $this->assertIsArray($returnedResult);
         $this->assertCount(1, $returnedResult);
         $this->assertContainsOnlyInstancesOf(Quote::class, $returnedResult);
 
@@ -355,40 +364,41 @@ class ResultDecoderTest extends TestCase
 
     /**
      * @test
-     * @expectedException \Scheb\YahooFinanceApi\Exception\ApiException
-     * @expectedExceptionMessage Not a number in field "trailingPE": 19.45277%
      */
-    public function transformQuotes_jsonWithInvalidFloatGiven_createArrayOfQuote()
+    public function transformQuotes_jsonWithInvalidFloatGiven_createArrayOfQuote(): void
     {
+        $this->expectException(ApiException::class);
+        $this->expectExceptionMessage('Not a number in field "trailingPE": 19.45277%');
+
         $this->resultDecoder->transformQuotes(file_get_contents(__DIR__.'/fixtures/invalidFloatQuote.json'));
     }
 
     /**
      * @test
-     * @expectedException \Exception
-     * @expectedExceptionMessage Not a date in field "postMarketTime": invalid_date_time
      */
-    public function transformQuotes_jsonWithInvalidDateTimeGiven_createArrayOfQuote()
+    public function transformQuotes_jsonWithInvalidDateTimeGiven_createArrayOfQuote(): void
     {
+        $this->expectException(ApiException::class);
+        $this->expectExceptionMessage('Not a date in field "postMarketTime": invalid_date_time');
+
         $this->resultDecoder->transformQuotes(file_get_contents(__DIR__.'/fixtures/invalidDateTimeQuote.json'));
     }
 
     /**
      * @test
-     * @expectedException \Exception
-     * @expectedExceptionMessage Not a number in field "priceHint": invalid_integer
      */
-    public function transformQuotes_jsonWithInvalidIntegerGiven_createArrayOfQuote()
+    public function transformQuotes_jsonWithInvalidIntegerGiven_createArrayOfQuote(): void
     {
+        $this->expectException(ApiException::class);
+        $this->expectExceptionMessage('Not a number in field "priceHint": invalid_integer');
+
         $this->resultDecoder->transformQuotes(file_get_contents(__DIR__.'/fixtures/invalidIntegerQuote.json'));
     }
 
     /**
      * @test
-     * @expectedException \Scheb\YahooFinanceApi\Exception\ApiException
-     * @expectedExceptionMessage Search result is missing fields: symbol, name, exch, type, exchDisp, typeDisp
      */
-    public function transformSearchResult_jsonWithMissedFieldGiven_createSearchResultFromJson()
+    public function transformSearchResult_jsonWithMissedFieldGiven_createSearchResultFromJson(): void
     {
         $jsonArray = [
             'data' => [
@@ -398,6 +408,9 @@ class ResultDecoderTest extends TestCase
                 ],
             ],
         ];
+
+        $this->expectException(ApiException::class);
+        $this->expectExceptionMessage('Search result is missing fields: symbol, name, exch, type, exchDisp, typeDisp');
 
         $this->resultDecoder->transformSearchResult(json_encode($jsonArray));
     }

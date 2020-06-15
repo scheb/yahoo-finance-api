@@ -1,53 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Scheb\YahooFinanceApi\Results;
 
 class HistoricalData implements \JsonSerializable
 {
-    /**
-     * @var \DateTime
-     */
     private $date;
-
-    /**
-     * @var float
-     */
     private $open;
-
-    /**
-     * @var float
-     */
     private $high;
-
-    /**
-     * @var float
-     */
     private $low;
-
-    /**
-     * @var float
-     */
     private $close;
-
-    /**
-     * @var float
-     */
     private $adjClose;
-
-    /**
-     * @var int
-     */
     private $volume;
 
-    /**
-     * @param float     $open
-     * @param float     $high
-     * @param float     $low
-     * @param float     $close
-     * @param float     $adjClose
-     * @param int       $volume
-     */
-    public function __construct(\DateTime $date, $open, $high, $low, $close, $adjClose, $volume)
+    public function __construct(\DateTime $date, ?float $open, ?float $high, ?float $low, ?float $close, ?float $adjClose, ?int $volume)
     {
         $this->date = $date;
         $this->open = $open;
@@ -58,66 +25,42 @@ class HistoricalData implements \JsonSerializable
         $this->volume = $volume;
     }
 
-    /**
-     * @return array
-     */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return get_object_vars($this);
     }
 
-    /**
-     * @return \DateTime
-     */
-    public function getDate()
+    public function getDate(): ?\DateTime
     {
         return $this->date;
     }
 
-    /**
-     * @return float
-     */
-    public function getOpen()
+    public function getOpen(): ?float
     {
         return $this->open;
     }
 
-    /**
-     * @return float
-     */
-    public function getHigh()
+    public function getHigh(): ?float
     {
         return $this->high;
     }
 
-    /**
-     * @return float
-     */
-    public function getLow()
+    public function getLow(): ?float
     {
         return $this->low;
     }
 
-    /**
-     * @return float
-     */
-    public function getClose()
+    public function getClose(): ?float
     {
         return $this->close;
     }
 
-    /**
-     * @return float
-     */
-    public function getAdjClose()
+    public function getAdjClose(): ?float
     {
         return $this->adjClose;
     }
 
-    /**
-     * @return int
-     */
-    public function getVolume()
+    public function getVolume(): ?int
     {
         return $this->volume;
     }

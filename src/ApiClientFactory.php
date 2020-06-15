@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Scheb\YahooFinanceApi;
 
 use GuzzleHttp\Client;
@@ -7,10 +9,7 @@ use GuzzleHttp\ClientInterface;
 
 class ApiClientFactory
 {
-    /**
-     * @return ApiClient
-     */
-    public static function createApiClient(ClientInterface $guzzleClient = null)
+    public static function createApiClient(ClientInterface $guzzleClient = null): ApiClient
     {
         $guzzleClient = $guzzleClient ? $guzzleClient : new Client();
         $resultDecoder = new ResultDecoder();

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Scheb\YahooFinanceApi\Tests;
 
 use GuzzleHttp\Exception\TransferException;
@@ -12,21 +14,21 @@ use Scheb\YahooFinanceApi\Results\SearchResult;
 
 class ApiClientIntegrationTest extends TestCase
 {
-    const APPLE_NAME = 'Apple';
-    const APPLE_SYMBOL = 'AAPL';
-    const GOOGLE_SYMBOL = 'GOOG';
+    private const APPLE_NAME = 'Apple';
+    private const APPLE_SYMBOL = 'AAPL';
+    private const GOOGLE_SYMBOL = 'GOOG';
 
-    const CURRENCY_USD = 'USD';
-    const CURRENCY_EUR = 'EUR';
-    const TRY_COUNT = 3;
-    const RETRY_SLEEP_SECONDS = 1;
+    private const CURRENCY_USD = 'USD';
+    private const CURRENCY_EUR = 'EUR';
+    private const TRY_COUNT = 3;
+    private const RETRY_SLEEP_SECONDS = 1;
 
     /**
      * @var ApiClient
      */
     private $client;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->client = ApiClientFactory::createApiClient();
     }
@@ -34,11 +36,11 @@ class ApiClientIntegrationTest extends TestCase
     /**
      * @test
      */
-    public function search_withSearchTerm_returnSearchResults()
+    public function search_withSearchTerm_returnSearchResults(): void
     {
         $returnValue = $this->client->search(self::APPLE_NAME);
 
-        $this->assertInternalType('array', $returnValue);
+        $this->assertIsArray($returnValue);
         $this->assertContainsOnlyInstancesOf(SearchResult::class, $returnValue);
 
         $aaplStock = $this->findAAPL($returnValue);
@@ -61,10 +63,8 @@ class ApiClientIntegrationTest extends TestCase
 
     /**
      * @param SearchResult[] $searchResult
-     *
-     * @return SearchResult|null
      */
-    private function findAAPL($searchResult)
+    private function findAAPL($searchResult): ?SearchResult
     {
         foreach ($searchResult as $result) {
             if (self::APPLE_SYMBOL === $result->getSymbol()) {
@@ -79,45 +79,45 @@ class ApiClientIntegrationTest extends TestCase
      * @test
      * @dataProvider getTestDataForHistoricalData
      */
-    public function getHistoricalData_valuesForInterval_returnHistoricalData($interval, \DateTime $startDate, \DateTime $endDate)
+    public function getHistoricalData_valuesForInterval_returnHistoricalData($interval, \DateTime $startDate, \DateTime $endDate): void
     {
         $returnValue = $this->client->getHistoricalData(self::APPLE_SYMBOL, $interval, $startDate, $endDate);
 
-        $this->assertInternalType('array', $returnValue);
+        $this->assertIsArray($returnValue);
         $this->assertGreaterThan(0, \count($returnValue));
         $this->assertContainsOnlyInstancesOf(HistoricalData::class, $returnValue);
 
         $historicalData = $returnValue[0];
         $this->assertInstanceOf(\DateTime::class, $historicalData->getDate());
-        $this->assertInternalType('float', $historicalData->getOpen());
-        $this->assertInternalType('float', $historicalData->getHigh());
-        $this->assertInternalType('float', $historicalData->getLow());
-        $this->assertInternalType('float', $historicalData->getClose());
-        $this->assertInternalType('float', $historicalData->getAdjClose());
-        $this->assertInternalType('int', $historicalData->getVolume());
+        $this->assertIsFloat($historicalData->getOpen());
+        $this->assertIsFloat($historicalData->getHigh());
+        $this->assertIsFloat($historicalData->getLow());
+        $this->assertIsFloat($historicalData->getClose());
+        $this->assertIsFloat($historicalData->getAdjClose());
+        $this->assertIsInt($historicalData->getVolume());
     }
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Interval must be one of: 1d, 1wk, 1mo
      */
-    public function getHistoricalData_valuesForInvalidInterval_throwInvalidArgumentException()
+    public function getHistoricalData_valuesForInvalidInterval_throwInvalidArgumentException(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Interval must be one of: 1d, 1wk, 1mo');
         $this->client->getHistoricalData(self::APPLE_SYMBOL, 'invalid_interval', new \DateTime('-7 days'), new \DateTime('today'));
     }
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Start date must be before end date
      */
-    public function getHistoricalData_startDateIsGreaterThanEndDate_throwInvalidArgumentException()
+    public function getHistoricalData_startDateIsGreaterThanEndDate_throwInvalidArgumentException(): void
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Start date must be before end date');
         $this->client->getHistoricalData(self::APPLE_SYMBOL, ApiClient::INTERVAL_1_DAY, new \DateTime('7 days'), new \DateTime('today'));
     }
 
-    public function getTestDataForHistoricalData()
+    public function getTestDataForHistoricalData(): array
     {
         return [
             [ApiClient::INTERVAL_1_DAY, new \DateTime('-7 days'), new \DateTime('today')],
@@ -129,7 +129,7 @@ class ApiClientIntegrationTest extends TestCase
     /**
      * @test
      */
-    public function getQuote_singleSymbol_returnQuote()
+    public function getQuote_singleSymbol_returnQuote(): void
     {
         $returnValue = $this->client->getQuote(self::APPLE_SYMBOL);
 
@@ -140,11 +140,11 @@ class ApiClientIntegrationTest extends TestCase
     /**
      * @test
      */
-    public function getQuotes_multipleSymbols_returnListOfQuotes()
+    public function getQuotes_multipleSymbols_returnListOfQuotes(): void
     {
         $returnValue = $this->client->getQuotes([self::APPLE_SYMBOL, self::GOOGLE_SYMBOL]);
 
-        $this->assertInternalType('array', $returnValue);
+        $this->assertIsArray($returnValue);
         $this->assertCount(2, $returnValue);
         $this->assertContainsOnlyInstancesOf(Quote::class, $returnValue);
 
@@ -152,7 +152,7 @@ class ApiClientIntegrationTest extends TestCase
         $this->assertAppleQuote($appleQuote);
     }
 
-    private function assertAppleQuote(Quote $quote)
+    private function assertAppleQuote(Quote $quote): void
     {
         $this->assertEquals('AAPL', $quote->getSymbol());
     }
@@ -160,7 +160,7 @@ class ApiClientIntegrationTest extends TestCase
     /**
      * @test
      */
-    public function getExchangeRate_singleRate_returnExchangeRate()
+    public function getExchangeRate_singleRate_returnExchangeRate(): void
     {
         $returnValue = $this->client->getExchangeRate(self::CURRENCY_EUR, self::CURRENCY_USD);
 
@@ -171,7 +171,7 @@ class ApiClientIntegrationTest extends TestCase
     /**
      * @test
      */
-    public function getExchangeRates_multipleOnes_returnListOfExchangeRates()
+    public function getExchangeRates_multipleOnes_returnListOfExchangeRates(): void
     {
         $query = [
             [self::CURRENCY_EUR, self::CURRENCY_USD],
@@ -179,7 +179,7 @@ class ApiClientIntegrationTest extends TestCase
         ];
         $returnValue = $this->client->getExchangeRates($query);
 
-        $this->assertInternalType('array', $returnValue);
+        $this->assertIsArray($returnValue);
         $this->assertCount(2, $returnValue);
         $this->assertContainsOnlyInstancesOf(Quote::class, $returnValue);
 
@@ -187,7 +187,7 @@ class ApiClientIntegrationTest extends TestCase
         $this->assertEurUsdExchangeRate($exchangeRate);
     }
 
-    private function assertEurUsdExchangeRate(Quote $exchangeRate)
+    private function assertEurUsdExchangeRate(Quote $exchangeRate): void
     {
         $expectedSymbol = self::CURRENCY_EUR.self::CURRENCY_USD.ApiClient::CURRENCY_SYMBOL_SUFFIX;
         $expectedName = self::CURRENCY_EUR.'/'.self::CURRENCY_USD;
@@ -195,12 +195,12 @@ class ApiClientIntegrationTest extends TestCase
         $this->assertEquals($expectedSymbol, $exchangeRate->getSymbol());
         $this->assertEquals($expectedName, $exchangeRate->getShortName());
         $this->assertInstanceOf(\DateTime::class, $exchangeRate->getRegularMarketTime());
-        $this->assertInternalType('float', $exchangeRate->getRegularMarketPrice());
-        $this->assertInternalType('float', $exchangeRate->getAsk());
-        $this->assertInternalType('float', $exchangeRate->getBid());
+        $this->assertIsFloat($exchangeRate->getRegularMarketPrice());
+        $this->assertIsFloat($exchangeRate->getAsk());
+        $this->assertIsFloat($exchangeRate->getBid());
     }
 
-    public function runBare()
+    public function runBare(): void
     {
         // I'll leave this part to you. PHPUnit supplies methods for parsing annotations.
         for ($i = 0; $i < self::TRY_COUNT; ++$i) {

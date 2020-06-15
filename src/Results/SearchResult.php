@@ -1,40 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Scheb\YahooFinanceApi\Results;
 
 class SearchResult implements \JsonSerializable
 {
-    /**
-     * @var string
-     */
     private $symbol;
-
-    /**
-     * @var string
-     */
     private $name;
-
-    /**
-     * @var string
-     */
     private $exch;
-
-    /**
-     * @var string
-     */
     private $type;
-
-    /**
-     * @var string
-     */
     private $exchDisp;
-
-    /**
-     * @var string
-     */
     private $typeDisp;
 
-    public function __construct($symbol, $name, $exch, $type, $exchDisp, $typeDisp)
+    public function __construct(?string $symbol, ?string $name, ?string $exch, ?string $type, ?string $exchDisp, ?string $typeDisp)
     {
         $this->symbol = $symbol;
         $this->name = $name;
@@ -44,58 +23,37 @@ class SearchResult implements \JsonSerializable
         $this->typeDisp = $typeDisp;
     }
 
-    /**
-     * @return array
-     */
-    public function jsonSerialize()
+    public function jsonSerialize(): ?array
     {
         return get_object_vars($this);
     }
 
-    /**
-     * @return string
-     */
-    public function getSymbol()
+    public function getSymbol(): ?string
     {
         return $this->symbol;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    /**
-     * @return string
-     */
-    public function getExch()
+    public function getExch(): ?string
     {
         return $this->exch;
     }
 
-    /**
-     * @return string
-     */
-    public function getType()
+    public function getType(): ?string
     {
         return $this->type;
     }
 
-    /**
-     * @return string
-     */
-    public function getExchDisp()
+    public function getExchDisp(): ?string
     {
         return $this->exchDisp;
     }
 
-    /**
-     * @return string
-     */
-    public function getTypeDisp()
+    public function getTypeDisp(): ?string
     {
         return $this->typeDisp;
     }
