@@ -56,8 +56,6 @@ class ApiClient
      *
      * @param string    $symbol
      * @param string    $interval
-     * @param \DateTime $startDate
-     * @param \DateTime $endDate
      *
      * @return array|HistoricalData[]
      *
@@ -66,7 +64,7 @@ class ApiClient
     public function getHistoricalData($symbol, $interval, \DateTime $startDate, \DateTime $endDate)
     {
         $allowedIntervals = [self::INTERVAL_1_DAY, self::INTERVAL_1_WEEK, self::INTERVAL_1_MONTH];
-        if (!in_array($interval, $allowedIntervals)) {
+        if (!\in_array($interval, $allowedIntervals)) {
             throw new \InvalidArgumentException('Interval must be one of: '.implode(', ', $allowedIntervals));
         }
 
@@ -102,8 +100,6 @@ class ApiClient
 
     /**
      * Get quotes for one or multiple symbols.
-     *
-     * @param array $symbols
      *
      * @return array|Quote[]
      */
@@ -145,8 +141,6 @@ class ApiClient
 
     /**
      * Fetch quote data from API.
-     *
-     * @param array $symbols
      *
      * @return array|Quote[]
      */

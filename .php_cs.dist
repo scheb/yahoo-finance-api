@@ -2,6 +2,9 @@
 
 $rules = [
     '@Symfony' => true,
+    'native_function_invocation' => ['include' => ['@compiler_optimized'], 'scope' => 'namespaced'],
+    'phpdoc_to_comment' => false,
+    'phpdoc_align' => false,
 ];
 
 $finder = PhpCsFixer\Finder::create()

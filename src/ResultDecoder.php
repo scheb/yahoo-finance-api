@@ -100,7 +100,7 @@ class ResultDecoder
     public function transformSearchResult($responseBody)
     {
         $decoded = json_decode($responseBody, true);
-        if (!isset($decoded['data']['items']) || !is_array($decoded['data']['items'])) {
+        if (!isset($decoded['data']['items']) || !\is_array($decoded['data']['items'])) {
             throw new ApiException('Yahoo Search API returned an invalid response', ApiException::INVALID_RESPONSE);
         }
 
@@ -151,7 +151,7 @@ class ResultDecoder
 
     private function createHistoricalData(array $columns)
     {
-        if (7 !== count($columns)) {
+        if (7 !== \count($columns)) {
             throw new ApiException('CSV did not contain correct number of columns', ApiException::INVALID_RESPONSE);
         }
 
@@ -180,7 +180,7 @@ class ResultDecoder
     public function transformQuotes($responseBody)
     {
         $decoded = json_decode($responseBody, true);
-        if (!isset($decoded['quoteResponse']['result']) || !is_array($decoded['quoteResponse']['result'])) {
+        if (!isset($decoded['quoteResponse']['result']) || !\is_array($decoded['quoteResponse']['result'])) {
             throw new ApiException('Yahoo Search API returned an invalid result.', ApiException::INVALID_RESPONSE);
         }
 
@@ -196,7 +196,7 @@ class ResultDecoder
     {
         $mappedValues = [];
         foreach ($json as $field => $value) {
-            if (array_key_exists($field, self::QUOTE_FIELDS_MAP)) {
+            if (\array_key_exists($field, self::QUOTE_FIELDS_MAP)) {
                 $type = self::QUOTE_FIELDS_MAP[$field];
                 $mappedValues[$field] = $this->mapValue($field, $value, $type);
             }
@@ -244,7 +244,7 @@ class ResultDecoder
             throw new ApiException('Not a percent in field "'.$field.'": '.$rawValue, ApiException::INVALID_VALUE);
         }
 
-        $numericPart = substr($rawValue, 0, strlen($rawValue) - 1);
+        $numericPart = substr($rawValue, 0, \strlen($rawValue) - 1);
         if (!is_numeric($numericPart)) {
             throw new ApiException('Not a percent in field "'.$field.'": '.$rawValue, ApiException::INVALID_VALUE);
         }

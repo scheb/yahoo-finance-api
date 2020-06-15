@@ -8,8 +8,6 @@ use GuzzleHttp\ClientInterface;
 class ApiClientFactory
 {
     /**
-     * @param ClientInterface|null $guzzleClient
-     *
      * @return ApiClient
      */
     public static function createApiClient(ClientInterface $guzzleClient = null)

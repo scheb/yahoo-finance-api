@@ -3,12 +3,12 @@
 namespace Scheb\YahooFinanceApi\Tests;
 
 use GuzzleHttp\Exception\TransferException;
+use PHPUnit\Framework\TestCase;
 use Scheb\YahooFinanceApi\ApiClient;
 use Scheb\YahooFinanceApi\ApiClientFactory;
 use Scheb\YahooFinanceApi\Results\HistoricalData;
 use Scheb\YahooFinanceApi\Results\Quote;
 use Scheb\YahooFinanceApi\Results\SearchResult;
-use PHPUnit\Framework\TestCase;
 
 class ApiClientIntegrationTest extends TestCase
 {
@@ -84,7 +84,7 @@ class ApiClientIntegrationTest extends TestCase
         $returnValue = $this->client->getHistoricalData(self::APPLE_SYMBOL, $interval, $startDate, $endDate);
 
         $this->assertInternalType('array', $returnValue);
-        $this->assertGreaterThan(0, count($returnValue));
+        $this->assertGreaterThan(0, \count($returnValue));
         $this->assertContainsOnlyInstancesOf(HistoricalData::class, $returnValue);
 
         $historicalData = $returnValue[0];
@@ -203,9 +203,10 @@ class ApiClientIntegrationTest extends TestCase
     public function runBare()
     {
         // I'll leave this part to you. PHPUnit supplies methods for parsing annotations.
-        for ($i = 0; $i < self::TRY_COUNT; $i++) {
+        for ($i = 0; $i < self::TRY_COUNT; ++$i) {
             try {
                 parent::runBare();
+
                 return;
             } catch (TransferException $e) {
                 // Catch all Guzzle network exceptions for retry

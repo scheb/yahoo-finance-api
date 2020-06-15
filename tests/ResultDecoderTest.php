@@ -2,11 +2,11 @@
 
 namespace Scheb\YahooFinanceApi\Tests;
 
+use PHPUnit\Framework\TestCase;
 use Scheb\YahooFinanceApi\ResultDecoder;
 use Scheb\YahooFinanceApi\Results\HistoricalData;
 use Scheb\YahooFinanceApi\Results\Quote;
 use Scheb\YahooFinanceApi\Results\SearchResult;
-use PHPUnit\Framework\TestCase;
 
 class ResultDecoderTest extends TestCase
 {
@@ -25,15 +25,15 @@ class ResultDecoderTest extends TestCase
         return [
             [
                 [
-                    'data' => null
-                ]
+                    'data' => null,
+                ],
             ],
             [
                 [
                     'data' => [
-                        'items' => null
-                    ]
-                ]
+                        'items' => null,
+                    ],
+                ],
             ],
         ];
     }
@@ -161,17 +161,17 @@ class ResultDecoderTest extends TestCase
         return [
             [
                 [
-                    'quoteResponse' => null
-                ]
+                    'quoteResponse' => null,
+                ],
             ],
             [
                 [
                     [
                         'quoteResponse' => [
-                            'result' => null
-                        ]
-                    ]
-                ]
+                            'result' => null,
+                        ],
+                    ],
+                ],
             ],
         ];
     }

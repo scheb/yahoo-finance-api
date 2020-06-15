@@ -40,7 +40,6 @@ class HistoricalData implements \JsonSerializable
     private $volume;
 
     /**
-     * @param \DateTime $date
      * @param float     $open
      * @param float     $high
      * @param float     $low

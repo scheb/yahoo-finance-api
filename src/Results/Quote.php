@@ -75,9 +75,6 @@ class Quote implements \JsonSerializable
     private $twoHundredDayAverageChange;
     private $twoHundredDayAverageChangePercent;
 
-    /**
-     * @param array $values
-     */
     public function __construct(array $values)
     {
         foreach ($values as $property => $value) {
