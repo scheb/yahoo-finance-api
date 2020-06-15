@@ -30,7 +30,7 @@ class HistoricalData implements \JsonSerializable
         return get_object_vars($this);
     }
 
-    public function getDate(): ?\DateTime
+    public function getDate(): \DateTime
     {
         return $this->date;
     }
