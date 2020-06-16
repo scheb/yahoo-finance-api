@@ -10,6 +10,7 @@ use Scheb\YahooFinanceApi\ResultDecoder;
 use Scheb\YahooFinanceApi\Results\HistoricalData;
 use Scheb\YahooFinanceApi\Results\Quote;
 use Scheb\YahooFinanceApi\Results\SearchResult;
+use Scheb\YahooFinanceApi\ValueMapper;
 
 class ResultDecoderTest extends TestCase
 {
@@ -20,7 +21,7 @@ class ResultDecoderTest extends TestCase
 
     public function setUp(): void
     {
-        $this->resultDecoder = new ResultDecoder();
+        $this->resultDecoder = new ResultDecoder(new ValueMapper());
     }
 
     public function transformInvalidResponse(): array
@@ -378,7 +379,7 @@ class ResultDecoderTest extends TestCase
     public function transformQuotes_jsonWithInvalidFloatGiven_createArrayOfQuote(): void
     {
         $this->expectException(ApiException::class);
-        $this->expectExceptionMessage('Not a number in field "trailingPE": 19.45277%');
+        $this->expectExceptionMessage('Not a float in field "trailingPE": 19.45277%');
 
         $this->resultDecoder->transformQuotes(file_get_contents(__DIR__.'/fixtures/invalidFloatQuote.json'));
     }
@@ -400,7 +401,7 @@ class ResultDecoderTest extends TestCase
     public function transformQuotes_jsonWithInvalidIntegerGiven_createArrayOfQuote(): void
     {
         $this->expectException(ApiException::class);
-        $this->expectExceptionMessage('Not a number in field "priceHint": invalid_integer');
+        $this->expectExceptionMessage('Not a int in field "priceHint": invalid_integer');
 
         $this->resultDecoder->transformQuotes(file_get_contents(__DIR__.'/fixtures/invalidIntegerQuote.json'));
     }

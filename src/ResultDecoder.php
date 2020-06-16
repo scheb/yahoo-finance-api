@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Scheb\YahooFinanceApi;
 
 use Scheb\YahooFinanceApi\Exception\ApiException;
+use Scheb\YahooFinanceApi\Exception\InvalidValueException;
 use Scheb\YahooFinanceApi\Results\HistoricalData;
 use Scheb\YahooFinanceApi\Results\Quote;
 use Scheb\YahooFinanceApi\Results\SearchResult;
@@ -14,77 +15,87 @@ class ResultDecoder
     public const HISTORICAL_DATA_HEADER_LINE = ['Date', 'Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume'];
     public const SEARCH_RESULT_FIELDS = ['symbol', 'name', 'exch', 'type', 'exchDisp', 'typeDisp'];
     public const QUOTE_FIELDS_MAP = [
-        'ask' => 'float',
-        'askSize' => 'int',
-        'averageDailyVolume10Day' => 'int',
-        'averageDailyVolume3Month' => 'int',
-        'bid' => 'float',
-        'bidSize' => 'int',
-        'bookValue' => 'float',
-        'currency' => 'string',
-        'dividendDate' => 'date',
-        'earningsTimestamp' => 'date',
-        'earningsTimestampStart' => 'date',
-        'earningsTimestampEnd' => 'date',
-        'epsForward' => 'float',
-        'epsTrailingTwelveMonths' => 'float',
-        'exchange' => 'string',
-        'exchangeDataDelayedBy' => 'int',
-        'exchangeTimezoneName' => 'string',
-        'exchangeTimezoneShortName' => 'string',
-        'fiftyDayAverage' => 'float',
-        'fiftyDayAverageChange' => 'float',
-        'fiftyDayAverageChangePercent' => 'float',
-        'fiftyTwoWeekHigh' => 'float',
-        'fiftyTwoWeekHighChange' => 'float',
-        'fiftyTwoWeekHighChangePercent' => 'float',
-        'fiftyTwoWeekLow' => 'float',
-        'fiftyTwoWeekLowChange' => 'float',
-        'fiftyTwoWeekLowChangePercent' => 'float',
-        'financialCurrency' => 'string',
-        'forwardPE' => 'float',
-        'fullExchangeName' => 'string',
-        'gmtOffSetMilliseconds' => 'int',
-        'language' => 'string',
-        'longName' => 'string',
-        'market' => 'string',
-        'marketCap' => 'int',
-        'marketState' => 'string',
-        'messageBoardId' => 'string',
-        'postMarketChange' => 'float',
-        'postMarketChangePercent' => 'float',
-        'postMarketPrice' => 'float',
-        'postMarketTime' => 'date',
-        'preMarketChange' => 'float',
-        'preMarketChangePercent' => 'float',
-        'preMarketPrice' => 'float',
-        'preMarketTime' => 'date',
-        'priceHint' => 'int',
-        'priceToBook' => 'float',
-        'openInterest' => 'float',
-        'quoteSourceName' => 'string',
-        'quoteType' => 'string',
-        'regularMarketChange' => 'float',
-        'regularMarketChangePercent' => 'float',
-        'regularMarketDayHigh' => 'float',
-        'regularMarketDayLow' => 'float',
-        'regularMarketOpen' => 'float',
-        'regularMarketPreviousClose' => 'float',
-        'regularMarketPrice' => 'float',
-        'regularMarketTime' => 'date',
-        'regularMarketVolume' => 'int',
-        'sharesOutstanding' => 'int',
-        'shortName' => 'string',
-        'sourceInterval' => 'int',
-        'symbol' => 'string',
-        'tradeable' => 'bool',
-        'trailingAnnualDividendRate' => 'float',
-        'trailingAnnualDividendYield' => 'float',
-        'trailingPE' => 'float',
-        'twoHundredDayAverage' => 'float',
-        'twoHundredDayAverageChange' => 'float',
-        'twoHundredDayAverageChangePercent' => 'float',
+        'ask' => ValueMapperInterface::TYPE_FLOAT,
+        'askSize' => ValueMapperInterface::TYPE_INT,
+        'averageDailyVolume10Day' => ValueMapperInterface::TYPE_INT,
+        'averageDailyVolume3Month' => ValueMapperInterface::TYPE_INT,
+        'bid' => ValueMapperInterface::TYPE_FLOAT,
+        'bidSize' => ValueMapperInterface::TYPE_INT,
+        'bookValue' => ValueMapperInterface::TYPE_FLOAT,
+        'currency' => ValueMapperInterface::TYPE_STRING,
+        'dividendDate' => ValueMapperInterface::TYPE_DATE,
+        'earningsTimestamp' => ValueMapperInterface::TYPE_DATE,
+        'earningsTimestampStart' => ValueMapperInterface::TYPE_DATE,
+        'earningsTimestampEnd' => ValueMapperInterface::TYPE_DATE,
+        'epsForward' => ValueMapperInterface::TYPE_FLOAT,
+        'epsTrailingTwelveMonths' => ValueMapperInterface::TYPE_FLOAT,
+        'exchange' => ValueMapperInterface::TYPE_STRING,
+        'exchangeDataDelayedBy' => ValueMapperInterface::TYPE_INT,
+        'exchangeTimezoneName' => ValueMapperInterface::TYPE_STRING,
+        'exchangeTimezoneShortName' => ValueMapperInterface::TYPE_STRING,
+        'fiftyDayAverage' => ValueMapperInterface::TYPE_FLOAT,
+        'fiftyDayAverageChange' => ValueMapperInterface::TYPE_FLOAT,
+        'fiftyDayAverageChangePercent' => ValueMapperInterface::TYPE_FLOAT,
+        'fiftyTwoWeekHigh' => ValueMapperInterface::TYPE_FLOAT,
+        'fiftyTwoWeekHighChange' => ValueMapperInterface::TYPE_FLOAT,
+        'fiftyTwoWeekHighChangePercent' => ValueMapperInterface::TYPE_FLOAT,
+        'fiftyTwoWeekLow' => ValueMapperInterface::TYPE_FLOAT,
+        'fiftyTwoWeekLowChange' => ValueMapperInterface::TYPE_FLOAT,
+        'fiftyTwoWeekLowChangePercent' => ValueMapperInterface::TYPE_FLOAT,
+        'financialCurrency' => ValueMapperInterface::TYPE_STRING,
+        'forwardPE' => ValueMapperInterface::TYPE_FLOAT,
+        'fullExchangeName' => ValueMapperInterface::TYPE_STRING,
+        'gmtOffSetMilliseconds' => ValueMapperInterface::TYPE_INT,
+        'language' => ValueMapperInterface::TYPE_STRING,
+        'longName' => ValueMapperInterface::TYPE_STRING,
+        'market' => ValueMapperInterface::TYPE_STRING,
+        'marketCap' => ValueMapperInterface::TYPE_INT,
+        'marketState' => ValueMapperInterface::TYPE_STRING,
+        'messageBoardId' => ValueMapperInterface::TYPE_STRING,
+        'postMarketChange' => ValueMapperInterface::TYPE_FLOAT,
+        'postMarketChangePercent' => ValueMapperInterface::TYPE_FLOAT,
+        'postMarketPrice' => ValueMapperInterface::TYPE_FLOAT,
+        'postMarketTime' => ValueMapperInterface::TYPE_DATE,
+        'preMarketChange' => ValueMapperInterface::TYPE_FLOAT,
+        'preMarketChangePercent' => ValueMapperInterface::TYPE_FLOAT,
+        'preMarketPrice' => ValueMapperInterface::TYPE_FLOAT,
+        'preMarketTime' => ValueMapperInterface::TYPE_DATE,
+        'priceHint' => ValueMapperInterface::TYPE_INT,
+        'priceToBook' => ValueMapperInterface::TYPE_FLOAT,
+        'openInterest' => ValueMapperInterface::TYPE_FLOAT,
+        'quoteSourceName' => ValueMapperInterface::TYPE_STRING,
+        'quoteType' => ValueMapperInterface::TYPE_STRING,
+        'regularMarketChange' => ValueMapperInterface::TYPE_FLOAT,
+        'regularMarketChangePercent' => ValueMapperInterface::TYPE_FLOAT,
+        'regularMarketDayHigh' => ValueMapperInterface::TYPE_FLOAT,
+        'regularMarketDayLow' => ValueMapperInterface::TYPE_FLOAT,
+        'regularMarketOpen' => ValueMapperInterface::TYPE_FLOAT,
+        'regularMarketPreviousClose' => ValueMapperInterface::TYPE_FLOAT,
+        'regularMarketPrice' => ValueMapperInterface::TYPE_FLOAT,
+        'regularMarketTime' => ValueMapperInterface::TYPE_DATE,
+        'regularMarketVolume' => ValueMapperInterface::TYPE_INT,
+        'sharesOutstanding' => ValueMapperInterface::TYPE_INT,
+        'shortName' => ValueMapperInterface::TYPE_STRING,
+        'sourceInterval' => ValueMapperInterface::TYPE_INT,
+        'symbol' => ValueMapperInterface::TYPE_STRING,
+        'tradeable' => ValueMapperInterface::TYPE_BOOL,
+        'trailingAnnualDividendRate' => ValueMapperInterface::TYPE_FLOAT,
+        'trailingAnnualDividendYield' => ValueMapperInterface::TYPE_FLOAT,
+        'trailingPE' => ValueMapperInterface::TYPE_FLOAT,
+        'twoHundredDayAverage' => ValueMapperInterface::TYPE_FLOAT,
+        'twoHundredDayAverageChange' => ValueMapperInterface::TYPE_FLOAT,
+        'twoHundredDayAverageChangePercent' => ValueMapperInterface::TYPE_FLOAT,
     ];
+
+    /**
+     * @var ValueMapperInterface
+     */
+    private $valueMapper;
+
+    public function __construct(ValueMapperInterface $valueMapper)
+    {
+        $this->valueMapper = $valueMapper;
+    }
 
     public function transformSearchResult(string $responseBody): array
     {
@@ -187,100 +198,14 @@ class ResultDecoder
         foreach ($json as $field => $value) {
             if (\array_key_exists($field, self::QUOTE_FIELDS_MAP)) {
                 $type = self::QUOTE_FIELDS_MAP[$field];
-                $mappedValues[$field] = $this->mapValue($field, $value, $type);
+                try {
+                    $mappedValues[$field] = $this->valueMapper->mapValue($value, $type);
+                } catch (InvalidValueException $e) {
+                    throw new ApiException(sprintf('Not a %s in field "%s": %s', $type, $field, $value), ApiException::INVALID_VALUE, $e);
+                }
             }
         }
 
         return new Quote($mappedValues);
-    }
-
-    /**
-     * @param mixed $rawValue
-     *
-     * @return mixed
-     */
-    private function mapValue(string $field, $rawValue, string $type)
-    {
-        if (null === $rawValue) {
-            return null;
-        }
-
-        switch ($type) {
-            case 'float':
-                return $this->mapFloatValue($field, $rawValue);
-            case 'percent':
-                return $this->mapPercentValue($field, $rawValue);
-            case 'int':
-                return $this->mapIntValue($field, $rawValue);
-            case 'date':
-                return $this->mapDateValue($field, $rawValue);
-            case 'string':
-                return (string) $rawValue;
-            case 'bool':
-                return $this->mapBoolValue($rawValue);
-            default:
-                throw new \InvalidArgumentException(sprintf('Invalid data type %s for field %s', $type, $field));
-        }
-    }
-
-    /**
-     * @param mixed $rawValue
-     */
-    private function mapFloatValue(string $field, $rawValue): float
-    {
-        if (!is_numeric($rawValue)) {
-            throw new ApiException(sprintf('Not a number in field "%s": %s', $field, $rawValue), ApiException::INVALID_VALUE);
-        }
-
-        return (float) $rawValue;
-    }
-
-    /**
-     * @param mixed $rawValue
-     */
-    private function mapPercentValue(string $field, $rawValue): float
-    {
-        if ('%' !== substr($rawValue, -1, 1)) {
-            throw new ApiException(sprintf('Not a percent in field "%s": %s', $field, $rawValue), ApiException::INVALID_VALUE);
-        }
-
-        $numericPart = substr($rawValue, 0, \strlen($rawValue) - 1);
-        if (!is_numeric($numericPart)) {
-            throw new ApiException(sprintf('Not a percent in field "%s": %s', $field, $rawValue), ApiException::INVALID_VALUE);
-        }
-
-        return (float) $numericPart;
-    }
-
-    /**
-     * @param mixed $rawValue
-     */
-    private function mapIntValue(string $field, $rawValue): int
-    {
-        if (!is_numeric($rawValue)) {
-            throw new ApiException(sprintf('Not a number in field "%s": %s', $field, $rawValue), ApiException::INVALID_VALUE);
-        }
-
-        return (int) $rawValue;
-    }
-
-    /**
-     * @param mixed $rawValue
-     */
-    private function mapBoolValue($rawValue): bool
-    {
-        return (bool) $rawValue;
-    }
-
-    /**
-     * @param mixed $rawValue
-     */
-    private function mapDateValue(string $field, $rawValue): \DateTime
-    {
-        try {
-            return new \DateTime('@'.$rawValue);
-        } catch (\Exception $e) {
-            throw new ApiException(sprintf('Not a date in field "%s": %s', $field, $rawValue), ApiException::INVALID_VALUE);
-        }
     }
 }
