@@ -86,18 +86,6 @@ class ResultDecoder
         'twoHundredDayAverageChangePercent' => 'float',
     ];
 
-    /**
-     * @var array
-     */
-    private $quoteFields;
-
-    public function __construct()
-    {
-        $this->quoteFields = array_keys(self::QUOTE_FIELDS_MAP);
-        $this->quoteFields[] = 'LastTradeDate';
-        $this->quoteFields[] = 'LastTradeDate';
-    }
-
     public function transformSearchResult(string $responseBody): array
     {
         $decoded = json_decode($responseBody, true);
