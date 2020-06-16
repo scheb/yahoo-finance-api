@@ -1,6 +1,8 @@
 scheb/yahoo-finance-api
 =======================
 
+**This is a PHP client for Yahoo Finance API.**
+
 [![Build Status](https://travis-ci.org/scheb/yahoo-finance-api.svg?branch=master)](https://travis-ci.org/scheb/yahoo-finance-api)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/scheb/yahoo-finance-api/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/scheb/yahoo-finance-api/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/scheb/yahoo-finance-api/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/scheb/yahoo-finance-api/?branch=master)
@@ -8,7 +10,7 @@ scheb/yahoo-finance-api
 [![Total Downloads](https://poser.pugx.org/scheb/yahoo-finance-api/downloads)](https://packagist.org/packages/scheb/yahoo-finance-api)
 [![License](https://poser.pugx.org/scheb/yahoo-finance-api/license.svg)](https://packagist.org/packages/scheb/yahoo-finance-api)
 
-This is a PHP client for Yahoo Finance API.
+<p align="center"><img alt="Logo" src="doc/logo.svg" width="180"/></p>
 
 Since YQL APIs have been discontinued in November 2017, this client is using non-official API endpoints for quotes, search and historical data.
 
