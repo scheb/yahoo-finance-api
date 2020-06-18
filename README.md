@@ -85,7 +85,7 @@ Version Guidance
 | [1.x][v1-repo] | EOL        |>= 5.3.0     |
 | [2.x][v2-repo] | EOL        |>= 5.6.0     |
 | [3.x][v3-repo] | EOL        |>= 5.6.0     |
-| [4.x][v3-repo] | Maintained |>= 7.1.3     |
+| [4.x][v4-repo] | Maintained |>= 7.1.3     |
 
 [v1-repo]: https://github.com/scheb/yahoo-finance-api/tree/1.x
 [v2-repo]: https://github.com/scheb/yahoo-finance-api/tree/2.x
