@@ -10,7 +10,7 @@ scheb/yahoo-finance-api
 [![Total Downloads](https://poser.pugx.org/scheb/yahoo-finance-api/downloads)](https://packagist.org/packages/scheb/yahoo-finance-api)
 [![License](https://poser.pugx.org/scheb/yahoo-finance-api/license.svg)](https://packagist.org/packages/scheb/yahoo-finance-api)
 
-<p align="center"><img alt="Logo" src="doc/logo.svg" width="180"/></p>
+<p align="center"><img alt="Logo" src="doc/logo.svg" width="180" /></p>
 
 Since YQL APIs have been discontinued in November 2017, this client is using non-official API endpoints for quotes, search and historical data.
 
