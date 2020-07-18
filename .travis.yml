@@ -15,7 +15,7 @@ install:
     - composer update --prefer-dist --no-interaction $COMPOSER_FLAGS
 
 script:
-    - ./vendor/bin/phpunit --coverage-clover build/logs/clover.xml
+    - ./vendor/bin/phpunit
 
 jobs:
     fast_finish: true
