@@ -70,7 +70,7 @@ class ValueMapper implements ValueMapperInterface
     /**
      * @param mixed $rawValue
      */
-    private function mapDateValue($rawValue): \DateTime
+    private function mapDateValue($rawValue): \DateTimeInterface
     {
         try {
             return new \DateTime('@'.$rawValue);

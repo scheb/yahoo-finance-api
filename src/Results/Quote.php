@@ -129,22 +129,22 @@ class Quote implements \JsonSerializable
         return $this->currency;
     }
 
-    public function getDividendDate(): ?\DateTime
+    public function getDividendDate(): ?\DateTimeInterface
     {
         return $this->dividendDate;
     }
 
-    public function getEarningsTimestamp(): ?\DateTime
+    public function getEarningsTimestamp(): ?\DateTimeInterface
     {
         return $this->earningsTimestamp;
     }
 
-    public function getEarningsTimestampStart(): ?\DateTime
+    public function getEarningsTimestampStart(): ?\DateTimeInterface
     {
         return $this->earningsTimestampStart;
     }
 
-    public function getEarningsTimestampEnd(): ?\DateTime
+    public function getEarningsTimestampEnd(): ?\DateTimeInterface
     {
         return $this->earningsTimestampEnd;
     }
@@ -289,7 +289,7 @@ class Quote implements \JsonSerializable
         return $this->postMarketPrice;
     }
 
-    public function getPostMarketTime(): ?\DateTime
+    public function getPostMarketTime(): ?\DateTimeInterface
     {
         return $this->postMarketTime;
     }
@@ -309,7 +309,7 @@ class Quote implements \JsonSerializable
         return $this->preMarketPrice;
     }
 
-    public function getPreMarketTime(): ?\DateTime
+    public function getPreMarketTime(): ?\DateTimeInterface
     {
         return $this->preMarketTime;
     }
@@ -374,7 +374,7 @@ class Quote implements \JsonSerializable
         return $this->regularMarketPrice;
     }
 
-    public function getRegularMarketTime(): ?\DateTime
+    public function getRegularMarketTime(): ?\DateTimeInterface
     {
         return $this->regularMarketTime;
     }
