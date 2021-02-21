@@ -58,7 +58,7 @@ class ApiClient
      *
      * @throws ApiException
      */
-    public function getHistoricalData(string $symbol, string $interval, \DateTime $startDate, \DateTime $endDate): array
+    public function getHistoricalData(string $symbol, string $interval, \DateTimeInterface $startDate, \DateTimeInterface $endDate): array
     {
         $allowedIntervals = [self::INTERVAL_1_DAY, self::INTERVAL_1_WEEK, self::INTERVAL_1_MONTH];
         if (!\in_array($interval, $allowedIntervals)) {
