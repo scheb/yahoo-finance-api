@@ -60,9 +60,11 @@ $searchResult = $client->search("Apple");
 
 // Returns an array of Scheb\YahooFinanceApi\Results\HistoricalData
 $historicalData = $client->getHistoricalData("AAPL", ApiClient::INTERVAL_1_DAY, new \DateTime("-14 days"), new \DateTime("today"));
-// Returns an array of Scheb\YahooFinanceApi\Results\dividendData
+
+// Or you can filter by dividends and return an array of Scheb\YahooFinanceApi\Results\DividendData
 $dividendData = $client->getDividendData("AAPL", ApiClient::INTERVAL_1_DAY, new \DateTime("-14 days"), new \DateTime("today"), ApiClient::FILTER_DIVIDENDS);
-// Returns an array of Scheb\YahooFinanceApi\Results\SplitData
+
+// Or you can filter by splits and return an array of Scheb\YahooFinanceApi\Results\SplitData
 $splitData = $client->getSplitData("AAPL", ApiClient::INTERVAL_1_DAY, new \DateTime("-14 days"), new \DateTime("today"), ApiClient::FILTER_SPLITS);
 
 // Returns Scheb\YahooFinanceApi\Results\Quote
