@@ -86,11 +86,11 @@ class ApiClient
         $dataUrl = 'https://query1.finance.yahoo.com/v7/finance/download/'.urlencode($symbol).'?period1='.$startDate->getTimestamp().'&period2='.$endDate->getTimestamp().'&interval='.$interval.'&events='.$filter.'&crumb='.urlencode($crumb);
         $responseBody = (string) $this->client->request('GET', $dataUrl, ['cookies' => $cookieJar])->getBody();
 
-        if ($filter === self::FILTER_DIVIDENDS) {
+        if (self::FILTER_DIVIDENDS === $filter) {
             return $this->resultDecoder->transformDividendDataResult($responseBody);
         }
 
-        if ($filter === self::FILTER_SPLITS) {
+        if (self::FILTER_SPLITS === $filter) {
             return $this->resultDecoder->transformSplitDataResult($responseBody);
         }
 

@@ -147,6 +147,7 @@ class ResultDecoder
         if ($headerLine !== $expectedHeaderLine) {
             throw new ApiException(sprintf('CSV header line did not match expected header line, given: %s, expected: %s', $headerLine, $expectedHeaderLine), ApiException::INVALID_RESPONSE);
         }
+
         return $lines;
     }
 
@@ -161,7 +162,7 @@ class ResultDecoder
 
     public function transformHistoricalDataResult(string $responseBody): array
     {
-        $lines = $this->validateHeaderLines($responseBody,self::HISTORICAL_DATA_HEADER_LINE);
+        $lines = $this->validateHeaderLines($responseBody, self::HISTORICAL_DATA_HEADER_LINE);
         
         return array_map(function ($line) {
             return $this->createHistoricalData(explode(',', $line));
@@ -190,7 +191,7 @@ class ResultDecoder
 
     public function transformDividendDataResult(string $responseBody): array
     {
-        $lines = $this->validateHeaderLines($responseBody,self::DIVIDEND_DATA_HEADER_LINE);
+        $lines = $this->validateHeaderLines($responseBody, self::DIVIDEND_DATA_HEADER_LINE);
 
         return array_map(function ($line) {
             return $this->createDividendData(explode(',', $line));
@@ -212,7 +213,7 @@ class ResultDecoder
 
     public function transformSplitDataResult(string $responseBody): array
     {
-        $lines = $this->validateHeaderLines($responseBody,self::SPLIT_DATA_HEADER_LINE);
+        $lines = $this->validateHeaderLines($responseBody, self::SPLIT_DATA_HEADER_LINE);
 
         return array_map(function ($line) {
             return $this->createSplitData(explode(',', $line));

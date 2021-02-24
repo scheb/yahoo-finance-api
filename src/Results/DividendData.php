@@ -9,7 +9,7 @@ class DividendData implements \JsonSerializable
     private $date;
     private $dividends;
 
-    public function __construct(\DateTime $date, ?float $dividends )
+    public function __construct(\DateTime $date, ?float $dividends)
     {
         $this->date = $date;
         $this->dividends = $dividends;

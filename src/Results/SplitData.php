@@ -9,7 +9,7 @@ class SplitData implements \JsonSerializable
     private $date;
     private $stockSplits;
 
-    public function __construct(\DateTime $date, ?string $stockSplits )
+    public function __construct(\DateTime $date, ?string $stockSplits)
     {
         $this->date = $date;
         $this->stockSplits = $stockSplits;
