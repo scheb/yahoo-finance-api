@@ -223,9 +223,9 @@ class ResultDecoder
     {
         $date = $this->validateDate($columns);
 
-        $stock_splits = (string) $columns[1];
+        $stockSplits = (string) $columns[1];
 
-        return new SplitData($date, $stock_splits);
+        return new SplitData($date, $stockSplits);
     }
 
     public function transformQuotes(string $responseBody): array

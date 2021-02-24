@@ -7,12 +7,12 @@ namespace Scheb\YahooFinanceApi\Results;
 class SplitData implements \JsonSerializable
 {
     private $date;
-    private $stock_splits;
+    private $stockSplits;
 
-    public function __construct(\DateTime $date, ?string $stock_splits )
+    public function __construct(\DateTime $date, ?string $stockSplits )
     {
         $this->date = $date;
-        $this->stock_splits = $stock_splits;
+        $this->stockSplits = $stockSplits;
     }
 
     public function jsonSerialize(): array
@@ -27,6 +27,6 @@ class SplitData implements \JsonSerializable
 
     public function getStockSplits(): ?string
     {
-        return $this->stock_splits;
+        return $this->stockSplits;
     }
 }
