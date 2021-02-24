@@ -163,7 +163,7 @@ class ResultDecoder
     public function transformHistoricalDataResult(string $responseBody): array
     {
         $lines = $this->validateHeaderLines($responseBody, self::HISTORICAL_DATA_HEADER_LINE);
-        
+
         return array_map(function ($line) {
             return $this->createHistoricalData(explode(',', $line));
         }, $lines);
