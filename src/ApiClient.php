@@ -16,6 +16,9 @@ class ApiClient
     public const INTERVAL_1_DAY = '1d';
     public const INTERVAL_1_WEEK = '1wk';
     public const INTERVAL_1_MONTH = '1mo';
+    public const FILTER_HISTORICAL = 'history';
+    public const FILTER_DIVIDENDS = 'div';
+    public const FILTER_SPLITS = 'split';
     public const CURRENCY_SYMBOL_SUFFIX = '=X';
 
     /**
@@ -58,8 +61,13 @@ class ApiClient
      *
      * @throws ApiException
      */
-    public function getHistoricalData(string $symbol, string $interval, \DateTimeInterface $startDate, \DateTimeInterface $endDate): array
+    public function getHistoricalData(string $symbol, string $interval, \DateTimeInterface $startDate, \DateTimeInterface $endDate, string $filter = self::FILTER_HISTORICAL): array
     {
+        $allowedFilters = [self::FILTER_HISTORICAL, self::FILTER_SPLITS, self::FILTER_DIVIDENDS];
+        if (!\in_array($filter, $allowedFilters)) {
+            throw new \InvalidArgumentException(sprintf('Filter must be one of: %s', implode(', ', $allowedFilters)));
+        }
+
         $allowedIntervals = [self::INTERVAL_1_DAY, self::INTERVAL_1_WEEK, self::INTERVAL_1_MONTH];
         if (!\in_array($interval, $allowedIntervals)) {
             throw new \InvalidArgumentException(sprintf('Interval must be one of: %s', implode(', ', $allowedIntervals)));
@@ -75,8 +83,16 @@ class ApiClient
         $responseBody = (string) $this->client->request('GET', $initialUrl, ['cookies' => $cookieJar])->getBody();
         $crumb = $this->resultDecoder->extractCrumb($responseBody);
 
-        $dataUrl = 'https://query1.finance.yahoo.com/v7/finance/download/'.urlencode($symbol).'?period1='.$startDate->getTimestamp().'&period2='.$endDate->getTimestamp().'&interval='.$interval.'&events=history&crumb='.urlencode($crumb);
+        $dataUrl = 'https://query1.finance.yahoo.com/v7/finance/download/'.urlencode($symbol).'?period1='.$startDate->getTimestamp().'&period2='.$endDate->getTimestamp().'&interval='.$interval.'&events='.$filter.'&crumb='.urlencode($crumb);
         $responseBody = (string) $this->client->request('GET', $dataUrl, ['cookies' => $cookieJar])->getBody();
+
+        if ($filter === self::FILTER_DIVIDENDS) {
+            return $this->resultDecoder->transformDividendDataResult($responseBody);
+        }
+
+        if ($filter === self::FILTER_SPLITS) {
+            return $this->resultDecoder->transformSplitDataResult($responseBody);
+        }
 
         return $this->resultDecoder->transformHistoricalDataResult($responseBody);
     }

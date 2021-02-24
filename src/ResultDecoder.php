@@ -6,13 +6,17 @@ namespace Scheb\YahooFinanceApi;
 
 use Scheb\YahooFinanceApi\Exception\ApiException;
 use Scheb\YahooFinanceApi\Exception\InvalidValueException;
+use Scheb\YahooFinanceApi\Results\DividendData;
 use Scheb\YahooFinanceApi\Results\HistoricalData;
 use Scheb\YahooFinanceApi\Results\Quote;
 use Scheb\YahooFinanceApi\Results\SearchResult;
+use Scheb\YahooFinanceApi\Results\SplitData;
 
 class ResultDecoder
 {
     public const HISTORICAL_DATA_HEADER_LINE = ['Date', 'Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume'];
+    public const DIVIDEND_DATA_HEADER_LINE = ['Date', 'Dividends'];
+    public const SPLIT_DATA_HEADER_LINE = ['Date', 'Stock Splits'];
     public const SEARCH_RESULT_FIELDS = ['symbol', 'name', 'exch', 'type', 'exchDisp', 'typeDisp'];
     public const QUOTE_FIELDS_MAP = [
         'ask' => ValueMapperInterface::TYPE_FLOAT,
@@ -135,15 +139,30 @@ class ResultDecoder
         throw new ApiException('Could not extract crumb from response', ApiException::MISSING_CRUMB);
     }
 
-    public function transformHistoricalDataResult(string $responseBody): array
+    private function validateHeaderLines(string $responseBody, array $expectedHeader): array
     {
         $lines = array_map('trim', explode("\n", trim($responseBody)));
         $headerLine = array_shift($lines);
-        $expectedHeaderLine = implode(',', self::HISTORICAL_DATA_HEADER_LINE);
+        $expectedHeaderLine = implode(',', $expectedHeader);
         if ($headerLine !== $expectedHeaderLine) {
             throw new ApiException(sprintf('CSV header line did not match expected header line, given: %s, expected: %s', $headerLine, $expectedHeaderLine), ApiException::INVALID_RESPONSE);
         }
+        return $lines;
+    }
 
+    private function validateDate(array $columns): \DateTime
+    {
+        try {
+            return new \DateTime($columns[0], new \DateTimeZone('UTC'));
+        } catch (\Exception $e) {
+            throw new ApiException(sprintf('Not a date in column "Date":%s', $columns[0]), ApiException::INVALID_VALUE);
+        }
+    }
+
+    public function transformHistoricalDataResult(string $responseBody): array
+    {
+        $lines = $this->validateHeaderLines($responseBody,self::HISTORICAL_DATA_HEADER_LINE);
+        
         return array_map(function ($line) {
             return $this->createHistoricalData(explode(',', $line));
         }, $lines);
@@ -151,15 +170,7 @@ class ResultDecoder
 
     private function createHistoricalData(array $columns): HistoricalData
     {
-        if (7 !== \count($columns)) {
-            throw new ApiException('CSV did not contain correct number of columns', ApiException::INVALID_RESPONSE);
-        }
-
-        try {
-            $date = new \DateTime($columns[0], new \DateTimeZone('UTC'));
-        } catch (\Exception $e) {
-            throw new ApiException(sprintf('Not a date in column "Date":%s', $columns[0]), ApiException::INVALID_VALUE);
-        }
+        $date = $this->validateDate($columns);
 
         for ($i = 1; $i <= 6; ++$i) {
             if (!is_numeric($columns[$i]) && 'null' !== $columns[$i]) {
@@ -175,6 +186,46 @@ class ResultDecoder
         $volume = (int) $columns[6];
 
         return new HistoricalData($date, $open, $high, $low, $close, $adjClose, $volume);
+    }
+
+    public function transformDividendDataResult(string $responseBody): array
+    {
+        $lines = $this->validateHeaderLines($responseBody,self::DIVIDEND_DATA_HEADER_LINE);
+
+        return array_map(function ($line) {
+            return $this->createDividendData(explode(',', $line));
+        }, $lines);
+    }
+
+    private function createDividendData(array $columns): DividendData
+    {
+        $date = $this->validateDate($columns);
+
+        if (!is_numeric($columns[1]) && 'null' !== $columns[1]) {
+            throw new ApiException(sprintf('Not a number in column Dividends: %s', $columns[1]), ApiException::INVALID_VALUE);
+        }
+
+        $dividends = (float) $columns[1];
+
+        return new DividendData($date, $dividends);
+    }
+
+    public function transformSplitDataResult(string $responseBody): array
+    {
+        $lines = $this->validateHeaderLines($responseBody,self::SPLIT_DATA_HEADER_LINE);
+
+        return array_map(function ($line) {
+            return $this->createSplitData(explode(',', $line));
+        }, $lines);
+    }
+
+    private function createSplitData(array $columns): SplitData
+    {
+        $date = $this->validateDate($columns);
+
+        $stock_splits = (string) $columns[1];
+
+        return new SplitData($date, $stock_splits);
     }
 
     public function transformQuotes(string $responseBody): array
