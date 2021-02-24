@@ -25,7 +25,7 @@ class SplitData implements \JsonSerializable
         return $this->date;
     }
 
-    public function getStockSplits(): ?float
+    public function getStockSplits(): ?string
     {
         return $this->stock_splits;
     }
