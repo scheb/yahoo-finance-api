@@ -59,13 +59,13 @@ $client = ApiClientFactory::createApiClient($guzzleClient);
 $searchResult = $client->search("Apple");
 
 // Returns an array of Scheb\YahooFinanceApi\Results\HistoricalData
-$historicalData = $client->getHistoricalData("AAPL", ApiClient::INTERVAL_1_DAY, new \DateTime("-14 days"), new \DateTime("today"));
+$historicalData = $client->getHistoricalQuoteData("AAPL", ApiClient::INTERVAL_1_DAY, new \DateTime("-14 days"), new \DateTime("today"));
 
 // Or you can filter by dividends and return an array of Scheb\YahooFinanceApi\Results\DividendData
-$dividendData = $client->getHistoricalData("AAPL", ApiClient::INTERVAL_1_DAY, new \DateTime("-14 days"), new \DateTime("today"), ApiClient::FILTER_DIVIDENDS);
+$dividendData = $client->getHistoricalDividendData("AAPL", ApiClient::INTERVAL_1_DAY, new \DateTime("-14 days"), new \DateTime("today"));
 
 // Or you can filter by splits and return an array of Scheb\YahooFinanceApi\Results\SplitData
-$splitData = $client->getHistoricalData("AAPL", ApiClient::INTERVAL_1_DAY, new \DateTime("-14 days"), new \DateTime("today"), ApiClient::FILTER_SPLITS);
+$splitData = $client->getHistoricalSplitData("AAPL", ApiClient::INTERVAL_1_DAY, new \DateTime("-14 days"), new \DateTime("today"));
 
 // Returns Scheb\YahooFinanceApi\Results\Quote
 $exchangeRate = $client->getExchangeRate("USD", "EUR");

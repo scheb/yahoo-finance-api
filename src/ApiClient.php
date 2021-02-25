@@ -8,6 +8,8 @@ use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Cookie\CookieJar;
 use Scheb\YahooFinanceApi\Exception\ApiException;
 use Scheb\YahooFinanceApi\Results\HistoricalData;
+use Scheb\YahooFinanceApi\Results\DividendData;
+use Scheb\YahooFinanceApi\Results\SplitData;
 use Scheb\YahooFinanceApi\Results\Quote;
 use Scheb\YahooFinanceApi\Results\SearchResult;
 
@@ -33,6 +35,7 @@ class ApiClient
 
     public function __construct(ClientInterface $guzzleClient, ResultDecoder $resultDecoder)
     {
+        
         $this->client = $guzzleClient;
         $this->resultDecoder = $resultDecoder;
     }
@@ -55,46 +58,72 @@ class ApiClient
     }
 
     /**
+     * Get historical data for a symbol (depreciated).
+     * 
+     * DEPRECIATION NOTICE:
+     * In future versions, this function will be removed. 
+     * Please consider using getHistoricalQuoteData() instead.
+     *
+     * @return array|HistoricalData[]
+     *
+     * @throws ApiException
+     */
+    public function getHistoricalData(string $symbol, string $interval, \DateTimeInterface $startDate, \DateTimeInterface $endDate): array
+    {
+        error_log('[scheb/yahoo-finance-api] getHistoricalData() is deprecated and will be removed in a future release');
+
+        return $this->getHistoricalQuoteData($symbol, $interval, $startDate, $endDate);
+    }
+
+    /**
      * Get historical data for a symbol.
      *
      * @return array|HistoricalData[]
      *
      * @throws ApiException
      */
-    public function getHistoricalData(string $symbol, string $interval, \DateTimeInterface $startDate, \DateTimeInterface $endDate, string $filter = self::FILTER_HISTORICAL): array
+    public function getHistoricalQuoteData(string $symbol, string $interval, \DateTimeInterface $startDate, \DateTimeInterface $endDate): array
     {
-        $allowedFilters = [self::FILTER_HISTORICAL, self::FILTER_SPLITS, self::FILTER_DIVIDENDS];
-        if (!\in_array($filter, $allowedFilters)) {
-            throw new \InvalidArgumentException(sprintf('Filter must be one of: %s', implode(', ', $allowedFilters)));
-        }
+        $this->validateIntervals($interval);
+        $this->validateDates($startDate, $endDate);
 
-        $allowedIntervals = [self::INTERVAL_1_DAY, self::INTERVAL_1_WEEK, self::INTERVAL_1_MONTH];
-        if (!\in_array($interval, $allowedIntervals)) {
-            throw new \InvalidArgumentException(sprintf('Interval must be one of: %s', implode(', ', $allowedIntervals)));
-        }
-
-        if ($startDate > $endDate) {
-            throw new \InvalidArgumentException('Start date must be before end date');
-        }
-
-        $cookieJar = new CookieJar();
-
-        $initialUrl = 'https://finance.yahoo.com/quote/'.urlencode($symbol).'/history?p='.urlencode($symbol);
-        $responseBody = (string) $this->client->request('GET', $initialUrl, ['cookies' => $cookieJar])->getBody();
-        $crumb = $this->resultDecoder->extractCrumb($responseBody);
-
-        $dataUrl = 'https://query1.finance.yahoo.com/v7/finance/download/'.urlencode($symbol).'?period1='.$startDate->getTimestamp().'&period2='.$endDate->getTimestamp().'&interval='.$interval.'&events='.$filter.'&crumb='.urlencode($crumb);
-        $responseBody = (string) $this->client->request('GET', $dataUrl, ['cookies' => $cookieJar])->getBody();
-
-        if (self::FILTER_DIVIDENDS === $filter) {
-            return $this->resultDecoder->transformDividendDataResult($responseBody);
-        }
-
-        if (self::FILTER_SPLITS === $filter) {
-            return $this->resultDecoder->transformSplitDataResult($responseBody);
-        }
+        $responseBody = $this->getResponseBody($symbol, $interval, $startDate, $endDate, self::FILTER_HISTORICAL);
 
         return $this->resultDecoder->transformHistoricalDataResult($responseBody);
+    }
+
+    /**
+     * Get dividend data for a symbol.
+     *
+     * @return array|DividendData[]
+     *
+     * @throws ApiException
+     */
+    public function getHistoricalDividendData(string $symbol, string $interval, \DateTimeInterface $startDate, \DateTimeInterface $endDate): array
+    {
+        $this->validateIntervals($interval);
+        $this->validateDates($startDate, $endDate);
+
+        $responseBody = $this->getResponseBody($symbol, $interval, $startDate, $endDate, self::FILTER_DIVIDENDS);
+
+        return $this->resultDecoder->transformDividendDataResult($responseBody);
+    }
+
+    /**
+     * Get stock split data for a symbol.
+     *
+     * @return array|SplitData[]
+     *
+     * @throws ApiException
+     */
+    public function getHistoricalSplitData(string $symbol, string $interval, \DateTimeInterface $startDate, \DateTimeInterface $endDate): array
+    {
+        $this->validateIntervals($interval);
+        $this->validateDates($startDate, $endDate);
+
+        $responseBody = $this->getResponseBody($symbol, $interval, $startDate, $endDate, self::FILTER_SPLITS);
+
+        return $this->resultDecoder->transformSplitDataResult($responseBody);
     }
 
     /**
@@ -155,4 +184,43 @@ class ApiClient
 
         return $this->resultDecoder->transformQuotes($responseBody);
     }
+
+    /**
+     * @return string
+     */
+    private function getResponseBody(string $symbol, string $interval, \DateTimeInterface $startDate, \DateTimeInterface $endDate, string $filter): string
+    {
+        $cookieJar = new CookieJar();
+
+        $initialUrl = 'https://finance.yahoo.com/quote/'.urlencode($symbol).'/history?p='.urlencode($symbol);
+        $responseBody = (string) $this->client->request('GET', $initialUrl, ['cookies' => $cookieJar])->getBody();
+        $crumb = $this->resultDecoder->extractCrumb($responseBody);
+
+        $dataUrl = 'https://query1.finance.yahoo.com/v7/finance/download/'.urlencode($symbol).'?period1='.$startDate->getTimestamp().'&period2='.$endDate->getTimestamp().'&interval='.$interval.'&events='.$filter.'&crumb='.urlencode($crumb);
+        
+        return (string) $this->client->request('GET', $dataUrl, ['cookies' => $cookieJar])->getBody();
+    }
+
+    /**
+     * @return void
+     * @throws \InvalidArgumentException
+     */
+    private function validateIntervals(string $interval): void
+    {
+        $allowedIntervals = [self::INTERVAL_1_DAY, self::INTERVAL_1_WEEK, self::INTERVAL_1_MONTH];
+        if (!\in_array($interval, $allowedIntervals)) {
+            throw new \InvalidArgumentException(sprintf('Interval must be one of: %s', implode(', ', $allowedIntervals)));
+        }
+    }  
+
+    /**
+     * @return void
+     * @throws \InvalidArgumentException
+     */
+    private function validateDates(\DateTimeInterface $startDate, \DateTimeInterface $endDate): void
+    {
+        if ($startDate > $endDate) {
+            throw new \InvalidArgumentException('Start date must be before end date');
+        }
+    }          
 }
