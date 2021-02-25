@@ -35,7 +35,6 @@ class ApiClient
 
     public function __construct(ClientInterface $guzzleClient, ResultDecoder $resultDecoder)
     {
-        
         $this->client = $guzzleClient;
         $this->resultDecoder = $resultDecoder;
     }
@@ -59,9 +58,9 @@ class ApiClient
 
     /**
      * Get historical data for a symbol (depreciated).
-     * 
+     *
      * DEPRECIATION NOTICE:
-     * In future versions, this function will be removed. 
+     * In future versions, this function will be removed.
      * Please consider using getHistoricalQuoteData() instead.
      *
      * @return array|HistoricalData[]
@@ -197,7 +196,7 @@ class ApiClient
         $crumb = $this->resultDecoder->extractCrumb($responseBody);
 
         $dataUrl = 'https://query1.finance.yahoo.com/v7/finance/download/'.urlencode($symbol).'?period1='.$startDate->getTimestamp().'&period2='.$endDate->getTimestamp().'&interval='.$interval.'&events='.$filter.'&crumb='.urlencode($crumb);
-        
+
         return (string) $this->client->request('GET', $dataUrl, ['cookies' => $cookieJar])->getBody();
     }
 
@@ -211,7 +210,7 @@ class ApiClient
         if (!\in_array($interval, $allowedIntervals)) {
             throw new \InvalidArgumentException(sprintf('Interval must be one of: %s', implode(', ', $allowedIntervals)));
         }
-    }  
+    }
 
     /**
      * @return void
@@ -222,5 +221,5 @@ class ApiClient
         if ($startDate > $endDate) {
             throw new \InvalidArgumentException('Start date must be before end date');
         }
-    }          
+    }
 }
