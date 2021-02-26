@@ -151,12 +151,12 @@ class ResultDecoder
         return $lines;
     }
 
-    private function validateDate(array $columns): \DateTime
+    private function validateDate(string $value): \DateTime
     {
         try {
-            return new \DateTime($columns[0], new \DateTimeZone('UTC'));
+            return new \DateTime($value, new \DateTimeZone('UTC'));
         } catch (\Exception $e) {
-            throw new ApiException(sprintf('Not a date in column "Date":%s', $columns[0]), ApiException::INVALID_VALUE);
+            throw new ApiException(sprintf('Not a date in column "Date":%s', $value), ApiException::INVALID_VALUE);
         }
     }
 
@@ -171,7 +171,7 @@ class ResultDecoder
 
     private function createHistoricalData(array $columns): HistoricalData
     {
-        $date = $this->validateDate($columns);
+        $date = $this->validateDate($columns[0]);
 
         for ($i = 1; $i <= 6; ++$i) {
             if (!is_numeric($columns[$i]) && 'null' !== $columns[$i]) {
@@ -200,7 +200,7 @@ class ResultDecoder
 
     private function createDividendData(array $columns): DividendData
     {
-        $date = $this->validateDate($columns);
+        $date = $this->validateDate($columns[0]);
 
         if (!is_numeric($columns[1]) && 'null' !== $columns[1]) {
             throw new ApiException(sprintf('Not a number in column Dividends: %s', $columns[1]), ApiException::INVALID_VALUE);
@@ -222,7 +222,7 @@ class ResultDecoder
 
     private function createSplitData(array $columns): SplitData
     {
-        $date = $this->validateDate($columns);
+        $date = $this->validateDate($columns[0]);
 
         $stockSplits = (string) $columns[1];
 

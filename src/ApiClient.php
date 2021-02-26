@@ -18,9 +18,9 @@ class ApiClient
     public const INTERVAL_1_DAY = '1d';
     public const INTERVAL_1_WEEK = '1wk';
     public const INTERVAL_1_MONTH = '1mo';
-    public const FILTER_HISTORICAL = 'history';
-    public const FILTER_DIVIDENDS = 'div';
-    public const FILTER_SPLITS = 'split';
+    private const FILTER_HISTORICAL = 'history';
+    private const FILTER_DIVIDENDS = 'div';
+    private const FILTER_SPLITS = 'split';
     public const CURRENCY_SYMBOL_SUFFIX = '=X';
 
     /**
@@ -57,7 +57,7 @@ class ApiClient
     }
 
     /**
-     * Get historical data for a symbol (depreciated).
+     * Get historical data for a symbol (deprecated).
      *
      * @deprecated In future versions, this function will be removed. Please consider using getHistoricalQuoteData() instead.
      *
@@ -67,7 +67,7 @@ class ApiClient
      */
     public function getHistoricalData(string $symbol, string $interval, \DateTimeInterface $startDate, \DateTimeInterface $endDate): array
     {
-        error_log('[scheb/yahoo-finance-api] getHistoricalData() is deprecated and will be removed in a future release');
+        @trigger_error('[scheb/yahoo-finance-api] getHistoricalData() is deprecated and will be removed in a future release', \E_USER_DEPRECATED);
 
         return $this->getHistoricalQuoteData($symbol, $interval, $startDate, $endDate);
     }
@@ -84,7 +84,7 @@ class ApiClient
         $this->validateIntervals($interval);
         $this->validateDates($startDate, $endDate);
 
-        $responseBody = $this->getResponseBody($symbol, $interval, $startDate, $endDate, self::FILTER_HISTORICAL);
+        $responseBody = $this->getHistoricalDataResponseBody($symbol, $interval, $startDate, $endDate, self::FILTER_HISTORICAL);
 
         return $this->resultDecoder->transformHistoricalDataResult($responseBody);
     }
@@ -101,7 +101,7 @@ class ApiClient
         $this->validateIntervals($interval);
         $this->validateDates($startDate, $endDate);
 
-        $responseBody = $this->getResponseBody($symbol, $interval, $startDate, $endDate, self::FILTER_DIVIDENDS);
+        $responseBody = $this->getHistoricalDataResponseBody($symbol, $interval, $startDate, $endDate, self::FILTER_DIVIDENDS);
 
         return $this->resultDecoder->transformDividendDataResult($responseBody);
     }
@@ -118,7 +118,7 @@ class ApiClient
         $this->validateIntervals($interval);
         $this->validateDates($startDate, $endDate);
 
-        $responseBody = $this->getResponseBody($symbol, $interval, $startDate, $endDate, self::FILTER_SPLITS);
+        $responseBody = $this->getHistoricalDataResponseBody($symbol, $interval, $startDate, $endDate, self::FILTER_SPLITS);
 
         return $this->resultDecoder->transformSplitDataResult($responseBody);
     }
@@ -182,10 +182,7 @@ class ApiClient
         return $this->resultDecoder->transformQuotes($responseBody);
     }
 
-    /**
-     * @return string
-     */
-    private function getResponseBody(string $symbol, string $interval, \DateTimeInterface $startDate, \DateTimeInterface $endDate, string $filter): string
+    private function getHistoricalDataResponseBody(string $symbol, string $interval, \DateTimeInterface $startDate, \DateTimeInterface $endDate, string $filter): string
     {
         $cookieJar = new CookieJar();
 
@@ -198,10 +195,6 @@ class ApiClient
         return (string) $this->client->request('GET', $dataUrl, ['cookies' => $cookieJar])->getBody();
     }
 
-    /**
-     * @return void
-     * @throws \InvalidArgumentException
-     */
     private function validateIntervals(string $interval): void
     {
         $allowedIntervals = [self::INTERVAL_1_DAY, self::INTERVAL_1_WEEK, self::INTERVAL_1_MONTH];
@@ -210,10 +203,6 @@ class ApiClient
         }
     }
 
-    /**
-     * @return void
-     * @throws \InvalidArgumentException
-     */
     private function validateDates(\DateTimeInterface $startDate, \DateTimeInterface $endDate): void
     {
         if ($startDate > $endDate) {
