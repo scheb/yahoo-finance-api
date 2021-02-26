@@ -168,7 +168,7 @@ class ResultDecoderTest extends TestCase
 
         $expectedExchangeRate = new DividendData(
             new \DateTime('2017-07-11'),
-            0.205,
+            0.205
         );
         $this->assertEquals($expectedExchangeRate, $returnedResult[0]);
     }
