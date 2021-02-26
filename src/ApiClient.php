@@ -59,9 +59,7 @@ class ApiClient
     /**
      * Get historical data for a symbol (depreciated).
      *
-     * DEPRECIATION NOTICE:
-     * In future versions, this function will be removed.
-     * Please consider using getHistoricalQuoteData() instead.
+     * @deprecated In future versions, this function will be removed. Please consider using getHistoricalQuoteData() instead.
      *
      * @return array|HistoricalData[]
      *
