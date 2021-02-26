@@ -219,7 +219,7 @@ class ResultDecoderTest extends TestCase
 
         $expectedExchangeRate = new SplitData(
             new \DateTime('2017-07-11'),
-            '4:1',
+            '4:1'
         );
         $this->assertEquals($expectedExchangeRate, $returnedResult[0]);
     }
