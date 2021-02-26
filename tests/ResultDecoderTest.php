@@ -135,17 +135,6 @@ class ResultDecoderTest extends TestCase
     /**
      * @test
      */
-    public function transformHistoricalDataResult_invalidColumnsCsvGiven_throwApiException(): void
-    {
-        $this->expectException(ApiException::class);
-        $this->expectExceptionMessage('CSV did not contain correct number of columns');
-
-        $this->resultDecoder->transformHistoricalDataResult(file_get_contents(__DIR__.'/fixtures/invalidColumnsHistoricalData.csv'));
-    }
-
-    /**
-     * @test
-     */
     public function transformHistoricalDataResult_invalidDateTimeFormatCsvGiven_throwApiException(): void
     {
         $this->expectException(ApiException::class);
