@@ -8,6 +8,8 @@ use PHPUnit\Framework\TestCase;
 use Scheb\YahooFinanceApi\Exception\ApiException;
 use Scheb\YahooFinanceApi\ResultDecoder;
 use Scheb\YahooFinanceApi\Results\HistoricalData;
+use Scheb\YahooFinanceApi\Results\DividendData;
+use Scheb\YahooFinanceApi\Results\SplitData;
 use Scheb\YahooFinanceApi\Results\Quote;
 use Scheb\YahooFinanceApi\Results\SearchResult;
 use Scheb\YahooFinanceApi\ValueMapper;
@@ -152,6 +154,97 @@ class ResultDecoderTest extends TestCase
         $this->expectExceptionMessage('Not a number in column "High": this_is_not_numeric_string');
 
         $this->resultDecoder->transformHistoricalDataResult(file_get_contents(__DIR__.'/fixtures/invalidNumericStringHistoricalData.csv'));
+    }
+
+    /**
+     * @test
+     */
+    public function transformDividendDataResult_csvGiven_returnArrayOfDividendData(): void
+    {
+        $returnedResult = $this->resultDecoder->transformDividendDataResult(file_get_contents(__DIR__.'/fixtures/dividendData.csv'));
+
+        $this->assertIsArray($returnedResult);
+        $this->assertContainsOnlyInstancesOf(DividendData::class, $returnedResult);
+
+        $expectedExchangeRate = new DividendData(
+            new \DateTime('2017-07-11'),
+            0.205,
+        );
+        $this->assertEquals($expectedExchangeRate, $returnedResult[0]);
+    }
+
+    /**
+     * @test
+     */
+    public function transformDividendDataResult_unexpectedHeaderLineCsvGiven_throwApiException(): void
+    {
+        $this->expectException(ApiException::class);
+        $this->expectExceptionMessage('CSV header line did not match expected header line, given: 12345	1234567, expected: Date,Dividends');
+
+        $invalidCsvString = "12345\t1234567\t";
+        $this->resultDecoder->transformDividendDataResult($invalidCsvString);
+    }
+
+    /**
+     * @test
+     */
+    public function transformDividendDataResult_invalidDateTimeFormatCsvGiven_throwApiException(): void
+    {
+        $this->expectException(ApiException::class);
+        $this->expectExceptionMessage('Not a date in column "Date":2017-07');
+
+        $this->resultDecoder->transformDividendDataResult(file_get_contents(__DIR__.'/fixtures/invalidDateTimeFormatDividendData.csv'));
+    }
+
+    /**
+     * @test
+     */
+    public function transformDividendDataResult_invalidNumericStringCsvGiven_throwApiException(): void
+    {
+        $this->expectException(ApiException::class);
+        $this->expectExceptionMessage('Not a number in column Dividends: this_is_not_numeric_string');
+
+        $this->resultDecoder->transformDividendDataResult(file_get_contents(__DIR__.'/fixtures/invalidNumericStringDividendData.csv'));
+    }
+
+    /**
+     * @test
+     */
+    public function transformSplitDataResult_csvGiven_returnArrayOfSplitData(): void
+    {
+        $returnedResult = $this->resultDecoder->transformSplitDataResult(file_get_contents(__DIR__.'/fixtures/splitData.csv'));
+
+        $this->assertIsArray($returnedResult);
+        $this->assertContainsOnlyInstancesOf(SplitData::class, $returnedResult);
+
+        $expectedExchangeRate = new SplitData(
+            new \DateTime('2017-07-11'),
+            '4:1',
+        );
+        $this->assertEquals($expectedExchangeRate, $returnedResult[0]);
+    }
+
+    /**
+     * @test
+     */
+    public function transformSplitDataResult_unexpectedHeaderLineCsvGiven_throwApiException(): void
+    {
+        $this->expectException(ApiException::class);
+        $this->expectExceptionMessage('CSV header line did not match expected header line, given: 12345	1234567, expected: Date,Stock Splits');
+
+        $invalidCsvString = "12345\t1234567\t";
+        $this->resultDecoder->transformSplitDataResult($invalidCsvString);
+    }
+
+    /**
+     * @test
+     */
+    public function transformSplitDataResult_invalidDateTimeFormatCsvGiven_throwApiException(): void
+    {
+        $this->expectException(ApiException::class);
+        $this->expectExceptionMessage('Not a date in column "Date":2017-07');
+
+        $this->resultDecoder->transformSplitDataResult(file_get_contents(__DIR__.'/fixtures/invalidDateTimeFormatSplitData.csv'));
     }
 
     public function transformQuotesInvalidResult(): array
