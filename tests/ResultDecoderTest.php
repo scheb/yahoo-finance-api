@@ -7,11 +7,11 @@ namespace Scheb\YahooFinanceApi\Tests;
 use PHPUnit\Framework\TestCase;
 use Scheb\YahooFinanceApi\Exception\ApiException;
 use Scheb\YahooFinanceApi\ResultDecoder;
-use Scheb\YahooFinanceApi\Results\HistoricalData;
 use Scheb\YahooFinanceApi\Results\DividendData;
-use Scheb\YahooFinanceApi\Results\SplitData;
+use Scheb\YahooFinanceApi\Results\HistoricalData;
 use Scheb\YahooFinanceApi\Results\Quote;
 use Scheb\YahooFinanceApi\Results\SearchResult;
+use Scheb\YahooFinanceApi\Results\SplitData;
 use Scheb\YahooFinanceApi\ValueMapper;
 
 class ResultDecoderTest extends TestCase

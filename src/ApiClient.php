@@ -7,11 +7,11 @@ namespace Scheb\YahooFinanceApi;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Cookie\CookieJar;
 use Scheb\YahooFinanceApi\Exception\ApiException;
-use Scheb\YahooFinanceApi\Results\HistoricalData;
 use Scheb\YahooFinanceApi\Results\DividendData;
-use Scheb\YahooFinanceApi\Results\SplitData;
+use Scheb\YahooFinanceApi\Results\HistoricalData;
 use Scheb\YahooFinanceApi\Results\Quote;
 use Scheb\YahooFinanceApi\Results\SearchResult;
+use Scheb\YahooFinanceApi\Results\SplitData;
 
 class ApiClient
 {
