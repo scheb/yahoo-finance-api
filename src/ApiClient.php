@@ -7,15 +7,20 @@ namespace Scheb\YahooFinanceApi;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Cookie\CookieJar;
 use Scheb\YahooFinanceApi\Exception\ApiException;
+use Scheb\YahooFinanceApi\Results\DividendData;
 use Scheb\YahooFinanceApi\Results\HistoricalData;
 use Scheb\YahooFinanceApi\Results\Quote;
 use Scheb\YahooFinanceApi\Results\SearchResult;
+use Scheb\YahooFinanceApi\Results\SplitData;
 
 class ApiClient
 {
     public const INTERVAL_1_DAY = '1d';
     public const INTERVAL_1_WEEK = '1wk';
     public const INTERVAL_1_MONTH = '1mo';
+    private const FILTER_HISTORICAL = 'history';
+    private const FILTER_DIVIDENDS = 'div';
+    private const FILTER_SPLITS = 'split';
     public const CURRENCY_SYMBOL_SUFFIX = '=X';
 
     /**
@@ -52,7 +57,9 @@ class ApiClient
     }
 
     /**
-     * Get historical data for a symbol.
+     * Get historical data for a symbol (deprecated).
+     *
+     * @deprecated In future versions, this function will be removed. Please consider using getHistoricalQuoteData() instead.
      *
      * @return array|HistoricalData[]
      *
@@ -60,25 +67,60 @@ class ApiClient
      */
     public function getHistoricalData(string $symbol, string $interval, \DateTimeInterface $startDate, \DateTimeInterface $endDate): array
     {
-        $allowedIntervals = [self::INTERVAL_1_DAY, self::INTERVAL_1_WEEK, self::INTERVAL_1_MONTH];
-        if (!\in_array($interval, $allowedIntervals)) {
-            throw new \InvalidArgumentException(sprintf('Interval must be one of: %s', implode(', ', $allowedIntervals)));
-        }
+        @trigger_error('[scheb/yahoo-finance-api] getHistoricalData() is deprecated and will be removed in a future release', \E_USER_DEPRECATED);
 
-        if ($startDate > $endDate) {
-            throw new \InvalidArgumentException('Start date must be before end date');
-        }
+        return $this->getHistoricalQuoteData($symbol, $interval, $startDate, $endDate);
+    }
 
-        $cookieJar = new CookieJar();
+    /**
+     * Get historical data for a symbol.
+     *
+     * @return array|HistoricalData[]
+     *
+     * @throws ApiException
+     */
+    public function getHistoricalQuoteData(string $symbol, string $interval, \DateTimeInterface $startDate, \DateTimeInterface $endDate): array
+    {
+        $this->validateIntervals($interval);
+        $this->validateDates($startDate, $endDate);
 
-        $initialUrl = 'https://finance.yahoo.com/quote/'.urlencode($symbol).'/history?p='.urlencode($symbol);
-        $responseBody = (string) $this->client->request('GET', $initialUrl, ['cookies' => $cookieJar])->getBody();
-        $crumb = $this->resultDecoder->extractCrumb($responseBody);
-
-        $dataUrl = 'https://query1.finance.yahoo.com/v7/finance/download/'.urlencode($symbol).'?period1='.$startDate->getTimestamp().'&period2='.$endDate->getTimestamp().'&interval='.$interval.'&events=history&crumb='.urlencode($crumb);
-        $responseBody = (string) $this->client->request('GET', $dataUrl, ['cookies' => $cookieJar])->getBody();
+        $responseBody = $this->getHistoricalDataResponseBody($symbol, $interval, $startDate, $endDate, self::FILTER_HISTORICAL);
 
         return $this->resultDecoder->transformHistoricalDataResult($responseBody);
+    }
+
+    /**
+     * Get dividend data for a symbol.
+     *
+     * @return array|DividendData[]
+     *
+     * @throws ApiException
+     */
+    public function getHistoricalDividendData(string $symbol, string $interval, \DateTimeInterface $startDate, \DateTimeInterface $endDate): array
+    {
+        $this->validateIntervals($interval);
+        $this->validateDates($startDate, $endDate);
+
+        $responseBody = $this->getHistoricalDataResponseBody($symbol, $interval, $startDate, $endDate, self::FILTER_DIVIDENDS);
+
+        return $this->resultDecoder->transformDividendDataResult($responseBody);
+    }
+
+    /**
+     * Get stock split data for a symbol.
+     *
+     * @return array|SplitData[]
+     *
+     * @throws ApiException
+     */
+    public function getHistoricalSplitData(string $symbol, string $interval, \DateTimeInterface $startDate, \DateTimeInterface $endDate): array
+    {
+        $this->validateIntervals($interval);
+        $this->validateDates($startDate, $endDate);
+
+        $responseBody = $this->getHistoricalDataResponseBody($symbol, $interval, $startDate, $endDate, self::FILTER_SPLITS);
+
+        return $this->resultDecoder->transformSplitDataResult($responseBody);
     }
 
     /**
@@ -138,5 +180,33 @@ class ApiClient
         $responseBody = (string) $this->client->request('GET', $url)->getBody();
 
         return $this->resultDecoder->transformQuotes($responseBody);
+    }
+
+    private function getHistoricalDataResponseBody(string $symbol, string $interval, \DateTimeInterface $startDate, \DateTimeInterface $endDate, string $filter): string
+    {
+        $cookieJar = new CookieJar();
+
+        $initialUrl = 'https://finance.yahoo.com/quote/'.urlencode($symbol).'/history?p='.urlencode($symbol);
+        $responseBody = (string) $this->client->request('GET', $initialUrl, ['cookies' => $cookieJar])->getBody();
+        $crumb = $this->resultDecoder->extractCrumb($responseBody);
+
+        $dataUrl = 'https://query1.finance.yahoo.com/v7/finance/download/'.urlencode($symbol).'?period1='.$startDate->getTimestamp().'&period2='.$endDate->getTimestamp().'&interval='.$interval.'&events='.$filter.'&crumb='.urlencode($crumb);
+
+        return (string) $this->client->request('GET', $dataUrl, ['cookies' => $cookieJar])->getBody();
+    }
+
+    private function validateIntervals(string $interval): void
+    {
+        $allowedIntervals = [self::INTERVAL_1_DAY, self::INTERVAL_1_WEEK, self::INTERVAL_1_MONTH];
+        if (!\in_array($interval, $allowedIntervals)) {
+            throw new \InvalidArgumentException(sprintf('Interval must be one of: %s', implode(', ', $allowedIntervals)));
+        }
+    }
+
+    private function validateDates(\DateTimeInterface $startDate, \DateTimeInterface $endDate): void
+    {
+        if ($startDate > $endDate) {
+            throw new \InvalidArgumentException('Start date must be before end date');
+        }
     }
 }
