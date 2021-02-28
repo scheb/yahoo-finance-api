@@ -97,12 +97,11 @@ class ApiClient
      *
      * @throws ApiException
      */
-    public function getHistoricalDividendData(string $symbol, string $interval, \DateTimeInterface $startDate, \DateTimeInterface $endDate): array
+    public function getHistoricalDividendData(string $symbol, \DateTimeInterface $startDate, \DateTimeInterface $endDate): array
     {
-        $this->validateIntervals($interval);
         $this->validateDates($startDate, $endDate);
 
-        $responseBody = $this->getHistoricalDataResponseBody($symbol, $interval, $startDate, $endDate, self::FILTER_DIVIDENDS);
+        $responseBody = $this->getHistoricalDataResponseBody($symbol, self::INTERVAL_1_MONTH, $startDate, $endDate, self::FILTER_DIVIDENDS);
 
         return $this->resultDecoder->transformDividendDataResult($responseBody);
     }
@@ -114,12 +113,11 @@ class ApiClient
      *
      * @throws ApiException
      */
-    public function getHistoricalSplitData(string $symbol, string $interval, \DateTimeInterface $startDate, \DateTimeInterface $endDate): array
+    public function getHistoricalSplitData(string $symbol, \DateTimeInterface $startDate, \DateTimeInterface $endDate): array
     {
-        $this->validateIntervals($interval);
         $this->validateDates($startDate, $endDate);
 
-        $responseBody = $this->getHistoricalDataResponseBody($symbol, $interval, $startDate, $endDate, self::FILTER_SPLITS);
+        $responseBody = $this->getHistoricalDataResponseBody($symbol, self::INTERVAL_1_MONTH, $startDate, $endDate, self::FILTER_SPLITS);
 
         return $this->resultDecoder->transformSplitDataResult($responseBody);
     }
