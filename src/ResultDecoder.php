@@ -171,6 +171,10 @@ class ResultDecoder
 
     private function createHistoricalData(array $columns): HistoricalData
     {
+        if (7 !== \count($columns)) {
+            throw new ApiException('CSV did not contain correct number of columns', ApiException::INVALID_RESPONSE);
+        }
+
         $date = $this->validateDate($columns[0]);
 
         for ($i = 1; $i <= 6; ++$i) {
@@ -200,6 +204,10 @@ class ResultDecoder
 
     private function createDividendData(array $columns): DividendData
     {
+        if (2 !== \count($columns)) {
+            throw new ApiException('CSV did not contain correct number of columns', ApiException::INVALID_RESPONSE);
+        }
+
         $date = $this->validateDate($columns[0]);
 
         if (!is_numeric($columns[1]) && 'null' !== $columns[1]) {
@@ -222,6 +230,10 @@ class ResultDecoder
 
     private function createSplitData(array $columns): SplitData
     {
+        if (2 !== \count($columns)) {
+            throw new ApiException('CSV did not contain correct number of columns', ApiException::INVALID_RESPONSE);
+        }
+
         $date = $this->validateDate($columns[0]);
 
         $stockSplits = (string) $columns[1];

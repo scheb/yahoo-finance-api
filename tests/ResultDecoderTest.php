@@ -125,6 +125,17 @@ class ResultDecoderTest extends TestCase
     /**
      * @test
      */
+    public function transformHistoricalDataResult_invalidColumnsCsvGiven_throwApiException(): void
+    {
+        $this->expectException(ApiException::class);
+        $this->expectExceptionMessage('CSV did not contain correct number of columns');
+
+        $this->resultDecoder->transformHistoricalDataResult(file_get_contents(__DIR__.'/fixtures/invalidColumnsHistoricalData.csv'));
+    }
+
+    /**
+     * @test
+     */
     public function transformHistoricalDataResult_unexpectedHeaderLineCsvGiven_throwApiException(): void
     {
         $this->expectException(ApiException::class);
@@ -176,6 +187,17 @@ class ResultDecoderTest extends TestCase
     /**
      * @test
      */
+    public function transformDividendDataResult_invalidColumnsCsvGiven_throwApiException(): void
+    {
+        $this->expectException(ApiException::class);
+        $this->expectExceptionMessage('CSV did not contain correct number of columns');
+
+        $this->resultDecoder->transformDividendDataResult(file_get_contents(__DIR__.'/fixtures/invalidColumnsDividendData.csv'));
+    }
+
+    /**
+     * @test
+     */
     public function transformDividendDataResult_unexpectedHeaderLineCsvGiven_throwApiException(): void
     {
         $this->expectException(ApiException::class);
@@ -222,6 +244,17 @@ class ResultDecoderTest extends TestCase
             '4:1'
         );
         $this->assertEquals($expectedExchangeRate, $returnedResult[0]);
+    }
+
+    /**
+     * @test
+     */
+    public function transformSplitDataResult_invalidColumnsCsvGiven_throwApiException(): void
+    {
+        $this->expectException(ApiException::class);
+        $this->expectExceptionMessage('CSV did not contain correct number of columns');
+
+        $this->resultDecoder->transformSplitDataResult(file_get_contents(__DIR__.'/fixtures/invalidColumnsSplitData.csv'));
     }
 
     /**
