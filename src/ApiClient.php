@@ -18,10 +18,11 @@ class ApiClient
     public const INTERVAL_1_DAY = '1d';
     public const INTERVAL_1_WEEK = '1wk';
     public const INTERVAL_1_MONTH = '1mo';
+    public const CURRENCY_SYMBOL_SUFFIX = '=X';
+
     private const FILTER_HISTORICAL = 'history';
     private const FILTER_DIVIDENDS = 'div';
     private const FILTER_SPLITS = 'split';
-    public const CURRENCY_SYMBOL_SUFFIX = '=X';
 
     /**
      * @var ClientInterface
@@ -42,7 +43,7 @@ class ApiClient
     /**
      * Search for stocks.
      *
-     * @return array|SearchResult[]
+     * @return SearchResult[]
      *
      * @throws ApiException
      */
@@ -61,7 +62,7 @@ class ApiClient
      *
      * @deprecated In future versions, this function will be removed. Please consider using getHistoricalQuoteData() instead.
      *
-     * @return array|HistoricalData[]
+     * @return HistoricalData[]
      *
      * @throws ApiException
      */
@@ -75,7 +76,7 @@ class ApiClient
     /**
      * Get historical data for a symbol.
      *
-     * @return array|HistoricalData[]
+     * @return HistoricalData[]
      *
      * @throws ApiException
      */
@@ -92,7 +93,7 @@ class ApiClient
     /**
      * Get dividend data for a symbol.
      *
-     * @return array|DividendData[]
+     * @return DividendData[]
      *
      * @throws ApiException
      */
@@ -109,7 +110,7 @@ class ApiClient
     /**
      * Get stock split data for a symbol.
      *
-     * @return array|SplitData[]
+     * @return SplitData[]
      *
      * @throws ApiException
      */
@@ -136,7 +137,7 @@ class ApiClient
     /**
      * Get quotes for one or multiple symbols.
      *
-     * @return array|Quote[]
+     * @return Quote[]
      */
     public function getQuotes(array $symbols): array
     {
@@ -144,7 +145,7 @@ class ApiClient
     }
 
     /**
-     * Get exchange rate for two currencies. Accepts concatenated ISO 4217 currency codes.
+     * Get exchange rate for two currencies. Accepts concatenated ISO 4217 currency codes such as "GBP" or "USD".
      */
     public function getExchangeRate(string $currency1, string $currency2): ?Quote
     {
@@ -154,11 +155,11 @@ class ApiClient
     }
 
     /**
-     * Retrieves currency exchange rates. Accepts concatenated ISO 4217 currency codes such as "GBPUSD".
+     * Retrieves currency exchange rates. Accepts concatenated ISO 4217 currency codes such as "GBP" or "USD".
      *
-     * @param array $currencyPairs List of pairs of currencies
+     * @param string[][] $currencyPairs List of pairs of currencies, e.g. [["USD", "GBP"]]
      *
-     * @return array|Quote[]
+     * @return Quote[]
      */
     public function getExchangeRates(array $currencyPairs): array
     {
@@ -172,7 +173,7 @@ class ApiClient
     /**
      * Fetch quote data from API.
      *
-     * @return array|Quote[]
+     * @return Quote[]
      */
     private function fetchQuotes(array $symbols): array
     {
