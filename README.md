@@ -62,10 +62,10 @@ $searchResult = $client->search("Apple");
 $historicalData = $client->getHistoricalQuoteData("AAPL", ApiClient::INTERVAL_1_DAY, new \DateTime("-14 days"), new \DateTime("today"));
 
 // Or you can filter by dividends and return an array of Scheb\YahooFinanceApi\Results\DividendData
-$dividendData = $client->getHistoricalDividendData("AAPL", ApiClient::INTERVAL_1_DAY, new \DateTime("-14 days"), new \DateTime("today"));
+$dividendData = $client->getHistoricalDividendData("AAPL", new \DateTime("-14 days"), new \DateTime("today"));
 
 // Or you can filter by splits and return an array of Scheb\YahooFinanceApi\Results\SplitData
-$splitData = $client->getHistoricalSplitData("AAPL", ApiClient::INTERVAL_1_DAY, new \DateTime("-14 days"), new \DateTime("today"));
+$splitData = $client->getHistoricalSplitData("AAPL", new \DateTime("-14 days"), new \DateTime("today"));
 
 // Returns Scheb\YahooFinanceApi\Results\Quote
 $exchangeRate = $client->getExchangeRate("USD", "EUR");
