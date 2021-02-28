@@ -79,9 +79,9 @@ class ApiClientIntegrationTest extends TestCase
      * @test
      * @dataProvider getTestDataForHistoricalData
      */
-    public function getHistoricalData_valuesForInterval_returnHistoricalData($interval, \DateTime $startDate, \DateTime $endDate): void
+    public function getHistoricalQuoteData_valuesForInterval_returnHistoricalData($interval, \DateTime $startDate, \DateTime $endDate): void
     {
-        $returnValue = $this->client->getHistoricalData(self::APPLE_SYMBOL, $interval, $startDate, $endDate);
+        $returnValue = $this->client->getHistoricalQuoteData(self::APPLE_SYMBOL, $interval, $startDate, $endDate);
 
         $this->assertIsArray($returnValue);
         $this->assertGreaterThan(0, \count($returnValue));
@@ -100,21 +100,21 @@ class ApiClientIntegrationTest extends TestCase
     /**
      * @test
      */
-    public function getHistoricalData_valuesForInvalidInterval_throwInvalidArgumentException(): void
+    public function getHistoricalQuoteData_valuesForInvalidInterval_throwInvalidArgumentException(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Interval must be one of: 1d, 1wk, 1mo');
-        $this->client->getHistoricalData(self::APPLE_SYMBOL, 'invalid_interval', new \DateTime('-7 days'), new \DateTime('today'));
+        $this->client->getHistoricalQuoteData(self::APPLE_SYMBOL, 'invalid_interval', new \DateTime('-7 days'), new \DateTime('today'));
     }
 
     /**
      * @test
      */
-    public function getHistoricalData_startDateIsGreaterThanEndDate_throwInvalidArgumentException(): void
+    public function getHistoricalQuoteData_startDateIsGreaterThanEndDate_throwInvalidArgumentException(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Start date must be before end date');
-        $this->client->getHistoricalData(self::APPLE_SYMBOL, ApiClient::INTERVAL_1_DAY, new \DateTime('7 days'), new \DateTime('today'));
+        $this->client->getHistoricalQuoteData(self::APPLE_SYMBOL, ApiClient::INTERVAL_1_DAY, new \DateTime('7 days'), new \DateTime('today'));
     }
 
     public function getTestDataForHistoricalData(): array
