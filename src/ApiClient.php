@@ -103,7 +103,13 @@ class ApiClient
 
         $responseBody = $this->getHistoricalDataResponseBody($symbol, self::INTERVAL_1_MONTH, $startDate, $endDate, self::FILTER_DIVIDENDS);
 
-        return $this->resultDecoder->transformDividendDataResult($responseBody);
+        $historicData = $this->resultDecoder->transformDividendDataResult($responseBody);
+        usort($historicData, function (DividendData $a, DividendData $b): int {
+            // Data is not necessary in order, so ensure ascending order by date
+            return $a->getDate() <=> $b->getDate();
+        });
+
+        return $historicData;
     }
 
     /**
@@ -119,7 +125,13 @@ class ApiClient
 
         $responseBody = $this->getHistoricalDataResponseBody($symbol, self::INTERVAL_1_MONTH, $startDate, $endDate, self::FILTER_SPLITS);
 
-        return $this->resultDecoder->transformSplitDataResult($responseBody);
+        $historicData = $this->resultDecoder->transformSplitDataResult($responseBody);
+        usort($historicData, function (SplitData $a, SplitData $b): int {
+            // Data is not necessary in order, so ensure ascending order by date
+            return $a->getDate() <=> $b->getDate();
+        });
+
+        return $historicData;
     }
 
     /**
