@@ -8,9 +8,11 @@ use GuzzleHttp\Exception\TransferException;
 use PHPUnit\Framework\TestCase;
 use Scheb\YahooFinanceApi\ApiClient;
 use Scheb\YahooFinanceApi\ApiClientFactory;
+use Scheb\YahooFinanceApi\Results\DividendData;
 use Scheb\YahooFinanceApi\Results\HistoricalData;
 use Scheb\YahooFinanceApi\Results\Quote;
 use Scheb\YahooFinanceApi\Results\SearchResult;
+use Scheb\YahooFinanceApi\Results\SplitData;
 
 class ApiClientIntegrationTest extends TestCase
 {
@@ -124,6 +126,63 @@ class ApiClientIntegrationTest extends TestCase
             [ApiClient::INTERVAL_1_WEEK, new \DateTime('-8 weeks'), new \DateTime('today')],
             [ApiClient::INTERVAL_1_MONTH, new \DateTime('-12 months'), new \DateTime('today')],
         ];
+    }
+
+    /**
+     * @test
+     */
+    public function getHistoricalDividendData_valuesForInterval_returnHistoricalData(): void
+    {
+        $returnValue = $this->client->getHistoricalDividendData(self::APPLE_SYMBOL, new \DateTime('2020-01-01'), new \DateTime());
+
+        $this->assertIsArray($returnValue);
+        $this->assertGreaterThanOrEqual(5, \count($returnValue));
+        $this->assertContainsOnlyInstancesOf(DividendData::class, $returnValue);
+
+        // Assert the dividend from Feb 2020
+        $historicalData = $returnValue[0];
+        $this->assertInstanceOf(\DateTime::class, $historicalData->getDate());
+        $this->assertEquals('2020-02-07', $historicalData->getDate()->format('Y-m-d'));
+        $this->assertIsFloat($historicalData->getDividends());
+        $this->assertEquals(0.1925, $historicalData->getDividends());
+    }
+
+    /**
+     * @test
+     */
+    public function getHistoricalDividendData_startDateIsGreaterThanEndDate_throwInvalidArgumentException(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Start date must be before end date');
+        $this->client->getHistoricalDividendData(self::APPLE_SYMBOL, new \DateTime('7 days'), new \DateTime('today'));
+    }
+
+    /**
+     * @test
+     */
+    public function getHistoricalSplitData_valuesForInterval_returnHistoricalData(): void
+    {
+        $returnValue = $this->client->getHistoricalSplitData(self::APPLE_SYMBOL, new \DateTime('2005-01-01'), new \DateTime());
+
+        $this->assertIsArray($returnValue);
+        $this->assertGreaterThanOrEqual(3, \count($returnValue));
+        $this->assertContainsOnlyInstancesOf(SplitData::class, $returnValue);
+
+        // Assert the stop split from Feb 2005
+        $historicalData = $returnValue[0];
+        $this->assertInstanceOf(\DateTime::class, $historicalData->getDate());
+        $this->assertEquals('2005-02-28', $historicalData->getDate()->format('Y-m-d'));
+        $this->assertEquals('2:1', $historicalData->getStockSplits());
+    }
+
+    /**
+     * @test
+     */
+    public function getHistoricalSplitData_startDateIsGreaterThanEndDate_throwInvalidArgumentException(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Start date must be before end date');
+        $this->client->getHistoricalSplitData(self::APPLE_SYMBOL, new \DateTime('7 days'), new \DateTime('today'));
     }
 
     /**
