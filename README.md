@@ -98,10 +98,20 @@ Version Guidance
 [v3-repo]: https://github.com/scheb/yahoo-finance-api/tree/3.x
 [v4-repo]: https://github.com/scheb/yahoo-finance-api/tree/4.x
 
+License
+-------
+This library is available under the [MIT license](LICENSE).
+
 Contributing
 ------------
 Want to contribute to this project? See [CONTRIBUTING.md](CONTRIBUTING.md).
 
-License
--------
-This bundle is available under the [MIT license](LICENSE).
+Support Me
+----------
+I'm developing this library since 2014. I love to hear from people using it, giving me the motivation to keep working
+on my open source projects.
+
+If you want to let me know you're finding it useful, please consider giving it a star ⭐ on GitHub.
+
+If you love my work and want to say thank you, you can help me out for a beer 🍻️
+[via PayPal](https://paypal.me/ChristianScheb).
