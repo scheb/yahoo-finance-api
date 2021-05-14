@@ -26,8 +26,8 @@ For pull requests, please follow these guidelines:
 Before you create a pull request, please make sure your changes fulfill the quality criteria:
 
 1) Install the dependencies with `composer install` in the project root
-2) Run the unit tests with `vendor/bin/phpunit`
-3) Run PHP CodeSniffer with `vendor/bin/phpcs --standard=php_cs.xml src tests`
-4) Run Psalm with `vendor/bin/psalm` and address any error-level issues
-5) Run [PHP-CS-Fixer](https://github.com/FriendsOfPHP/PHP-CS-Fixer) v3 (not provided with the library, has to be
+2) Run [PHP-CS-Fixer](https://github.com/FriendsOfPHP/PHP-CS-Fixer) v3 (not provided with the library, has to be
    installed locally): `php-cs-fixer fix`
+3) Run the unit tests with `vendor/bin/phpunit`
+4) Run PHP CodeSniffer with `vendor/bin/phpcs --standard=php_cs.xml src tests`
+5) Run Psalm with `vendor/bin/psalm` and address any error-level issues
