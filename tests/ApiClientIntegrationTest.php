@@ -88,7 +88,7 @@ class ApiClientIntegrationTest extends TestCase
         // Can be either NAS or NMS
         $this->assertThat(
             $aaplStock->getExch(),
-            $this->equalTo('FRA'),
+            $this->equalTo('FRA')
         );
     }
 
