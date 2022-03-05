@@ -18,12 +18,16 @@ class ApiClientIntegrationTest extends TestCase
 {
     private const APPLE_NAME = 'Apple';
     private const APPLE_SYMBOL = 'AAPL';
+    private const APPLE_SYMBOL_FRANKFURT = 'APC.F';
     private const GOOGLE_SYMBOL = 'GOOG';
 
     private const CURRENCY_USD = 'USD';
     private const CURRENCY_EUR = 'EUR';
     private const TRY_COUNT = 3;
     private const RETRY_SLEEP_SECONDS = 1;
+
+    private const REGION_US = 'en_US';
+    private const REGION_GERMANY = 'de_DE';
 
     /**
      * @var ApiClient
@@ -45,7 +49,7 @@ class ApiClientIntegrationTest extends TestCase
         $this->assertIsArray($returnValue);
         $this->assertContainsOnlyInstancesOf(SearchResult::class, $returnValue);
 
-        $aaplStock = $this->findAAPL($returnValue);
+        $aaplStock = $this->findApple($returnValue);
         $this->assertNotNull($aaplStock, 'Search result must contain AAPL');
 
         $this->assertEquals('Apple Inc.', $aaplStock->getName());
@@ -64,12 +68,37 @@ class ApiClientIntegrationTest extends TestCase
     }
 
     /**
+     * @test
+     */
+    public function search_withSearchTermAndRegion_returnSearchResults(): void
+    {
+        $returnValue = $this->client->search(self::APPLE_NAME, self::REGION_GERMANY);
+
+        $this->assertIsArray($returnValue);
+        $this->assertContainsOnlyInstancesOf(SearchResult::class, $returnValue);
+
+        $aaplStock = $this->findApple($returnValue, self::APPLE_SYMBOL_FRANKFURT);
+        $this->assertNotNull($aaplStock, 'Search result must contain APC.F');
+
+        $this->assertEquals('Apple Inc.', $aaplStock->getName());
+        $this->assertEquals('S', $aaplStock->getType());
+        $this->assertEquals('Frankfurt', $aaplStock->getExchDisp());
+        $this->assertEquals('Aktie', $aaplStock->getTypeDisp());
+
+        // Can be either NAS or NMS
+        $this->assertThat(
+            $aaplStock->getExch(),
+            $this->equalTo('FRA')
+        );
+    }
+
+    /**
      * @param SearchResult[] $searchResult
      */
-    private function findAAPL($searchResult): ?SearchResult
+    private function findApple($searchResult, $symbol = self::APPLE_SYMBOL): ?SearchResult
     {
         foreach ($searchResult as $result) {
-            if (self::APPLE_SYMBOL === $result->getSymbol()) {
+            if ($symbol === $result->getSymbol()) {
                 return $result;
             }
         }
