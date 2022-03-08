@@ -51,7 +51,7 @@ use GuzzleHttp\Client;
 $client = ApiClientFactory::createApiClient();
 
 // Or use your own Guzzle client and pass it in
-$options = [/*...*/];
+$options = [/* ... */];
 $guzzleClient = new Client($options);
 $client = ApiClientFactory::createApiClient($guzzleClient);
 
