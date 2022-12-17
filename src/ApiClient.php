@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Scheb\YahooFinanceApi;
 
 use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Cookie\CookieJar;
 use Scheb\YahooFinanceApi\Exception\ApiException;
 use Scheb\YahooFinanceApi\Results\DividendData;
 use Scheb\YahooFinanceApi\Results\HistoricalData;
@@ -199,15 +198,9 @@ class ApiClient
 
     private function getHistoricalDataResponseBody(string $symbol, string $interval, \DateTimeInterface $startDate, \DateTimeInterface $endDate, string $filter): string
     {
-        $cookieJar = new CookieJar();
+        $dataUrl = 'https://query1.finance.yahoo.com/v7/finance/download/'.urlencode($symbol).'?period1='.$startDate->getTimestamp().'&period2='.$endDate->getTimestamp().'&interval='.$interval.'&events='.$filter;
 
-        $initialUrl = 'https://finance.yahoo.com/quote/'.urlencode($symbol).'/history?p='.urlencode($symbol);
-        $responseBody = (string) $this->client->request('GET', $initialUrl, ['cookies' => $cookieJar])->getBody();
-        $crumb = $this->resultDecoder->extractCrumb($responseBody);
-
-        $dataUrl = 'https://query1.finance.yahoo.com/v7/finance/download/'.urlencode($symbol).'?period1='.$startDate->getTimestamp().'&period2='.$endDate->getTimestamp().'&interval='.$interval.'&events='.$filter.'&crumb='.urlencode($crumb);
-
-        return (string) $this->client->request('GET', $dataUrl, ['cookies' => $cookieJar])->getBody();
+        return (string) $this->client->request('GET', $dataUrl)->getBody();
     }
 
     private function validateIntervals(string $interval): void
