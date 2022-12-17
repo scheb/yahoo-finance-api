@@ -31,5 +31,10 @@
         "psr-4": {
             "Scheb\\YahooFinanceApi\\Tests\\": "tests/"
         }
+    },
+    "config": {
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true
+        }
     }
 }
