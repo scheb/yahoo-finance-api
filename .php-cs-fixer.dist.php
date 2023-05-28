@@ -3,6 +3,7 @@
 $rules = [
     '@Symfony' => true,
     'native_function_invocation' => ['include' => ['@compiler_optimized'], 'scope' => 'namespaced'],
+    'no_superfluous_phpdoc_tags' => ['allow_mixed' => true],
     'phpdoc_to_comment' => false,
     'phpdoc_align' => false,
     'php_unit_method_casing' => false,

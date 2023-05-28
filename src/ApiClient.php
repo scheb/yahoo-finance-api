@@ -234,6 +234,6 @@ class ApiClient
 
     private function getRandomQueryServer(): int
     {
-        return \rand(1, 2);
+        return rand(1, 2);
     }
 }
