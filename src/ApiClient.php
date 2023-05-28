@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Scheb\YahooFinanceApi;
 
 use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Cookie\CookieJar;
 use Scheb\YahooFinanceApi\Exception\ApiException;
 use Scheb\YahooFinanceApi\Results\DividendData;
 use Scheb\YahooFinanceApi\Results\HistoricalData;
@@ -188,10 +189,21 @@ class ApiClient
      *
      * @return Quote[]
      */
-    private function fetchQuotes(array $symbols): array
+    private function fetchQuotes(array $symbols)
     {
-        $url = 'https://query1.finance.yahoo.com/v6/finance/quote?symbols='.urlencode(implode(',', $symbols));
-        $responseBody = (string) $this->client->request('GET', $url)->getBody();
+        $cookieJar = new CookieJar();
+
+        // Initialize session cookies
+        $initialUrl = 'https://fc.yahoo.com';
+        $this->client->request('GET', $initialUrl, ['cookies' => $cookieJar, 'http_errors' => false]);
+
+        // Get crumb value
+        $initialUrl = 'https://query2.finance.yahoo.com/v1/test/getcrumb';
+        $crumb = (string) $this->client->request('GET', $initialUrl, ['cookies' => $cookieJar])->getBody();
+
+        // Fetch quotes
+        $url = 'https://query2.finance.yahoo.com/v7/finance/quote?crumb=' . $crumb . '&symbols='.urlencode(implode(',', $symbols));
+        $responseBody = (string) $this->client->request('GET', $url, ['cookies' => $cookieJar])->getBody();
 
         return $this->resultDecoder->transformQuotes($responseBody);
     }
