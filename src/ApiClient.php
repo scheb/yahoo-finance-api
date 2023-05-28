@@ -191,6 +191,7 @@ class ApiClient
      */
     private function fetchQuotes(array $symbols)
     {
+        $qs = $this->getRandomQueryServer();
         $cookieJar = new CookieJar();
 
         // Initialize session cookies
@@ -198,11 +199,11 @@ class ApiClient
         $this->client->request('GET', $initialUrl, ['cookies' => $cookieJar, 'http_errors' => false]);
 
         // Get crumb value
-        $initialUrl = 'https://query2.finance.yahoo.com/v1/test/getcrumb';
+        $initialUrl = 'https://query'.$qs.'.finance.yahoo.com/v1/test/getcrumb';
         $crumb = (string) $this->client->request('GET', $initialUrl, ['cookies' => $cookieJar])->getBody();
 
         // Fetch quotes
-        $url = 'https://query2.finance.yahoo.com/v7/finance/quote?crumb=' . $crumb . '&symbols='.urlencode(implode(',', $symbols));
+        $url = 'https://query'.$qs.'.finance.yahoo.com/v7/finance/quote?crumb='.$crumb.'&symbols='.urlencode(implode(',', $symbols));
         $responseBody = (string) $this->client->request('GET', $url, ['cookies' => $cookieJar])->getBody();
 
         return $this->resultDecoder->transformQuotes($responseBody);
@@ -210,7 +211,8 @@ class ApiClient
 
     private function getHistoricalDataResponseBody(string $symbol, string $interval, \DateTimeInterface $startDate, \DateTimeInterface $endDate, string $filter): string
     {
-        $dataUrl = 'https://query1.finance.yahoo.com/v7/finance/download/'.urlencode($symbol).'?period1='.$startDate->getTimestamp().'&period2='.$endDate->getTimestamp().'&interval='.$interval.'&events='.$filter;
+        $qs = $this->getRandomQueryServer();
+        $dataUrl = 'https://query'.$qs.'.finance.yahoo.com/v7/finance/download/'.urlencode($symbol).'?period1='.$startDate->getTimestamp().'&period2='.$endDate->getTimestamp().'&interval='.$interval.'&events='.$filter;
 
         return (string) $this->client->request('GET', $dataUrl)->getBody();
     }
@@ -228,5 +230,10 @@ class ApiClient
         if ($startDate > $endDate) {
             throw new \InvalidArgumentException('Start date must be before end date');
         }
+    }
+
+    private function getRandomQueryServer(): int
+    {
+        return \rand(1, 2);
     }
 }
