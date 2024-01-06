@@ -18,7 +18,7 @@ $client = ApiClientFactory::createApiClient($guzzleClient);
 $searchResult = $client->search('Apple');
 
 // Returns an array of Scheb\YahooFinanceApi\Results\HistoricalData
-$historicalData = $client->getHistoricalData('AAPL', ApiClient::INTERVAL_1_DAY, new \DateTime('-14 days'), new \DateTime('today'));
+$historicalData = $client->getHistoricalData('AAPL', ApiClient::INTERVAL_1_DAY, new DateTime('-14 days'), new DateTime('today'));
 
 // Returns Scheb\YahooFinanceApi\Results\Quote
 $exchangeRate = $client->getExchangeRate('USD', 'EUR');
