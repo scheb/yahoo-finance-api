@@ -28,6 +28,7 @@ class ApiClientIntegrationTest extends TestCase
 
     private const REGION_US = 'en_US';
     private const REGION_GERMANY = 'de_DE';
+    private const INIT_COOKIE_URL = 'https://sports.yahoo.com';
 
     /**
      * @var ApiClient
@@ -36,7 +37,7 @@ class ApiClientIntegrationTest extends TestCase
 
     public function setUp(): void
     {
-        $this->client = ApiClientFactory::createApiClient();
+        $this->client = ApiClientFactory::createApiClient(null, self::INIT_COOKIE_URL);
     }
 
     /**

@@ -9,11 +9,11 @@ use GuzzleHttp\ClientInterface;
 
 class ApiClientFactory
 {
-    public static function createApiClient(ClientInterface $guzzleClient = null): ApiClient
+    public static function createApiClient(ClientInterface $guzzleClient = null, ?string $initCookieUrl = null): ApiClient
     {
         $guzzleClient = $guzzleClient ? $guzzleClient : new Client();
         $resultDecoder = new ResultDecoder(new ValueMapper());
 
-        return new ApiClient($guzzleClient, $resultDecoder);
+        return new ApiClient($guzzleClient, $resultDecoder, $initCookieUrl);
     }
 }

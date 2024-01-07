@@ -39,16 +39,37 @@ class ApiClient
      */
     private $userAgent;
 
-    public function __construct(ClientInterface $guzzleClient, ResultDecoder $resultDecoder)
+    /**
+     * @var string|null
+     */
+    private $initCookieUrl;
+
+    public function __construct(ClientInterface $guzzleClient, ResultDecoder $resultDecoder, ?string $initCookieUrl = null)
     {
         $this->client = $guzzleClient;
         $this->resultDecoder = $resultDecoder;
+        $this->initCookieUrl = $initCookieUrl;
         $this->userAgent = UserAgent::getRandomUserAgent();
     }
 
-    public function getHeaders(): array
+    /**
+     * @deprecated
+     */
+    public function getHeaders(): array {
+        return $this->getApiClientHeaders();
+    }
+
+    private function getApiClientHeaders(): array
     {
         return [
+            'User-Agent' => $this->userAgent,
+        ];
+    }
+
+    private function getBrowserHeaders(): array
+    {
+        return [
+            'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
             'User-Agent' => $this->userAgent,
         ];
     }
@@ -69,7 +90,7 @@ class ApiClient
             .'?bkt=[%22findd-ctrl%22,%22fin-strm-test1%22,%22fndmtest%22,%22finnossl%22]&device=desktop&feature=canvassOffnet,finGrayNav,newContentAttribution,relatedVideoFeature,videoNativePlaylist,livecoverage&intl=us&lang='
             .urlencode($locale)
             .'&partner=none&prid=eo2okrhcni00f&region=DE&site=finance&tz=UTC&ver=0.102.432&returnMeta=true';
-        $responseBody = (string) $this->client->request('GET', $url, ['headers' => $this->getHeaders()])->getBody();
+        $responseBody = (string) $this->client->request('GET', $url, ['headers' => $this->getApiClientHeaders()])->getBody();
 
         return $this->resultDecoder->transformSearchResult($responseBody);
     }
@@ -209,15 +230,16 @@ class ApiClient
 
         // Initialize session cookies
         $initialUrl = 'https://fc.yahoo.com';
-        $this->client->request('GET', $initialUrl, ['cookies' => $cookieJar, 'http_errors' => false, 'headers' => $this->getHeaders()]);
+        $headers = $this->getBrowserHeaders();
+        $this->client->request('GET', $initialUrl, ['cookies' => $cookieJar, 'http_errors' => false, 'headers' => $headers]);
 
         // Get crumb value
         $initialUrl = 'https://query'.$qs.'.finance.yahoo.com/v1/test/getcrumb';
-        $crumb = (string) $this->client->request('GET', $initialUrl, ['cookies' => $cookieJar, 'headers' => $this->getHeaders()])->getBody();
+        $crumb = (string) $this->client->request('GET', $initialUrl, ['cookies' => $cookieJar, 'headers' => $this->getApiClientHeaders()])->getBody();
 
         // Fetch quotes
         $url = 'https://query'.$qs.'.finance.yahoo.com/v7/finance/quote?crumb='.$crumb.'&symbols='.urlencode(implode(',', $symbols));
-        $responseBody = (string) $this->client->request('GET', $url, ['cookies' => $cookieJar, 'headers' => $this->getHeaders()])->getBody();
+        $responseBody = (string) $this->client->request('GET', $url, ['cookies' => $cookieJar, 'headers' => $this->getApiClientHeaders()])->getBody();
 
         return $this->resultDecoder->transformQuotes($responseBody);
     }
@@ -227,7 +249,7 @@ class ApiClient
         $qs = $this->getRandomQueryServer();
         $dataUrl = 'https://query'.$qs.'.finance.yahoo.com/v7/finance/download/'.urlencode($symbol).'?period1='.$startDate->getTimestamp().'&period2='.$endDate->getTimestamp().'&interval='.$interval.'&events='.$filter;
 
-        return (string) $this->client->request('GET', $dataUrl, ['headers' => $this->getHeaders()])->getBody();
+        return (string) $this->client->request('GET', $dataUrl, ['headers' => $this->getApiClientHeaders()])->getBody();
     }
 
     private function validateIntervals(string $interval): void
