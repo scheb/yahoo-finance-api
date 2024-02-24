@@ -308,4 +308,13 @@ class ApiClientIntegrationTest extends TestCase
             throw $e; // Throw the last exception
         }
     }
+
+	public function testStockSummary()
+	{
+		$returnValue = $this->client->stockSummary(self::APPLE_SYMBOL);
+
+		$this->assertIsArray($returnValue);
+		$this->assertEquals(self::APPLE_SYMBOL, $returnValue[0]['quoteType']['symbol']);
+
+	}
 }

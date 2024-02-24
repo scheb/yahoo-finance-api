@@ -249,4 +249,26 @@ class ApiClient
     {
         return rand(1, 2);
     }
+
+	public function stockSummary($symbol)
+	{
+		$qs = $this->getRandomQueryServer();
+		$cookieJar = new CookieJar();
+
+		// Initialize session cookies
+		$initialUrl = 'https://fc.yahoo.com';
+		$modules = 'financialData,quoteType,defaultKeyStatistics,assetProfile,summaryDetail';
+		$this->client->request('GET', $initialUrl, ['cookies' => $cookieJar, 'http_errors' => false, 'headers' => $this->getHeaders()]);
+
+		// Get crumb value
+		$initialUrl = 'https://query'.$qs.'.finance.yahoo.com/v1/test/getcrumb';
+		$crumb = (string) $this->client->request('GET', $initialUrl, ['cookies' => $cookieJar, 'headers' => $this->getHeaders()])->getBody();
+
+		// Fetch quotes
+		$url = 'https://query'.$qs.'.finance.yahoo.com/v10/finance/quoteSummary/'.$symbol.'?crumb='.$crumb.'&modules='.$modules;
+		$responseBody = (string) $this->client->request('GET', $url, ['cookies' => $cookieJar, 'headers' => $this->getHeaders()])->getBody();
+
+		return $this->resultDecoder->transformQuotesSumamary($responseBody);
+	}
+
 }
