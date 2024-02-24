@@ -1,0 +1,41 @@
+<component name="ProjectCodeStyleConfiguration">
+  <code_scheme name="Project" version="173">
+    <HTMLCodeStyleSettings>
+      <option name="HTML_ATTRIBUTE_WRAP" value="0" />
+      <option name="HTML_TEXT_WRAP" value="0" />
+    </HTMLCodeStyleSettings>
+    <PHPCodeStyleSettings>
+      <option name="ALIGN_PHPDOC_PARAM_NAMES" value="true" />
+      <option name="ALIGN_PHPDOC_COMMENTS" value="true" />
+      <option name="PHPDOC_BLANK_LINE_BEFORE_TAGS" value="true" />
+      <option name="PHPDOC_BLANK_LINES_AROUND_PARAMETERS" value="true" />
+      <option name="PHPDOC_WRAP_LONG_LINES" value="true" />
+      <option name="UPPER_CASE_BOOLEAN_CONST" value="true" />
+      <option name="UPPER_CASE_NULL_CONST" value="true" />
+      <option name="ELSE_IF_STYLE" value="COMBINE" />
+      <option name="VARIABLE_NAMING_STYLE" value="CAMEL_CASE" />
+      <option name="BLANK_LINES_BEFORE_RETURN_STATEMENT" value="1" />
+      <option name="KEEP_BLANK_LINES_AFTER_LBRACE" value="1" />
+      <option name="SPACE_AROUND_ASSIGNMENT_IN_DECLARE" value="true" />
+    </PHPCodeStyleSettings>
+    <codeStyleSettings language="HTML">
+      <option name="WRAP_ON_TYPING" value="0" />
+      <indentOptions>
+        <option name="USE_TAB_CHARACTER" value="true" />
+      </indentOptions>
+    </codeStyleSettings>
+    <codeStyleSettings language="PHP">
+      <option name="KEEP_BLANK_LINES_BEFORE_RBRACE" value="1" />
+      <option name="BLANK_LINES_AFTER_PACKAGE" value="1" />
+      <option name="BLANK_LINES_AFTER_CLASS_HEADER" value="1" />
+      <option name="CLASS_BRACE_STYLE" value="1" />
+      <option name="METHOD_BRACE_STYLE" value="1" />
+      <option name="SPACE_WITHIN_IF_PARENTHESES" value="true" />
+      <option name="SPACE_WITHIN_WHILE_PARENTHESES" value="true" />
+      <option name="SPACE_WITHIN_FOR_PARENTHESES" value="true" />
+      <indentOptions>
+        <option name="USE_TAB_CHARACTER" value="true" />
+      </indentOptions>
+    </codeStyleSettings>
+  </code_scheme>
+</component>

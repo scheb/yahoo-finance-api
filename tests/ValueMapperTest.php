@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Scheb\YahooFinanceApi\Tests;
+namespace Elminson\YahooFinanceApi\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Scheb\YahooFinanceApi\Exception\InvalidValueException;
-use Scheb\YahooFinanceApi\ValueMapper;
-use Scheb\YahooFinanceApi\ValueMapperInterface;
+use Elminson\YahooFinanceApi\Exception\InvalidValueException;
+use Elminson\YahooFinanceApi\ValueMapper;
+use Elminson\YahooFinanceApi\ValueMapperInterface;
 
 class ValueMapperTest extends TestCase
 {

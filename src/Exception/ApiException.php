@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Scheb\YahooFinanceApi\Exception;
+namespace Elminson\YahooFinanceApi\Exception;
 
 class ApiException extends \Exception
 {

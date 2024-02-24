@@ -1,5 +1,5 @@
 {
-    "name": "scheb/yahoo-finance-api",
+    "name": "elminson/yahoo-finance-api",
     "type": "library",
     "description": "PHP library for accessing Yahoo Finance data",
     "keywords": ["yahoo", "finance", "stock", "api"],
@@ -24,12 +24,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Scheb\\YahooFinanceApi\\": "src/"
+            "Elminson\\YahooFinanceApi\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Scheb\\YahooFinanceApi\\Tests\\": "tests/"
+            "Elminson\\YahooFinanceApi\\Tests\\": "tests/"
         }
     },
     "config": {

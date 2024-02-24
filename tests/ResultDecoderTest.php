@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Scheb\YahooFinanceApi\Tests;
+namespace Elminson\YahooFinanceApi\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Scheb\YahooFinanceApi\Exception\ApiException;
-use Scheb\YahooFinanceApi\ResultDecoder;
-use Scheb\YahooFinanceApi\Results\DividendData;
-use Scheb\YahooFinanceApi\Results\HistoricalData;
-use Scheb\YahooFinanceApi\Results\Quote;
-use Scheb\YahooFinanceApi\Results\SearchResult;
-use Scheb\YahooFinanceApi\Results\SplitData;
-use Scheb\YahooFinanceApi\ValueMapper;
+use Elminson\YahooFinanceApi\Exception\ApiException;
+use Elminson\YahooFinanceApi\ResultDecoder;
+use Elminson\YahooFinanceApi\Results\DividendData;
+use Elminson\YahooFinanceApi\Results\HistoricalData;
+use Elminson\YahooFinanceApi\Results\Quote;
+use Elminson\YahooFinanceApi\Results\SearchResult;
+use Elminson\YahooFinanceApi\Results\SplitData;
+use Elminson\YahooFinanceApi\ValueMapper;
 
 class ResultDecoderTest extends TestCase
 {

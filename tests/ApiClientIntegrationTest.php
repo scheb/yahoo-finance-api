@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Scheb\YahooFinanceApi\Tests;
+namespace Elminson\YahooFinanceApi\Tests;
 
 use GuzzleHttp\Exception\TransferException;
 use PHPUnit\Framework\TestCase;
-use Scheb\YahooFinanceApi\ApiClient;
-use Scheb\YahooFinanceApi\ApiClientFactory;
-use Scheb\YahooFinanceApi\Results\DividendData;
-use Scheb\YahooFinanceApi\Results\HistoricalData;
-use Scheb\YahooFinanceApi\Results\Quote;
-use Scheb\YahooFinanceApi\Results\SearchResult;
-use Scheb\YahooFinanceApi\Results\SplitData;
+use Elminson\YahooFinanceApi\ApiClient;
+use Elminson\YahooFinanceApi\ApiClientFactory;
+use Elminson\YahooFinanceApi\Results\DividendData;
+use Elminson\YahooFinanceApi\Results\HistoricalData;
+use Elminson\YahooFinanceApi\Results\Quote;
+use Elminson\YahooFinanceApi\Results\SearchResult;
+use Elminson\YahooFinanceApi\Results\SplitData;
 
 class ApiClientIntegrationTest extends TestCase
 {

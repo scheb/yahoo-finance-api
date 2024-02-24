@@ -43,8 +43,8 @@ composer update scheb/yahoo-finance-api
 ## Usage
 
 ```php
-use Scheb\YahooFinanceApi\ApiClient;
-use Scheb\YahooFinanceApi\ApiClientFactory;
+use Elminson\YahooFinanceApi\ApiClient;
+use Elminson\YahooFinanceApi\ApiClientFactory;
 use GuzzleHttp\Client;
 
 // Create a new client from the factory

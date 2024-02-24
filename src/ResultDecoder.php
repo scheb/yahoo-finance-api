@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Scheb\YahooFinanceApi;
+namespace Elminson\YahooFinanceApi;
 
-use Scheb\YahooFinanceApi\Exception\ApiException;
-use Scheb\YahooFinanceApi\Exception\InvalidValueException;
-use Scheb\YahooFinanceApi\Results\DividendData;
-use Scheb\YahooFinanceApi\Results\HistoricalData;
-use Scheb\YahooFinanceApi\Results\Quote;
-use Scheb\YahooFinanceApi\Results\SearchResult;
-use Scheb\YahooFinanceApi\Results\SplitData;
+use Elminson\YahooFinanceApi\Exception\ApiException;
+use Elminson\YahooFinanceApi\Exception\InvalidValueException;
+use Elminson\YahooFinanceApi\Results\DividendData;
+use Elminson\YahooFinanceApi\Results\HistoricalData;
+use Elminson\YahooFinanceApi\Results\Quote;
+use Elminson\YahooFinanceApi\Results\SearchResult;
+use Elminson\YahooFinanceApi\Results\SplitData;
 
 class ResultDecoder
 {

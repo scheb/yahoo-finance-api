@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Scheb\YahooFinanceApi\Results;
+namespace Elminson\YahooFinanceApi\Results;
 
 class Quote implements \JsonSerializable
 {
