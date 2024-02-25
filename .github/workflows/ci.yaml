@@ -117,7 +117,7 @@ jobs:
             -   name: 'Setup PHP'
                 uses: shivammathur/setup-php@v2
                 with:
-                    coverage: 'none'
+                    coverage: 'pcov'
                     extensions: 'json'
                     php-version: '${{ matrix.php-version }}'
 
@@ -135,11 +135,12 @@ jobs:
                 run: composer show
 
             -   name: 'Run tests with coverage'
-                run: phpdbg -qrr vendor/bin/phpunit --coverage-clover coverage/clover.xml
+                run: vendor/bin/phpunit --coverage-clover coverage/clover.xml
 
-            -   name: 'Send Coverage'
-                continue-on-error: true
-                timeout-minutes: 1
-                run: |
-                    wget https://scrutinizer-ci.com/ocular.phar
-                    php ocular.phar code-coverage:upload --format=php-clover coverage/clover.xml
+            -   name: 'Send Coverage to Codecov'
+                uses: codecov/codecov-action@v3
+                with:
+                    token: ${{ secrets.CODECOV_TOKEN }}
+                    files: coverage/clover.xml
+                    flags: unittests
+                    fail_ci_if_error: true

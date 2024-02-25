@@ -4,8 +4,7 @@ scheb/yahoo-finance-api
 **This is a PHP client for Yahoo Finance API.**
 
 [![Build Status](https://github.com/scheb/yahoo-finance-api/workflows/CI/badge.svg?branch=4.x)](https://github.com/scheb/yahoo-finance-api/actions?query=workflow%3ACI+branch%3A4.x)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/scheb/yahoo-finance-api/badges/quality-score.png?b=4.x)](https://scrutinizer-ci.com/g/scheb/yahoo-finance-api/?branch=4.x)
-[![Code Coverage](https://scrutinizer-ci.com/g/scheb/yahoo-finance-api/badges/coverage.png?b=4.x)](https://scrutinizer-ci.com/g/scheb/yahoo-finance-api/?branch=4.x)
+[![Code Coverage](https://codecov.io/gh/scheb/yahoo-finance-api/branch/4.x/graph/badge.svg)](https://app.codecov.io/gh/scheb/yahoo-finance-api/branch/4.x)
 [![Latest Stable Version](https://img.shields.io/packagist/v/scheb/yahoo-finance-api)](https://packagist.org/packages/scheb/yahoo-finance-api)
 [![Total Downloads](https://img.shields.io/packagist/dt/scheb/yahoo-finance-api)](https://packagist.org/packages/scheb/yahoo-finance-api/stats)
 [![License](https://poser.pugx.org/scheb/yahoo-finance-api/license.svg)](https://packagist.org/packages/scheb/yahoo-finance-api)
