@@ -250,7 +250,7 @@ class ApiClient
         return rand(1, 2);
     }
 
-	public function stockSummary($symbol)
+	public function stockSummary(string $symbol)
 	{
 		$qs = $this->getRandomQueryServer();
 		$cookieJar = new CookieJar();

@@ -273,7 +273,7 @@ class ResultDecoder
         return new Quote($mappedValues);
     }
 
-	public function transformQuotesSumamary(string $responseBody)
+	public function transformQuotesSumamary(string $responseBody): array
 	{
 		$decoded = json_decode($responseBody, true);
 		if (!isset($decoded['quoteSummary']['result']) || !\is_array($decoded['quoteSummary']['result'])) {
