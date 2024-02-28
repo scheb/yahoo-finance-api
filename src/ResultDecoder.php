@@ -273,13 +273,13 @@ class ResultDecoder
         return new Quote($mappedValues);
     }
 
-	public function transformQuotesSumamary(string $responseBody): array
-	{
-		$decoded = json_decode($responseBody, true);
-		if (!isset($decoded['quoteSummary']['result']) || !\is_array($decoded['quoteSummary']['result'])) {
-			throw new ApiException('Yahoo Search API returned an invalid result.', ApiException::INVALID_RESPONSE);
-		}
+    public function transformQuotesSumamary(string $responseBody): array
+    {
+        $decoded = json_decode($responseBody, true);
+        if (!isset($decoded['quoteSummary']['result']) || !\is_array($decoded['quoteSummary']['result'])) {
+            throw new ApiException('Yahoo Search API returned an invalid result.', ApiException::INVALID_RESPONSE);
+        }
 
-		return $decoded['quoteSummary']['result'];
-	}
+        return $decoded['quoteSummary']['result'];
+    }
 }
