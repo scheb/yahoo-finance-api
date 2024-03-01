@@ -264,7 +264,7 @@ class ApiClient
         $crumb = (string) $this->client->request('GET', $initialUrl, ['cookies' => $cookieJar, 'headers' => $this->getHeaders()])->getBody();
 
         // Fetch quotes
-		$modules = 'financialData,quoteType,defaultKeyStatistics,assetProfile,summaryDetail';
+        $modules = 'financialData,quoteType,defaultKeyStatistics,assetProfile,summaryDetail';
         $url = 'https://query'.$qs.'.finance.yahoo.com/v10/finance/quoteSummary/'.$symbol.'?crumb='.$crumb.'&modules='.$modules;
         $responseBody = (string) $this->client->request('GET', $url, ['cookies' => $cookieJar, 'headers' => $this->getHeaders()])->getBody();
 
