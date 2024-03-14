@@ -8,6 +8,7 @@ use Scheb\YahooFinanceApi\Exception\ApiException;
 use Scheb\YahooFinanceApi\Exception\InvalidValueException;
 use Scheb\YahooFinanceApi\Results\DividendData;
 use Scheb\YahooFinanceApi\Results\HistoricalData;
+use Scheb\YahooFinanceApi\Results\Option;
 use Scheb\YahooFinanceApi\Results\Quote;
 use Scheb\YahooFinanceApi\Results\SearchResult;
 use Scheb\YahooFinanceApi\Results\SplitData;
@@ -18,6 +19,23 @@ class ResultDecoder
     public const DIVIDEND_DATA_HEADER_LINE = ['Date', 'Dividends'];
     public const SPLIT_DATA_HEADER_LINE = ['Date', 'Stock Splits'];
     public const SEARCH_RESULT_FIELDS = ['symbol', 'name', 'exch', 'type', 'exchDisp', 'typeDisp'];
+    public const OPTION_FIELDS_MAP = [
+        'contractSymbol' => ValueMapperInterface::TYPE_STRING,
+        'strike' => ValueMapperInterface::TYPE_FLOAT,
+        'currency' => ValueMapperInterface::TYPE_STRING,
+        'lastPrice' => ValueMapperInterface::TYPE_FLOAT,
+        'change' => ValueMapperInterface::TYPE_FLOAT,
+        'percentChange' => ValueMapperInterface::TYPE_FLOAT,
+        'volume' => ValueMapperInterface::TYPE_INT,
+        'openInterest' => ValueMapperInterface::TYPE_INT,
+        'bid' => ValueMapperInterface::TYPE_FLOAT,
+        'ask' => ValueMapperInterface::TYPE_FLOAT,
+        'contractSize' => ValueMapperInterface::TYPE_STRING,
+        'expiration' => ValueMapperInterface::TYPE_DATE,
+        'lastTradeDate' => ValueMapperInterface::TYPE_DATE,
+        'impliedVolatility' => ValueMapperInterface::TYPE_FLOAT,
+        'inTheMoney' => ValueMapperInterface::TYPE_BOOL,
+    ];
     public const QUOTE_FIELDS_MAP = [
         'ask' => ValueMapperInterface::TYPE_FLOAT,
         'askSize' => ValueMapperInterface::TYPE_INT,
@@ -283,4 +301,35 @@ class ResultDecoder
         return $decoded['quoteSummary']['result'];
     }
 
+    public function transformOptions(string $responseBody): array
+    {
+        $decoded = json_decode($responseBody, true);
+        if (!isset($decoded['optionChain']['result']) || !\is_array($decoded['optionChain']['result'])) {
+            throw new ApiException('Yahoo Search API returned an invalid result.', ApiException::INVALID_RESPONSE);
+        }
+
+        $results = $decoded['optionChain']['result'];
+
+        // Single element is returned directly in "quote"
+        return array_map(function (array $item) {
+            return $this->createOption($item);
+        }, $results);
+    }
+
+    private function createOption(array $json): Option
+    {
+        $mappedValues = [];
+        foreach ($json as $field => $value) {
+            if (\array_key_exists($field, self::QUOTE_FIELDS_MAP)) {
+                $type = self::QUOTE_FIELDS_MAP[$field];
+                try {
+                    $mappedValues[$field] = $this->valueMapper->mapValue($value, $type);
+                } catch (InvalidValueException $e) {
+                    throw new ApiException(sprintf('Not a %s in field "%s": %s', $type, $field, $value), ApiException::INVALID_VALUE, $e);
+                }
+            }
+        }
+
+        return new Option($mappedValues);
+    }
 }

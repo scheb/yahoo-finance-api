@@ -285,6 +285,25 @@ class ApiClient
         $responseBody = (string) $this->client->request('GET', $url, ['cookies' => $cookieJar, 'headers' => $this->getHeaders()])->getBody();
 
         return $this->resultDecoder->transformQuotesSummary($responseBody);
+    }
 
+    public function getStockOptions(string $symbol, ?\DateTimeInterface $expiryDate = null): array
+    {
+        $qs = $this->getRandomQueryServer();
+
+        // Initialize session cookies
+        $cookieJar = $this->getCookies();
+
+        // Get crumb value
+        $crumb = $this->getCrumb($qs, $cookieJar);
+
+        // Fetch options
+        $url = 'https://query'.$qs.'.finance.yahoo.com/v7/finance/options/'.$symbol.'?crumb='.$crumb;
+        if ($expiryDate) {
+            $url .= '&date='.(string) $expiryDate->getTimestamp();
+        }
+        $responseBody = (string) $this->client->request('GET', $url, ['cookies' => $cookieJar, 'headers' => $this->getHeaders()])->getBody();
+
+        return $this->resultDecoder->transformOptions($responseBody);
     }
 }
