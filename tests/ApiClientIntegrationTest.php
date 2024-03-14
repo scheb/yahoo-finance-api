@@ -10,6 +10,7 @@ use Scheb\YahooFinanceApi\ApiClient;
 use Scheb\YahooFinanceApi\ApiClientFactory;
 use Scheb\YahooFinanceApi\Results\DividendData;
 use Scheb\YahooFinanceApi\Results\HistoricalData;
+use Scheb\YahooFinanceApi\Results\Option;
 use Scheb\YahooFinanceApi\Results\Quote;
 use Scheb\YahooFinanceApi\Results\SearchResult;
 use Scheb\YahooFinanceApi\Results\SplitData;
@@ -317,4 +318,12 @@ class ApiClientIntegrationTest extends TestCase
         $this->assertEquals(self::APPLE_SYMBOL, $returnValue[0]['quoteType']['symbol']);
     }
 
+    public function testGetStockOptions(): void
+    {
+        $returnValue = $this->client->getStockOptions(self::APPLE_SYMBOL);
+
+        $this->assertIsArray($returnValue);
+        $this->assertGreaterThan(0, \count($returnValue));
+        $this->assertContainsOnlyInstancesOf(Option::class, $returnValue);
+    }
 }
