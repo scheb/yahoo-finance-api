@@ -197,6 +197,28 @@ class ApiClient
         return $this->fetchQuotes($currencySymbols);
     }
 
+    private function getCookies(): CookieJar
+    {
+        $cookieJar = new CookieJar();
+
+        // Initialize session cookies
+        $initialUrl = 'https://fc.yahoo.com';
+        $this->client->request('GET', $initialUrl, ['cookies' => $cookieJar, 'http_errors' => false, 'headers' => $this->getHeaders()]);
+
+        return $cookieJar;
+    }
+
+    /**
+     * Get the crumb value from the Yahoo Finance API.
+     */
+    private function getCrumb(int $qs, CookieJar $cookies): string
+    {
+        // Get crumb value
+        $initialUrl = 'https://query'.(string) $qs.'.finance.yahoo.com/v1/test/getcrumb';
+
+        return (string) $this->client->request('GET', $initialUrl, ['cookies' => $cookies, 'headers' => $this->getHeaders()])->getBody();
+    }
+
     /**
      * Fetch quote data from API.
      *
@@ -205,15 +227,12 @@ class ApiClient
     private function fetchQuotes(array $symbols)
     {
         $qs = $this->getRandomQueryServer();
-        $cookieJar = new CookieJar();
 
         // Initialize session cookies
-        $initialUrl = 'https://fc.yahoo.com';
-        $this->client->request('GET', $initialUrl, ['cookies' => $cookieJar, 'http_errors' => false, 'headers' => $this->getHeaders()]);
+        $cookieJar = $this->getCookies();
 
         // Get crumb value
-        $initialUrl = 'https://query'.$qs.'.finance.yahoo.com/v1/test/getcrumb';
-        $crumb = (string) $this->client->request('GET', $initialUrl, ['cookies' => $cookieJar, 'headers' => $this->getHeaders()])->getBody();
+        $crumb = $this->getCrumb($qs, $cookieJar);
 
         // Fetch quotes
         $url = 'https://query'.$qs.'.finance.yahoo.com/v7/finance/quote?crumb='.$crumb.'&symbols='.urlencode(implode(',', $symbols));
@@ -253,21 +272,19 @@ class ApiClient
     public function stockSummary(string $symbol): array
     {
         $qs = $this->getRandomQueryServer();
-        $cookieJar = new CookieJar();
 
         // Initialize session cookies
-        $initialUrl = 'https://fc.yahoo.com';
-        $this->client->request('GET', $initialUrl, ['cookies' => $cookieJar, 'http_errors' => false, 'headers' => $this->getHeaders()]);
+        $cookieJar = $this->getCookies();
 
         // Get crumb value
-        $initialUrl = 'https://query'.$qs.'.finance.yahoo.com/v1/test/getcrumb';
-        $crumb = (string) $this->client->request('GET', $initialUrl, ['cookies' => $cookieJar, 'headers' => $this->getHeaders()])->getBody();
+        $crumb = $this->getCrumb($qs, $cookieJar);
 
         // Fetch quotes
         $modules = 'financialData,quoteType,defaultKeyStatistics,assetProfile,summaryDetail';
         $url = 'https://query'.$qs.'.finance.yahoo.com/v10/finance/quoteSummary/'.$symbol.'?crumb='.$crumb.'&modules='.$modules;
         $responseBody = (string) $this->client->request('GET', $url, ['cookies' => $cookieJar, 'headers' => $this->getHeaders()])->getBody();
 
-        return $this->resultDecoder->transformQuotesSumamary($responseBody);
+        return $this->resultDecoder->transformQuotesSummary($responseBody);
+
     }
 }
