@@ -309,11 +309,12 @@ class ApiClientIntegrationTest extends TestCase
         }
     }
 
-    public function testStockSummary()
+    public function testStockSummary(): void
     {
         $returnValue = $this->client->stockSummary(self::APPLE_SYMBOL);
 
         $this->assertIsArray($returnValue);
         $this->assertEquals(self::APPLE_SYMBOL, $returnValue[0]['quoteType']['symbol']);
     }
+
 }
