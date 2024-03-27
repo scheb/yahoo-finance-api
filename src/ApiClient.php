@@ -287,7 +287,7 @@ class ApiClient
         return $this->resultDecoder->transformQuotesSummary($responseBody);
     }
 
-    public function getStockOptions(string $symbol, ?\DateTimeInterface $expiryDate = null): array
+    public function getOptionChain(string $symbol, ?\DateTimeInterface $expiryDate = null): array
     {
         $qs = $this->getRandomQueryServer();
 
@@ -304,6 +304,6 @@ class ApiClient
         }
         $responseBody = (string) $this->client->request('GET', $url, ['cookies' => $cookieJar, 'headers' => $this->getHeaders()])->getBody();
 
-        return $this->resultDecoder->transformOptions($responseBody);
+        return $this->resultDecoder->transformOptionChains($responseBody);
     }
 }

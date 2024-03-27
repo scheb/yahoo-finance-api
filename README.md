@@ -93,6 +93,10 @@ $quote = $client->getQuote("AAPL");
 
 // Returns an array of Scheb\YahooFinanceApi\Results\Quote
 $quotes = $client->getQuotes(["AAPL", "GOOG"]);
+
+// Returns an array of Scheb\YahooFinanceApi\Results\OptionChain
+$optionChain = $client->getOptionChain("AAPL");
+$optionChain = $client->getOptionChain("AAPL", new \DateTime("2021-01-01"));
 ```
 
 Version Guidance

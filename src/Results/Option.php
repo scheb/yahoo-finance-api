@@ -6,21 +6,10 @@ namespace Scheb\YahooFinanceApi\Results;
 
 class Option implements \JsonSerializable
 {
-    private $contractSymbol;
-    private $strike;
-    private $currency;
-    private $lastPrice;
-    private $change;
-    private $percentChange;
-    private $volume;
-    private $openInterest;
-    private $bid;
-    private $ask;
-    private $contractSize;
-    private $expiration;
-    private $lastTradeDate;
-    private $impliedVolatility;
-    private $inTheMoney;
+    private $expirationDate;
+    private $hasMiniOptions;
+    private $calls;
+    private $puts;
 
     public function __construct(array $values)
     {
@@ -31,81 +20,35 @@ class Option implements \JsonSerializable
 
     public function jsonSerialize(): array
     {
-        return get_object_vars($this);
+        return [
+            'expirationDate' => $this->expirationDate,
+            'hasMiniOptions' => $this->hasMiniOptions,
+            'calls' => array_map(function (OptionContract $optionContract): array {
+                return $optionContract->jsonSerialize();
+            }, $this->calls),
+            'puts' => array_map(function (OptionContract $optionContract): array {
+                return $optionContract->jsonSerialize();
+            }, $this->puts),
+        ];
     }
 
-    public function getContractSymbol(): string
+    public function getExpirationDate(): int
     {
-        return $this->contractSymbol;
+        return $this->expirationDate;
     }
 
-    public function getStrike(): float
+    public function getHasMiniOptions(): bool
     {
-        return $this->strike;
+        return $this->hasMiniOptions;
     }
 
-    public function getCurrency(): string
+    public function getCalls(): array
     {
-        return $this->currency;
+        return $this->calls;
     }
 
-    public function getLastPrice(): float
+    public function getPuts(): array
     {
-        return $this->lastPrice;
-    }
-
-    public function getChange(): float
-    {
-        return $this->change;
-    }
-
-    public function getPercentChange(): float
-    {
-        return $this->percentChange;
-    }
-
-    public function getVolume(): int
-    {
-        return $this->volume;
-    }
-
-    public function getOpenInterest(): int
-    {
-        return $this->openInterest;
-    }
-
-    public function getBid(): float
-    {
-        return $this->bid;
-    }
-
-    public function getAsk(): float
-    {
-        return $this->ask;
-    }
-
-    public function getContractSize(): string
-    {
-        return $this->contractSize;
-    }
-
-    public function getExpiration(): \DateTimeInterface
-    {
-        return $this->expiration;
-    }
-
-    public function getLastTradeDate(): \DateTimeInterface
-    {
-        return $this->lastTradeDate;
-    }
-
-    public function getImpliedVolatility(): float
-    {
-        return $this->impliedVolatility;
-    }
-
-    public function getInTheMoney(): bool
-    {
-        return $this->inTheMoney;
+        return $this->puts;
     }
 }
