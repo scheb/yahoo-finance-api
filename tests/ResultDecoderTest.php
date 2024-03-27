@@ -9,6 +9,7 @@ use Scheb\YahooFinanceApi\Exception\ApiException;
 use Scheb\YahooFinanceApi\ResultDecoder;
 use Scheb\YahooFinanceApi\Results\DividendData;
 use Scheb\YahooFinanceApi\Results\HistoricalData;
+use Scheb\YahooFinanceApi\Results\OptionChain;
 use Scheb\YahooFinanceApi\Results\Quote;
 use Scheb\YahooFinanceApi\Results\SearchResult;
 use Scheb\YahooFinanceApi\Results\SplitData;
@@ -539,5 +540,445 @@ class ResultDecoderTest extends TestCase
         $this->expectExceptionMessage('Search result is missing fields: symbol, name, exch, type, exchDisp, typeDisp');
 
         $this->resultDecoder->transformSearchResult(json_encode($jsonArray));
+    }
+
+    /**
+     * @test
+     * @dataProvider transformQuotesInvalidResult
+     */
+    public function transformOptionChains_jsonGiven_createArrayOfInvalidResult($responseBody): void
+    {
+        $this->expectException(ApiException::class);
+        $this->expectExceptionMessage('Yahoo Search API returned an invalid result');
+
+        $this->resultDecoder->transformOptionChains(json_encode($responseBody));
+    }
+
+    /**
+     * @test
+     */
+    public function transformOptionChains_jsonGiven_createArrayOfOptionChain(): void
+    {
+        $returnedResult = $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/optionChain.json'));
+
+        $this->assertIsArray($returnedResult);
+        $this->assertCount(1, $returnedResult);
+        $this->assertContainsOnlyInstancesOf(OptionChain::class, $returnedResult);
+
+        $expectedOptionChainData = [
+            [
+                'underlyingSymbol' => 'AAPL',
+                'expirationDates' => [
+                    new \DateTime('@1711065600'),
+                    new \DateTime('@1711584000'),
+                    new \DateTime('@1781740800'),
+                ],
+                'strikes' => [
+                    100.0,
+                    105.0,
+                    265.0,
+                ],
+                'hasMiniOptions' => false,
+                'options' => [
+                    [
+                        'expirationDate' => new \DateTime('@1711065600'),
+                        'hasMiniOptions' => false,
+                        'calls' => [
+                            [
+                                'contractSymbol' => 'AAPL240322P00265000',
+                                'strike' => 256.0,
+                                'currency' => 'USD',
+                                'lastPrice' => 93.65,
+                                'change' => 6.7699966,
+                                'percentChange' => 7.7744565,
+                                'volume' => 3,
+                                'openInterest' => 0,
+                                'bid' => 90.65,
+                                'ask' => 94.8,
+                                'contractSize' => 'REGULAR',
+                                'expiration' => new \DateTime('@1598590800'),
+                                'lastTradeDate' => new \DateTime('@1597899600'),
+                                'impliedVolatility' => 1.642579912109375,
+                                'inTheMoney' => false,
+                            ],
+                        ],
+                        'puts' => [
+                            [
+                                'contractSymbol' => 'AAPL240322P00265000',
+                                'strike' => 265.0,
+                                'currency' => 'USD',
+                                'lastPrice' => 93.65,
+                                'change' => 6.7699966,
+                                'percentChange' => 7.7744565,
+                                'volume' => 3,
+                                'openInterest' => 0,
+                                'bid' => 90.65,
+                                'ask' => 94.8,
+                                'contractSize' => 'REGULAR',
+                                'expiration' => new \DateTime('@1598590800'),
+                                'lastTradeDate' => new \DateTime('@1597899600'),
+                                'impliedVolatility' => 1.642579912109375,
+                                'inTheMoney' => false,
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertEquals($expectedOptionChainData[0], $returnedResult[0]->jsonSerialize());
+    }
+
+    /**
+     * @test
+     */
+    public function transformOptionChains_jsonWithNullGiven_createArrayOfOptionChain(): void
+    {
+        $returnedResult = $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/nullOptionChain.json'));
+
+        $this->assertIsArray($returnedResult);
+        $this->assertCount(1, $returnedResult);
+        $this->assertContainsOnlyInstancesOf(OptionChain::class, $returnedResult);
+
+        $expectedOptionChainData = [
+            [
+                'underlyingSymbol' => null,
+                'expirationDates' => [],
+                'strikes' => [],
+                'hasMiniOptions' => false,
+                'options' => [
+                    [
+                        'expirationDate' => null,
+                        'hasMiniOptions' => false,
+                        'calls' => [],
+                        'puts' => [],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertEquals($expectedOptionChainData[0], $returnedResult[0]->jsonSerialize());
+    }
+
+    /**
+     * @test
+     */
+    public function transformOptionChains_jsonWithInvalidFloatGivenInOptionChain_apiExceptionThrown(): void
+    {
+        $this->expectException(ApiException::class);
+        $this->expectExceptionMessage('Not a float in field "strikes": ["invalid_float",105,265]');
+
+        $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/invalidFloatOptionChain.json'));
+    }
+
+    /**
+     * @test
+     */
+    public function transformOptionChains_jsonWithInvalidDateTimeGivenInOptionsChain_apiExceptionThrown(): void
+    {
+        $this->expectException(ApiException::class);
+        $this->expectExceptionMessage('Not a date in field "expirationDates": ["invalid_date_time",1711584000,1781740800]');
+
+        $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/invalidDateTimeOptionChain.json'));
+    }
+
+    /**
+     * @test
+     */
+    public function transformOptionChains_jsonWithInvalidBooleanGivenInOptionsChain_apiExceptionThrown(): void
+    {
+        $this->expectException(ApiException::class);
+        $this->expectExceptionMessage('Not a bool in field "hasMiniOptions": "invalid_boolean"');
+
+        $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/invalidBooleanOptionChain.json'));
+    }
+
+    /**
+     * @test
+     */
+    public function transformOptionChains_jsonWithInvalidArrayGivenInOptionsChain_apiExceptionThrownForInvalidData(): void
+    {
+        $this->expectException(ApiException::class);
+        $this->expectExceptionMessage('Not a array in field "options": "invalid_array"');
+
+        $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/invalidArrayOptionChain.json'));
+    }
+
+    /**
+     * @test
+     */
+    public function transformOptionChains_jsonGiven_createArrayOfOptions(): void
+    {
+        $returnedResult = $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/optionChain.json'));
+
+        $this->assertIsArray($returnedResult);
+        $this->assertCount(1, $returnedResult);
+        $this->assertContainsOnlyInstancesOf(OptionChain::class, $returnedResult);
+
+        $expectedOptionChainData = [
+            [
+                'underlyingSymbol' => 'AAPL',
+                'expirationDates' => [
+                    new \DateTime('@1711065600'),
+                    new \DateTime('@1711584000'),
+                    new \DateTime('@1781740800'),
+                ],
+                'strikes' => [
+                    100.0,
+                    105.0,
+                    265.0,
+                ],
+                'hasMiniOptions' => false,
+                'options' => [
+                    [
+                        'expirationDate' => new \DateTime('@1711065600'),
+                        'hasMiniOptions' => false,
+                        'calls' => [
+                            [
+                                'contractSymbol' => 'AAPL240322P00265000',
+                                'strike' => 256.0,
+                                'currency' => 'USD',
+                                'lastPrice' => 93.65,
+                                'change' => 6.7699966,
+                                'percentChange' => 7.7744565,
+                                'volume' => 3,
+                                'openInterest' => 0,
+                                'bid' => 90.65,
+                                'ask' => 94.8,
+                                'contractSize' => 'REGULAR',
+                                'expiration' => new \DateTime('@1598590800'),
+                                'lastTradeDate' => new \DateTime('@1597899600'),
+                                'impliedVolatility' => 1.642579912109375,
+                                'inTheMoney' => false,
+                            ],
+                        ],
+                        'puts' => [
+                            [
+                                'contractSymbol' => 'AAPL240322P00265000',
+                                'strike' => 265.0,
+                                'currency' => 'USD',
+                                'lastPrice' => 93.65,
+                                'change' => 6.7699966,
+                                'percentChange' => 7.7744565,
+                                'volume' => 3,
+                                'openInterest' => 0,
+                                'bid' => 90.65,
+                                'ask' => 94.8,
+                                'contractSize' => 'REGULAR',
+                                'expiration' => new \DateTime('@1598590800'),
+                                'lastTradeDate' => new \DateTime('@1597899600'),
+                                'impliedVolatility' => 1.642579912109375,
+                                'inTheMoney' => false,
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertEquals($expectedOptionChainData[0], $returnedResult[0]->jsonSerialize());
+    }
+
+    /**
+     * @test
+     */
+    public function transformOptionChains_jsonWithNullGiven_HandleNullResult(): void
+    {
+        $returnedResult = $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/nullOptionChain.json'));
+
+        $this->assertIsArray($returnedResult);
+        $this->assertCount(1, $returnedResult);
+        $this->assertContainsOnlyInstancesOf(OptionChain::class, $returnedResult);
+
+        $expectedOptionChainData = [
+            [
+                'underlyingSymbol' => null,
+                'expirationDates' => [],
+                'strikes' => [],
+                'hasMiniOptions' => false,
+                'options' => [
+                    [
+                        'expirationDate' => null,
+                        'hasMiniOptions' => false,
+                        'calls' => [],
+                        'puts' => [],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertEquals($expectedOptionChainData[0], $returnedResult[0]->jsonSerialize());
+    }
+
+    /**
+     * @test
+     */
+    public function transformOptionChains_jsonWithInvalidArrayGivenInOption_apiExceptionThrown(): void
+    {
+        $this->expectException(ApiException::class);
+        $this->expectExceptionMessage('Not a array in field "calls": ""');
+
+        $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/invalidArrayOption.json'));
+    }
+
+    /**
+     * @test
+     */
+    public function transformOptionChains_jsonWithInvalidDateTimeGivenInOption_apiExceptionThrown(): void
+    {
+        $this->expectException(ApiException::class);
+        $this->expectExceptionMessage('Not a date in field "expirationDate": "invalid_date_time"');
+
+        $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/invalidDateTimeOption.json'));
+    }
+
+    /**
+     * @test
+     */
+    public function transformOptionChains_jsonWithInvalidBooleanGivenInOption_apiExceptionThrown(): void
+    {
+        $this->expectException(ApiException::class);
+        $this->expectExceptionMessage('Not a bool in field "hasMiniOptions": "invalid_boolean"');
+
+        $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/invalidBooleanOption.json'));
+    }
+
+    /**
+     * @test
+     */
+    public function transformOptionChains_jsonGiven_createArrayOfOptionContracts(): void
+    {
+        $returnedResult = $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/optionChain.json'));
+
+        $this->assertIsArray($returnedResult);
+        $this->assertCount(1, $returnedResult);
+        $this->assertContainsOnlyInstancesOf(OptionChain::class, $returnedResult);
+
+        $expectedOptionChainData = [
+            [
+                'underlyingSymbol' => 'AAPL',
+                'expirationDates' => [
+                    new \DateTime('@1711065600'),
+                    new \DateTime('@1711584000'),
+                    new \DateTime('@1781740800'),
+                ],
+                'strikes' => [
+                    100.0,
+                    105.0,
+                    265.0,
+                ],
+                'hasMiniOptions' => false,
+                'options' => [
+                    [
+                        'expirationDate' => new \DateTime('@1711065600'),
+                        'hasMiniOptions' => false,
+                        'calls' => [
+                            [
+                                'contractSymbol' => 'AAPL240322P00265000',
+                                'strike' => 256.0,
+                                'currency' => 'USD',
+                                'lastPrice' => 93.65,
+                                'change' => 6.7699966,
+                                'percentChange' => 7.7744565,
+                                'volume' => 3,
+                                'openInterest' => 0,
+                                'bid' => 90.65,
+                                'ask' => 94.8,
+                                'contractSize' => 'REGULAR',
+                                'expiration' => new \DateTime('@1598590800'),
+                                'lastTradeDate' => new \DateTime('@1597899600'),
+                                'impliedVolatility' => 1.642579912109375,
+                                'inTheMoney' => false,
+                            ],
+                        ],
+                        'puts' => [
+                            [
+                                'contractSymbol' => 'AAPL240322P00265000',
+                                'strike' => 265.0,
+                                'currency' => 'USD',
+                                'lastPrice' => 93.65,
+                                'change' => 6.7699966,
+                                'percentChange' => 7.7744565,
+                                'volume' => 3,
+                                'openInterest' => 0,
+                                'bid' => 90.65,
+                                'ask' => 94.8,
+                                'contractSize' => 'REGULAR',
+                                'expiration' => new \DateTime('@1598590800'),
+                                'lastTradeDate' => new \DateTime('@1597899600'),
+                                'impliedVolatility' => 1.642579912109375,
+                                'inTheMoney' => false,
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertEquals($expectedOptionChainData[0], $returnedResult[0]->jsonSerialize());
+    }
+
+    /**
+     * @test
+     */
+    public function transformOptionChains_jsonWithNullGiven_createArrayOfOptionContracts(): void
+    {
+        $returnedResult = $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/nullOptionChain.json'));
+
+        $this->assertIsArray($returnedResult);
+        $this->assertCount(1, $returnedResult);
+        $this->assertContainsOnlyInstancesOf(OptionChain::class, $returnedResult);
+
+        $expectedOptionChainData = [
+            [
+                'underlyingSymbol' => null,
+                'expirationDates' => [],
+                'strikes' => [],
+                'hasMiniOptions' => false,
+                'options' => [
+                    [
+                        'expirationDate' => null,
+                        'hasMiniOptions' => false,
+                        'calls' => [],
+                        'puts' => [],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertEquals($expectedOptionChainData[0], $returnedResult[0]->jsonSerialize());
+    }
+
+    /**
+     * @test
+     */
+    public function transformOptionChains_jsonWithInvalidFloatGiven_apiExceptionThrown(): void
+    {
+        $this->expectException(ApiException::class);
+        $this->expectExceptionMessage('Not a float in field "percentChange": "7.7744565%"');
+
+        $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/invalidFloatOptionContract.json'));
+    }
+
+    /**
+     * @test
+     */
+    public function transformOptionChains_jsonWithInvalidDateTimeGiven_apiExceptionThrown(): void
+    {
+        $this->expectException(ApiException::class);
+        $this->expectExceptionMessage('Not a date in field "expiration": "invalid_date_time"');
+
+        $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/invalidDateTimeOptionContract.json'));
+    }
+
+    /**
+     * @test
+     */
+    public function transformOptionChains_jsonWithInvalidBooleanGiven_apiExceptionThrown(): void
+    {
+        $this->expectException(ApiException::class);
+        $this->expectExceptionMessage('Not a bool in field "inTheMoney": "invalid_boolean"');
+
+        $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/invalidBooleanOptionContract.json'));
     }
 }

@@ -8,12 +8,27 @@ use Scheb\YahooFinanceApi\Exception\InvalidValueException;
 
 class ValueMapper implements ValueMapperInterface
 {
+    public function mapArray(array $rawValue, string $type): array
+    {
+        return array_map(
+            /**
+             * @param mixed $value
+             *
+             * @return mixed
+             */
+            function ($value) use ($type) {
+                return $this->mapValue($value, $type);
+            },
+            $rawValue
+        );
+    }
+
     /**
      * @param mixed $rawValue
      *
      * @return mixed
      */
-    public function mapValue($rawValue, string $type)
+    public function mapValue($rawValue, string $type, ?string $subType = null)
     {
         if (null === $rawValue) {
             return null;
@@ -30,6 +45,12 @@ class ValueMapper implements ValueMapperInterface
                 return (string) $rawValue;
             case self::TYPE_BOOL:
                 return $this->mapBoolValue($rawValue);
+            case self::TYPE_ARRAY:
+                if (null === $subType) {
+                    throw new \InvalidArgumentException('Subtype must be provided for array type');
+                }
+
+                return $this->mapArray($rawValue, $subType);
             default:
                 throw new \InvalidArgumentException(sprintf('Invalid data type %s', $type));
         }
@@ -64,7 +85,15 @@ class ValueMapper implements ValueMapperInterface
      */
     private function mapBoolValue($rawValue): bool
     {
-        return (bool) $rawValue;
+        if (is_numeric($rawValue)) {
+            return (bool) $rawValue;
+        }
+
+        if (!\is_bool($rawValue)) {
+            throw new InvalidValueException(ValueMapperInterface::TYPE_BOOL);
+        }
+
+        return $rawValue;
     }
 
     /**

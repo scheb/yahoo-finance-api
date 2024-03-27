@@ -1,0 +1,21 @@
+{
+  "optionChain": {
+    "result": [
+      {
+        "underlyingSymbol": null,
+        "expirationDates": [],
+        "strikes": [],
+        "hasMiniOptions": false,
+        "options": [
+          {
+            "expirationDate": null,
+            "hasMiniOptions": false,
+            "calls": [],
+            "puts": []
+          }
+        ]
+      }
+    ],
+    "error": null
+  }
+}
