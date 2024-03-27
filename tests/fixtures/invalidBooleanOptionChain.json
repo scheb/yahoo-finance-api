@@ -1,0 +1,65 @@
+{
+  "optionChain": {
+    "result": [
+      {
+        "underlyingSymbol": "AAPL",
+        "expirationDates": [
+          1711065600,
+          1711584000,
+          1781740800
+        ],
+        "strikes": [
+          100.0,
+          105.0,
+          265.0
+        ],
+        "hasMiniOptions": "invalid_boolean",
+        "options": [
+          {
+            "expirationDate": 1711065600,
+            "hasMiniOptions": false,
+            "calls": [
+              {
+                "contractSymbol": "AAPL240322P00265000",
+                "strike": 256.0,
+                "currency": "USD",
+                "lastPrice": 93.65,
+                "change": 6.7699966,
+                "percentChange": 7.7744565,
+                "volume": 3,
+                "openInterest": 0,
+                "bid": 90.65,
+                "ask": 94.8,
+                "contractSize": "REGULAR",
+                "expiration": 1598590800,
+                "lastTradeDate": 1597899600,
+                "impliedVolatility": 1.642579912109375,
+                "inTheMoney": false
+              }
+            ],
+            "puts": [
+              {
+                "contractSymbol": "AAPL240322P00265000",
+                "strike": 265.0,
+                "currency": "USD",
+                "lastPrice": 93.65,
+                "change": 6.7699966,
+                "percentChange": 7.7744565,
+                "volume": 3,
+                "openInterest": 0,
+                "bid": 90.65,
+                "ask": 94.8,
+                "contractSize": "REGULAR",
+                "expiration": 1598590800,
+                "lastTradeDate": 1597899600,
+                "impliedVolatility": 1.642579912109375,
+                "inTheMoney": "invalid_boolean"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "error": null
+  }
+}

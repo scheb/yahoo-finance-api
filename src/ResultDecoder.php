@@ -9,6 +9,8 @@ use Scheb\YahooFinanceApi\Exception\InvalidValueException;
 use Scheb\YahooFinanceApi\Results\DividendData;
 use Scheb\YahooFinanceApi\Results\HistoricalData;
 use Scheb\YahooFinanceApi\Results\Option;
+use Scheb\YahooFinanceApi\Results\OptionChain;
+use Scheb\YahooFinanceApi\Results\OptionContract;
 use Scheb\YahooFinanceApi\Results\Quote;
 use Scheb\YahooFinanceApi\Results\SearchResult;
 use Scheb\YahooFinanceApi\Results\SplitData;
@@ -19,7 +21,20 @@ class ResultDecoder
     public const DIVIDEND_DATA_HEADER_LINE = ['Date', 'Dividends'];
     public const SPLIT_DATA_HEADER_LINE = ['Date', 'Stock Splits'];
     public const SEARCH_RESULT_FIELDS = ['symbol', 'name', 'exch', 'type', 'exchDisp', 'typeDisp'];
+    public const OPTION_CHAIN_FIELDS_MAP = [
+        'underlyingSymbol' => ValueMapperInterface::TYPE_STRING,
+        'expirationDates' => ValueMapperInterface::TYPE_ARRAY,
+        'strikes' => ValueMapperInterface::TYPE_ARRAY,
+        'hasMiniOptions' => ValueMapperInterface::TYPE_BOOL,
+        'options' => ValueMapperInterface::TYPE_ARRAY,
+    ];
     public const OPTION_FIELDS_MAP = [
+        'expirationDate' => ValueMapperInterface::TYPE_DATE,
+        'hasMiniOptions' => ValueMapperInterface::TYPE_BOOL,
+        'calls' => ValueMapperInterface::TYPE_ARRAY,
+        'puts' => ValueMapperInterface::TYPE_ARRAY,
+    ];
+    public const OPTION_CONTRACT_FIELDS_MAP = [
         'contractSymbol' => ValueMapperInterface::TYPE_STRING,
         'strike' => ValueMapperInterface::TYPE_FLOAT,
         'currency' => ValueMapperInterface::TYPE_STRING,
@@ -301,7 +316,7 @@ class ResultDecoder
         return $decoded['quoteSummary']['result'];
     }
 
-    public function transformOptions(string $responseBody): array
+    public function transformOptionChains(string $responseBody): array
     {
         $decoded = json_decode($responseBody, true);
         if (!isset($decoded['optionChain']['result']) || !\is_array($decoded['optionChain']['result'])) {
@@ -310,26 +325,88 @@ class ResultDecoder
 
         $results = $decoded['optionChain']['result'];
 
-        // Single element is returned directly in "quote"
-        return array_map(function (array $item) {
-            return $this->createOption($item);
+        // Single element is returned directly in "OptionChain"
+        $final = array_map(function (array $item) {
+            return $this->createOptionChain($item);
         }, $results);
+
+        return $final;
+    }
+
+    private function createOptionChain(array $json): OptionChain
+    {
+        $mappedValues = [];
+        foreach ($json as $field => $value) {
+            if (!\array_key_exists($field, self::OPTION_CHAIN_FIELDS_MAP)) {
+                continue;
+            }
+            $type = self::OPTION_CHAIN_FIELDS_MAP[$field];
+            try {
+                if ('options' === $field) {
+                    if (!\is_array($value)) {
+                        throw new InvalidValueException($type);
+                    }
+
+                    $mappedValues[$field] = array_map(function (array $option): Option {
+                        return $this->createOption($option);
+                    }, $value);
+                } elseif ('expirationDates' === $field) {
+                    $mappedValues[$field] = $this->valueMapper->mapValue($value, $type, ValueMapperInterface::TYPE_DATE);
+                } elseif ('strikes' === $field) {
+                    $mappedValues[$field] = $this->valueMapper->mapValue($value, $type, ValueMapperInterface::TYPE_FLOAT);
+                } else {
+                    $mappedValues[$field] = $this->valueMapper->mapValue($value, $type);
+                }
+            } catch (InvalidValueException $e) {
+                throw new ApiException(sprintf('%s in field "%s": %s', $e->getMessage(), $field, json_encode($value)), ApiException::INVALID_VALUE, $e);
+            }
+        }
+
+        return new OptionChain($mappedValues);
     }
 
     private function createOption(array $json): Option
     {
         $mappedValues = [];
         foreach ($json as $field => $value) {
-            if (\array_key_exists($field, self::QUOTE_FIELDS_MAP)) {
-                $type = self::QUOTE_FIELDS_MAP[$field];
-                try {
+            if (!\array_key_exists($field, self::OPTION_FIELDS_MAP)) {
+                continue;
+            }
+            $type = self::OPTION_FIELDS_MAP[$field];
+            try {
+                if ('calls' === $field || 'puts' === $field) {
+                    if (!\is_array($value)) {
+                        throw new InvalidValueException($type);
+                    }
+
+                    $mappedValues[$field] = array_map(function (array $optionContract): OptionContract {
+                        return $this->createOptionContract($optionContract);
+                    }, $value);
+                } else {
                     $mappedValues[$field] = $this->valueMapper->mapValue($value, $type);
-                } catch (InvalidValueException $e) {
-                    throw new ApiException(sprintf('Not a %s in field "%s": %s', $type, $field, $value), ApiException::INVALID_VALUE, $e);
                 }
+            } catch (InvalidValueException $e) {
+                throw new ApiException(sprintf('%s in field "%s": %s', $e->getMessage(), $field, json_encode($value)), ApiException::INVALID_VALUE, $e);
             }
         }
 
         return new Option($mappedValues);
+    }
+
+    private function createOptionContract(array $values): OptionContract
+    {
+        $mappedValues = [];
+        foreach ($values as $property => $value) {
+            if (!\array_key_exists($property, self::OPTION_CONTRACT_FIELDS_MAP)) {
+                continue;
+            }
+            try {
+                $mappedValues[$property] = $this->valueMapper->mapValue($value, self::OPTION_CONTRACT_FIELDS_MAP[$property]);
+            } catch (InvalidValueException $e) {
+                throw new ApiException(sprintf('%s in field "%s": %s', $e->getMessage(), $property, json_encode($value)), ApiException::INVALID_VALUE, $e);
+            }
+        }
+
+        return new OptionContract($mappedValues);
     }
 }
