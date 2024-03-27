@@ -10,6 +10,9 @@ use Scheb\YahooFinanceApi\ApiClient;
 use Scheb\YahooFinanceApi\ApiClientFactory;
 use Scheb\YahooFinanceApi\Results\DividendData;
 use Scheb\YahooFinanceApi\Results\HistoricalData;
+use Scheb\YahooFinanceApi\Results\Option;
+use Scheb\YahooFinanceApi\Results\OptionChain;
+use Scheb\YahooFinanceApi\Results\OptionContract;
 use Scheb\YahooFinanceApi\Results\Quote;
 use Scheb\YahooFinanceApi\Results\SearchResult;
 use Scheb\YahooFinanceApi\Results\SplitData;
@@ -309,11 +312,50 @@ class ApiClientIntegrationTest extends TestCase
         }
     }
 
-    public function testStockSummary()
+    public function testStockSummary(): void
     {
         $returnValue = $this->client->stockSummary(self::APPLE_SYMBOL);
 
         $this->assertIsArray($returnValue);
         $this->assertEquals(self::APPLE_SYMBOL, $returnValue[0]['quoteType']['symbol']);
+    }
+
+    public function testGetStockOptionChains(): void
+    {
+        $returnValue = $this->client->getStockOptionChains(self::APPLE_SYMBOL);
+
+        $this->assertIsArray($returnValue);
+        $this->assertGreaterThan(0, \count($returnValue));
+        $this->assertContainsOnlyInstancesOf(OptionChain::class, $returnValue);
+        foreach ($returnValue as $optionChain) {
+            $options = $optionChain->getOptions();
+            $this->assertContainsOnlyInstancesOf(Option::class, $options);
+            foreach ($options as $option) {
+                $calls = $option->getCalls();
+                $this->assertContainsOnlyInstancesOf(OptionContract::class, $calls);
+                $puts = $option->getPuts();
+                $this->assertContainsOnlyInstancesOf(OptionContract::class, $puts);
+            }
+        }
+    }
+
+    public function testGetStockOptions_historicExpiryDate(): void
+    {
+        $returnValue = $this->client->getStockOptionChains(self::APPLE_SYMBOL, new \DateTime('2024-01-04'));
+
+        $this->assertIsArray($returnValue);
+        $this->assertGreaterThan(0, \count($returnValue));
+        $this->assertContainsOnlyInstancesOf(OptionChain::class, $returnValue);
+
+        foreach ($returnValue as $optionChain) {
+            $options = $optionChain->getOptions();
+            $this->assertContainsOnlyInstancesOf(Option::class, $options);
+            foreach ($options as $option) {
+                $calls = $option->getCalls();
+                $this->assertContainsOnlyInstancesOf(OptionContract::class, $calls);
+                $puts = $option->getPuts();
+                $this->assertContainsOnlyInstancesOf(OptionContract::class, $puts);
+            }
+        }
     }
 }

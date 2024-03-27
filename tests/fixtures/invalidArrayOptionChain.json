@@ -1,0 +1,22 @@
+{
+  "optionChain": {
+    "result": [
+      {
+        "underlyingSymbol": "AAPL",
+        "expirationDates": [
+          1711065600,
+          1711584000,
+          1781740800
+        ],
+        "strikes": [
+          100.0,
+          105.0,
+          265.0
+        ],
+        "hasMiniOptions": false,
+        "options": "invalid_array"
+      }
+    ],
+    "error": null
+  }
+}
