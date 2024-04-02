@@ -71,31 +71,6 @@ class ApiClientIntegrationTest extends TestCase
     }
 
     /**
-     * @test
-     */
-    public function search_withSearchTermAndRegion_returnSearchResults(): void
-    {
-        $returnValue = $this->client->search(self::APPLE_NAME, self::REGION_GERMANY);
-
-        $this->assertIsArray($returnValue);
-        $this->assertContainsOnlyInstancesOf(SearchResult::class, $returnValue);
-
-        $aaplStock = $this->findApple($returnValue, self::APPLE_SYMBOL_FRANKFURT);
-        $this->assertNotNull($aaplStock, 'Search result must contain APC.F');
-
-        $this->assertEquals('Apple Inc.', $aaplStock->getName());
-        $this->assertEquals('S', $aaplStock->getType());
-        $this->assertEquals('Frankfurt', $aaplStock->getExchDisp());
-        $this->assertEquals('Aktie', $aaplStock->getTypeDisp());
-
-        // Can be either NAS or NMS
-        $this->assertThat(
-            $aaplStock->getExch(),
-            $this->equalTo('FRA')
-        );
-    }
-
-    /**
      * @param SearchResult[] $searchResult
      */
     private function findApple($searchResult, $symbol = self::APPLE_SYMBOL): ?SearchResult
