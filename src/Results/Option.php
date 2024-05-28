@@ -32,7 +32,7 @@ class Option implements \JsonSerializable
         ];
     }
 
-    public function getExpirationDate(): int
+    public function getExpirationDate(): \DateTimeInterface
     {
         return $this->expirationDate;
     }
