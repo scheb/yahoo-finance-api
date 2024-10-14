@@ -150,7 +150,7 @@ class ResultDecoder
     {
         $missingFields = array_diff(self::SEARCH_RESULT_FIELDS, array_keys($json));
         if ($missingFields) {
-            throw new ApiException(sprintf('Search result is missing fields: %s', implode(', ', $missingFields)), ApiException::INVALID_RESPONSE);
+            throw new ApiException(\sprintf('Search result is missing fields: %s', implode(', ', $missingFields)), ApiException::INVALID_RESPONSE);
         }
 
         return new SearchResult(
@@ -178,7 +178,7 @@ class ResultDecoder
         $headerLine = array_shift($lines);
         $expectedHeaderLine = implode(',', $expectedHeader);
         if ($headerLine !== $expectedHeaderLine) {
-            throw new ApiException(sprintf('CSV header line did not match expected header line, given: %s, expected: %s', $headerLine, $expectedHeaderLine), ApiException::INVALID_RESPONSE);
+            throw new ApiException(\sprintf('CSV header line did not match expected header line, given: %s, expected: %s', $headerLine, $expectedHeaderLine), ApiException::INVALID_RESPONSE);
         }
 
         return $lines;
@@ -189,7 +189,7 @@ class ResultDecoder
         try {
             return new \DateTime($value, new \DateTimeZone('UTC'));
         } catch (\Exception $e) {
-            throw new ApiException(sprintf('Not a date in column "Date":%s', $value), ApiException::INVALID_VALUE);
+            throw new ApiException(\sprintf('Not a date in column "Date":%s', $value), ApiException::INVALID_VALUE);
         }
     }
 
@@ -217,19 +217,19 @@ class ResultDecoder
         if ($dateStr) {
             $date = $this->validateDate($dateStr);
         } else {
-            throw new ApiException(sprintf('Not a date in column "Date":%s', $dateStr), ApiException::INVALID_VALUE);
+            throw new ApiException(\sprintf('Not a date in column "Date":%s', $json['timestamp'][$index]), ApiException::INVALID_VALUE);
         }
 
         foreach (['open', 'high', 'low', 'close', 'volume'] as $column) {
             $columnValue = $json['indicators']['quote'][0][$column][$index];
             if (!is_numeric($columnValue) && 'null' !== $columnValue) {
-                throw new ApiException(sprintf('Not a number in column "%s": %s', $column, $column), ApiException::INVALID_VALUE);
+                throw new ApiException(\sprintf('Not a number in column "%s": %s', $column, $column), ApiException::INVALID_VALUE);
             }
         }
 
         $columnValue = $json['indicators']['adjclose'][0]['adjclose'][$index];
         if (!is_numeric($columnValue) && 'null' !== $columnValue) {
-            throw new ApiException(sprintf('Not a number in column "%s": %s', 'adjclose', 'adjclose'), ApiException::INVALID_VALUE);
+            throw new ApiException(\sprintf('Not a number in column "%s": %s', 'adjclose', 'adjclose'), ApiException::INVALID_VALUE);
         }
 
         $open = (float) $json['indicators']['quote'][0]['open'][$index];
@@ -260,7 +260,7 @@ class ResultDecoder
         if ($dateStr) {
             $date = $this->validateDate($dateStr);
         } else {
-            throw new ApiException(sprintf('Not a date in column "Date":%s', $dateStr), ApiException::INVALID_VALUE);
+            throw new ApiException(\sprintf('Not a date in column "Date":%s', $json['date']), ApiException::INVALID_VALUE);
         }
 
         $dividends = (float) $json['amount'];
@@ -286,7 +286,7 @@ class ResultDecoder
         if ($dateStr) {
             $date = $this->validateDate($dateStr);
         } else {
-            throw new ApiException(sprintf('Not a date in column "Date":%s', $dateStr), ApiException::INVALID_VALUE);
+            throw new ApiException(\sprintf('Not a date in column "Date":%s', $json['date']), ApiException::INVALID_VALUE);
         }
 
         $stockSplits = (string) $json['splitRatio'];
@@ -318,7 +318,7 @@ class ResultDecoder
                 try {
                     $mappedValues[$field] = $this->valueMapper->mapValue($value, $type);
                 } catch (InvalidValueException $e) {
-                    throw new ApiException(sprintf('Not a %s in field "%s": %s', $type, $field, $value), ApiException::INVALID_VALUE, $e);
+                    throw new ApiException(\sprintf('Not a %s in field "%s": %s', $type, $field, $value), ApiException::INVALID_VALUE, $e);
                 }
             }
         }
@@ -378,7 +378,7 @@ class ResultDecoder
                     $mappedValues[$field] = $this->valueMapper->mapValue($value, $type);
                 }
             } catch (InvalidValueException $e) {
-                throw new ApiException(sprintf('%s in field "%s": %s', $e->getMessage(), $field, json_encode($value)), ApiException::INVALID_VALUE, $e);
+                throw new ApiException(\sprintf('%s in field "%s": %s', $e->getMessage(), $field, json_encode($value)), ApiException::INVALID_VALUE, $e);
             }
         }
 
@@ -406,7 +406,7 @@ class ResultDecoder
                     $mappedValues[$field] = $this->valueMapper->mapValue($value, $type);
                 }
             } catch (InvalidValueException $e) {
-                throw new ApiException(sprintf('%s in field "%s": %s', $e->getMessage(), $field, json_encode($value)), ApiException::INVALID_VALUE, $e);
+                throw new ApiException(\sprintf('%s in field "%s": %s', $e->getMessage(), $field, json_encode($value)), ApiException::INVALID_VALUE, $e);
             }
         }
 
@@ -423,7 +423,7 @@ class ResultDecoder
             try {
                 $mappedValues[$property] = $this->valueMapper->mapValue($value, self::OPTION_CONTRACT_FIELDS_MAP[$property]);
             } catch (InvalidValueException $e) {
-                throw new ApiException(sprintf('%s in field "%s": %s', $e->getMessage(), $property, json_encode($value)), ApiException::INVALID_VALUE, $e);
+                throw new ApiException(\sprintf('%s in field "%s": %s', $e->getMessage(), $property, json_encode($value)), ApiException::INVALID_VALUE, $e);
             }
         }
 
