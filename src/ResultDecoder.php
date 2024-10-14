@@ -196,7 +196,8 @@ class ResultDecoder
     public function transformHistoricalDataResult(string $responseBody): array
     {
         $decoded = json_decode($responseBody, true);
-        if ((!\is_array($decoded)) || (null != $decoded['chart']['error'])) {
+
+        if ((!\is_array($decoded)) || (isset($decoded['chart']['error']))) {
             throw new ApiException('Response is not a valid JSON', ApiException::INVALID_RESPONSE);
         }
 
@@ -244,7 +245,7 @@ class ResultDecoder
     public function transformDividendDataResult(string $responseBody): array
     {
         $decoded = json_decode($responseBody, true);
-        if ((!\is_array($decoded)) || (null != $decoded['chart']['error'])) {
+        if ((!\is_array($decoded)) || (isset($decoded['chart']['error']))) {
             throw new ApiException('Response is not a valid JSON', ApiException::INVALID_RESPONSE);
         }
 
@@ -270,7 +271,7 @@ class ResultDecoder
     public function transformSplitDataResult(string $responseBody): array
     {
         $decoded = json_decode($responseBody, true);
-        if ((!\is_array($decoded)) || (null != $decoded['chart']['error'])) {
+        if ((!\is_array($decoded)) || (isset($decoded['chart']['error']))) {
             throw new ApiException('Response is not a valid JSON', ApiException::INVALID_RESPONSE);
         }
 
