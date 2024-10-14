@@ -150,7 +150,7 @@ class ResultDecoder
     {
         $missingFields = array_diff(self::SEARCH_RESULT_FIELDS, array_keys($json));
         if ($missingFields) {
-            throw new ApiException(\sprintf('Search result is missing fields: %s', implode(', ', $missingFields)), ApiException::INVALID_RESPONSE);
+            throw new ApiException(sprintf('Search result is missing fields: %s', implode(', ', $missingFields)), ApiException::INVALID_RESPONSE);
         }
 
         return new SearchResult(
@@ -178,7 +178,7 @@ class ResultDecoder
         $headerLine = array_shift($lines);
         $expectedHeaderLine = implode(',', $expectedHeader);
         if ($headerLine !== $expectedHeaderLine) {
-            throw new ApiException(\sprintf('CSV header line did not match expected header line, given: %s, expected: %s', $headerLine, $expectedHeaderLine), ApiException::INVALID_RESPONSE);
+            throw new ApiException(sprintf('CSV header line did not match expected header line, given: %s, expected: %s', $headerLine, $expectedHeaderLine), ApiException::INVALID_RESPONSE);
         }
 
         return $lines;
@@ -189,87 +189,92 @@ class ResultDecoder
         try {
             return new \DateTime($value, new \DateTimeZone('UTC'));
         } catch (\Exception $e) {
-            throw new ApiException(\sprintf('Not a date in column "Date":%s', $value), ApiException::INVALID_VALUE);
+            throw new ApiException(sprintf('Not a date in column "Date":%s', $value), ApiException::INVALID_VALUE);
         }
     }
 
     public function transformHistoricalDataResult(string $responseBody): array
     {
-        $lines = $this->validateHeaderLines($responseBody, self::HISTORICAL_DATA_HEADER_LINE);
-
-        return array_map(function ($line) {
-            return $this->createHistoricalData(explode(',', $line));
-        }, $lines);
-    }
-
-    private function createHistoricalData(array $columns): HistoricalData
-    {
-        if (7 !== \count($columns)) {
-            throw new ApiException('CSV did not contain correct number of columns', ApiException::INVALID_RESPONSE);
+        $decoded = json_decode($responseBody, true);
+        if ((!\is_array($decoded)) || (null != $decoded['chart']['error'])) {
+            throw new ApiException('Response is not a valid JSON', ApiException::INVALID_RESPONSE);
         }
 
-        $date = $this->validateDate($columns[0]);
+        $result = $decoded['chart']['result'][0];
+        $entryCount = \count($result['timestamp']);
+        $returnArray = [];
+        for ($i = 0; $i < $entryCount; ++$i) {
+            $returnArray[] = $this->createHistoricalData($result, $i);
+        }
 
-        for ($i = 1; $i <= 6; ++$i) {
-            if (!is_numeric($columns[$i]) && 'null' !== $columns[$i]) {
-                throw new ApiException(\sprintf('Not a number in column "%s": %s', self::HISTORICAL_DATA_HEADER_LINE[$i], $columns[$i]), ApiException::INVALID_VALUE);
+        return $returnArray;
+    }
+
+    private function createHistoricalData(array $json, int $index): HistoricalData
+    {
+        $dateStr = date('Y-m-d', $json['timestamp'][$index]);
+        $date = $this->validateDate($dateStr);
+
+        foreach (['open', 'high', 'low', 'close', 'volume'] as $column) {
+            $columnValue = $json['indicators']['quote'][0][$column][$index];
+            if (!is_numeric($columnValue) && 'null' !== $columnValue) {
+                throw new ApiException(sprintf('Not a number in column "%s": %s', $column, $column), ApiException::INVALID_VALUE);
             }
         }
 
-        $open = (float) $columns[1];
-        $high = (float) $columns[2];
-        $low = (float) $columns[3];
-        $close = (float) $columns[4];
-        $adjClose = (float) $columns[5];
-        $volume = (int) $columns[6];
+        $columnValue = $json['indicators']['adjclose'][0]['adjclose'][$index];
+        if (!is_numeric($columnValue) && 'null' !== $columnValue) {
+            throw new ApiException(sprintf('Not a number in column "%s": %s', 'adjclose', 'adjclose'), ApiException::INVALID_VALUE);
+        }
+
+        $open = (float) $json['indicators']['quote'][0]['open'][$index];
+        $high = (float) $json['indicators']['quote'][0]['high'][$index];
+        $low = (float) $json['indicators']['quote'][0]['low'][$index];
+        $close = (float) $json['indicators']['quote'][0]['close'][$index];
+        $volume = (int) $json['indicators']['quote'][0]['volume'][$index];
+        $adjClose = (float) $json['indicators']['adjclose'][0]['adjclose'][$index];
 
         return new HistoricalData($date, $open, $high, $low, $close, $adjClose, $volume);
     }
 
     public function transformDividendDataResult(string $responseBody): array
     {
-        $lines = $this->validateHeaderLines($responseBody, self::DIVIDEND_DATA_HEADER_LINE);
+        $decoded = json_decode($responseBody, true);
+        if ((!\is_array($decoded)) || (null != $decoded['chart']['error'])) {
+            throw new ApiException('Response is not a valid JSON', ApiException::INVALID_RESPONSE);
+        }
 
-        return array_map(function ($line) {
-            return $this->createDividendData(explode(',', $line));
-        }, $lines);
+        return array_map(function (array $item) {
+            return $this->createDividendData($item);
+        }, $decoded['chart']['result'][0]['events']['dividends']);
     }
 
-    private function createDividendData(array $columns): DividendData
+    private function createDividendData(array $json): DividendData
     {
-        if (2 !== \count($columns)) {
-            throw new ApiException('CSV did not contain correct number of columns', ApiException::INVALID_RESPONSE);
-        }
-
-        $date = $this->validateDate($columns[0]);
-
-        if (!is_numeric($columns[1]) && 'null' !== $columns[1]) {
-            throw new ApiException(\sprintf('Not a number in column Dividends: %s', $columns[1]), ApiException::INVALID_VALUE);
-        }
-
-        $dividends = (float) $columns[1];
+        $dateStr = date('Y-m-d', $json['date']);
+        $date = $this->validateDate($dateStr);
+        $dividends = (float) $json['amount'];
 
         return new DividendData($date, $dividends);
     }
 
     public function transformSplitDataResult(string $responseBody): array
     {
-        $lines = $this->validateHeaderLines($responseBody, self::SPLIT_DATA_HEADER_LINE);
-
-        return array_map(function ($line) {
-            return $this->createSplitData(explode(',', $line));
-        }, $lines);
-    }
-
-    private function createSplitData(array $columns): SplitData
-    {
-        if (2 !== \count($columns)) {
-            throw new ApiException('CSV did not contain correct number of columns', ApiException::INVALID_RESPONSE);
+        $decoded = json_decode($responseBody, true);
+        if ((!\is_array($decoded)) || (null != $decoded['chart']['error'])) {
+            throw new ApiException('Response is not a valid JSON', ApiException::INVALID_RESPONSE);
         }
 
-        $date = $this->validateDate($columns[0]);
+        return array_map(function (array $item) {
+            return $this->createSplitData($item);
+        }, $decoded['chart']['result'][0]['events']['splits']);
+    }
 
-        $stockSplits = (string) $columns[1];
+    private function createSplitData(array $json): SplitData
+    {
+        $dateStr = date('Y-m-d', $json['date']);
+        $date = $this->validateDate($dateStr);
+        $stockSplits = (string) $json['splitRatio'];
 
         return new SplitData($date, $stockSplits);
     }
@@ -298,7 +303,7 @@ class ResultDecoder
                 try {
                     $mappedValues[$field] = $this->valueMapper->mapValue($value, $type);
                 } catch (InvalidValueException $e) {
-                    throw new ApiException(\sprintf('Not a %s in field "%s": %s', $type, $field, $value), ApiException::INVALID_VALUE, $e);
+                    throw new ApiException(sprintf('Not a %s in field "%s": %s', $type, $field, $value), ApiException::INVALID_VALUE, $e);
                 }
             }
         }
@@ -358,7 +363,7 @@ class ResultDecoder
                     $mappedValues[$field] = $this->valueMapper->mapValue($value, $type);
                 }
             } catch (InvalidValueException $e) {
-                throw new ApiException(\sprintf('%s in field "%s": %s', $e->getMessage(), $field, json_encode($value)), ApiException::INVALID_VALUE, $e);
+                throw new ApiException(sprintf('%s in field "%s": %s', $e->getMessage(), $field, json_encode($value)), ApiException::INVALID_VALUE, $e);
             }
         }
 
@@ -386,7 +391,7 @@ class ResultDecoder
                     $mappedValues[$field] = $this->valueMapper->mapValue($value, $type);
                 }
             } catch (InvalidValueException $e) {
-                throw new ApiException(\sprintf('%s in field "%s": %s', $e->getMessage(), $field, json_encode($value)), ApiException::INVALID_VALUE, $e);
+                throw new ApiException(sprintf('%s in field "%s": %s', $e->getMessage(), $field, json_encode($value)), ApiException::INVALID_VALUE, $e);
             }
         }
 
@@ -403,7 +408,7 @@ class ResultDecoder
             try {
                 $mappedValues[$property] = $this->valueMapper->mapValue($value, self::OPTION_CONTRACT_FIELDS_MAP[$property]);
             } catch (InvalidValueException $e) {
-                throw new ApiException(\sprintf('%s in field "%s": %s', $e->getMessage(), $property, json_encode($value)), ApiException::INVALID_VALUE, $e);
+                throw new ApiException(sprintf('%s in field "%s": %s', $e->getMessage(), $property, json_encode($value)), ApiException::INVALID_VALUE, $e);
             }
         }
 
