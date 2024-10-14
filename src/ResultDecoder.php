@@ -213,7 +213,11 @@ class ResultDecoder
     private function createHistoricalData(array $json, int $index): HistoricalData
     {
         $dateStr = date('Y-m-d', $json['timestamp'][$index]);
-        $date = $this->validateDate($dateStr);
+        if ($dateStr) {
+            $date = $this->validateDate($dateStr);
+        } else {
+            throw new ApiException(sprintf('Not a date in column "Date":%s', $dateStr), ApiException::INVALID_VALUE);
+        }
 
         foreach (['open', 'high', 'low', 'close', 'volume'] as $column) {
             $columnValue = $json['indicators']['quote'][0][$column][$index];
@@ -252,7 +256,12 @@ class ResultDecoder
     private function createDividendData(array $json): DividendData
     {
         $dateStr = date('Y-m-d', $json['date']);
-        $date = $this->validateDate($dateStr);
+        if ($dateStr) {
+            $date = $this->validateDate($dateStr);
+        } else {
+            throw new ApiException(sprintf('Not a date in column "Date":%s', $dateStr), ApiException::INVALID_VALUE);
+        }
+
         $dividends = (float) $json['amount'];
 
         return new DividendData($date, $dividends);
@@ -273,7 +282,12 @@ class ResultDecoder
     private function createSplitData(array $json): SplitData
     {
         $dateStr = date('Y-m-d', $json['date']);
-        $date = $this->validateDate($dateStr);
+        if ($dateStr) {
+            $date = $this->validateDate($dateStr);
+        } else {
+            throw new ApiException(sprintf('Not a date in column "Date":%s', $dateStr), ApiException::INVALID_VALUE);
+        }
+
         $stockSplits = (string) $json['splitRatio'];
 
         return new SplitData($date, $stockSplits);

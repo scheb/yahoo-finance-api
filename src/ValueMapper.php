@@ -52,7 +52,7 @@ class ValueMapper implements ValueMapperInterface
 
                 return $this->mapArray($rawValue, $subType);
             default:
-                throw new \InvalidArgumentException(\sprintf('Invalid data type %s', $type));
+                throw new \InvalidArgumentException(sprintf('Invalid data type %s', $type));
         }
     }
 

@@ -8,6 +8,6 @@ class InvalidValueException extends \Exception
 {
     public function __construct(string $type)
     {
-        parent::__construct(\sprintf('Not a %s', $type));
+        parent::__construct(sprintf('Not a %s', $type));
     }
 }
