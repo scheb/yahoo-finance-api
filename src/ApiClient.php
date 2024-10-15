@@ -249,14 +249,6 @@ class ApiClient
         return (string) $this->client->request('GET', $dataUrl, ['headers' => $this->getHeaders()])->getBody();
     }
 
-    private function getHistoricalDataResponseBody(string $symbol, string $interval, \DateTimeInterface $startDate, \DateTimeInterface $endDate, string $filter): string
-    {
-        $qs = $this->getRandomQueryServer();
-        $dataUrl = 'https://query'.$qs.'.finance.yahoo.com/v7/finance/download/'.urlencode($symbol).'?period1='.$startDate->getTimestamp().'&period2='.$endDate->getTimestamp().'&interval='.$interval.'&events='.$filter;
-
-        return (string) $this->client->request('GET', $dataUrl, ['headers' => $this->getHeaders()])->getBody();
-    }
-
     private function validateIntervals(string $interval): void
     {
         $allowedIntervals = [self::INTERVAL_1_DAY, self::INTERVAL_1_WEEK, self::INTERVAL_1_MONTH];
