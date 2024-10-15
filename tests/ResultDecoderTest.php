@@ -106,19 +106,19 @@ class ResultDecoderTest extends TestCase
      */
     public function transformHistoricalDataResult_csvGiven_returnArrayOfHistoricalData(): void
     {
-        $returnedResult = $this->resultDecoder->transformHistoricalDataResult(file_get_contents(__DIR__.'/fixtures/historicalData.csv'));
+        $returnedResult = $this->resultDecoder->transformHistoricalDataResult(file_get_contents(__DIR__.'/fixtures/historicalData.json'));
 
         $this->assertIsArray($returnedResult);
         $this->assertContainsOnlyInstancesOf(HistoricalData::class, $returnedResult);
 
         $expectedExchangeRate = new HistoricalData(
-            new \DateTime('2017-07-11'),
-            144.729996,
-            145.850006,
-            144.380005,
-            145.529999,
-            145.529999,
-            19781800
+            new \DateTime('2024-09-30', new \DateTimeZone('UTC')),
+            230.0399932861328,
+            233.0,
+            229.64999389648438,
+            233.0,
+            233.0,
+            54541900
         );
         $this->assertEquals($expectedExchangeRate, $returnedResult[0]);
     }
@@ -129,7 +129,7 @@ class ResultDecoderTest extends TestCase
     public function transformHistoricalDataResult_invalidColumnsCsvGiven_throwApiException(): void
     {
         $this->expectException(ApiException::class);
-        $this->expectExceptionMessage('CSV did not contain correct number of columns');
+        $this->expectExceptionMessage('Response is not a valid JSON');
 
         $this->resultDecoder->transformHistoricalDataResult(file_get_contents(__DIR__.'/fixtures/invalidColumnsHistoricalData.csv'));
     }
@@ -140,7 +140,7 @@ class ResultDecoderTest extends TestCase
     public function transformHistoricalDataResult_unexpectedHeaderLineCsvGiven_throwApiException(): void
     {
         $this->expectException(ApiException::class);
-        $this->expectExceptionMessage('CSV header line did not match expected header line, given: 12345	1234567, expected: Date,Open,High,Low,Close,Adj Close,Volume');
+        $this->expectExceptionMessage('Response is not a valid JSON');
 
         $invalidCsvString = "12345\t1234567\t";
         $this->resultDecoder->transformHistoricalDataResult($invalidCsvString);
@@ -152,7 +152,7 @@ class ResultDecoderTest extends TestCase
     public function transformHistoricalDataResult_invalidDateTimeFormatCsvGiven_throwApiException(): void
     {
         $this->expectException(ApiException::class);
-        $this->expectExceptionMessage('Not a date in column "Date":2017-07');
+        $this->expectExceptionMessage('Response is not a valid JSON');
 
         $this->resultDecoder->transformHistoricalDataResult(file_get_contents(__DIR__.'/fixtures/invalidDateTimeFormatHistoricalData.csv'));
     }
@@ -163,7 +163,7 @@ class ResultDecoderTest extends TestCase
     public function transformHistoricalDataResult_invalidNumericStringCsvGiven_throwApiException(): void
     {
         $this->expectException(ApiException::class);
-        $this->expectExceptionMessage('Not a number in column "High": this_is_not_numeric_string');
+        $this->expectExceptionMessage('Response is not a valid JSON');
 
         $this->resultDecoder->transformHistoricalDataResult(file_get_contents(__DIR__.'/fixtures/invalidNumericStringHistoricalData.csv'));
     }
@@ -173,16 +173,17 @@ class ResultDecoderTest extends TestCase
      */
     public function transformDividendDataResult_csvGiven_returnArrayOfDividendData(): void
     {
-        $returnedResult = $this->resultDecoder->transformDividendDataResult(file_get_contents(__DIR__.'/fixtures/dividendData.csv'));
+        $returnedResult = $this->resultDecoder->transformDividendDataResult(file_get_contents(__DIR__.'/fixtures/dividendData.json'));
 
         $this->assertIsArray($returnedResult);
         $this->assertContainsOnlyInstancesOf(DividendData::class, $returnedResult);
+        $firstResult = array_shift($returnedResult);
 
         $expectedExchangeRate = new DividendData(
-            new \DateTime('2017-07-11'),
-            0.205
+            new \DateTime('2019-11-07', new \DateTimeZone('UTC')),
+            0.1925
         );
-        $this->assertEquals($expectedExchangeRate, $returnedResult[0]);
+        $this->assertEquals($expectedExchangeRate, $firstResult);
     }
 
     /**
@@ -191,7 +192,7 @@ class ResultDecoderTest extends TestCase
     public function transformDividendDataResult_invalidColumnsCsvGiven_throwApiException(): void
     {
         $this->expectException(ApiException::class);
-        $this->expectExceptionMessage('CSV did not contain correct number of columns');
+        $this->expectExceptionMessage('Response is not a valid JSON');
 
         $this->resultDecoder->transformDividendDataResult(file_get_contents(__DIR__.'/fixtures/invalidColumnsDividendData.csv'));
     }
@@ -202,7 +203,7 @@ class ResultDecoderTest extends TestCase
     public function transformDividendDataResult_unexpectedHeaderLineCsvGiven_throwApiException(): void
     {
         $this->expectException(ApiException::class);
-        $this->expectExceptionMessage('CSV header line did not match expected header line, given: 12345	1234567, expected: Date,Dividends');
+        $this->expectExceptionMessage('Response is not a valid JSON');
 
         $invalidCsvString = "12345\t1234567\t";
         $this->resultDecoder->transformDividendDataResult($invalidCsvString);
@@ -214,7 +215,7 @@ class ResultDecoderTest extends TestCase
     public function transformDividendDataResult_invalidDateTimeFormatCsvGiven_throwApiException(): void
     {
         $this->expectException(ApiException::class);
-        $this->expectExceptionMessage('Not a date in column "Date":2017-07');
+        $this->expectExceptionMessage('Response is not a valid JSON');
 
         $this->resultDecoder->transformDividendDataResult(file_get_contents(__DIR__.'/fixtures/invalidDateTimeFormatDividendData.csv'));
     }
@@ -225,7 +226,7 @@ class ResultDecoderTest extends TestCase
     public function transformDividendDataResult_invalidNumericStringCsvGiven_throwApiException(): void
     {
         $this->expectException(ApiException::class);
-        $this->expectExceptionMessage('Not a number in column Dividends: this_is_not_numeric_string');
+        $this->expectExceptionMessage('Response is not a valid JSON');
 
         $this->resultDecoder->transformDividendDataResult(file_get_contents(__DIR__.'/fixtures/invalidNumericStringDividendData.csv'));
     }
@@ -235,16 +236,17 @@ class ResultDecoderTest extends TestCase
      */
     public function transformSplitDataResult_csvGiven_returnArrayOfSplitData(): void
     {
-        $returnedResult = $this->resultDecoder->transformSplitDataResult(file_get_contents(__DIR__.'/fixtures/splitData.csv'));
+        $returnedResult = $this->resultDecoder->transformSplitDataResult(file_get_contents(__DIR__.'/fixtures/splitData.json'));
 
         $this->assertIsArray($returnedResult);
         $this->assertContainsOnlyInstancesOf(SplitData::class, $returnedResult);
+        $firstResult = array_shift($returnedResult);
 
         $expectedExchangeRate = new SplitData(
-            new \DateTime('2017-07-11'),
+            new \DateTime('2020-08-31', new \DateTimeZone('UTC')),
             '4:1'
         );
-        $this->assertEquals($expectedExchangeRate, $returnedResult[0]);
+        $this->assertEquals($expectedExchangeRate, $firstResult);
     }
 
     /**
@@ -253,7 +255,7 @@ class ResultDecoderTest extends TestCase
     public function transformSplitDataResult_invalidColumnsCsvGiven_throwApiException(): void
     {
         $this->expectException(ApiException::class);
-        $this->expectExceptionMessage('CSV did not contain correct number of columns');
+        $this->expectExceptionMessage('Response is not a valid JSON');
 
         $this->resultDecoder->transformSplitDataResult(file_get_contents(__DIR__.'/fixtures/invalidColumnsSplitData.csv'));
     }
@@ -264,7 +266,7 @@ class ResultDecoderTest extends TestCase
     public function transformSplitDataResult_unexpectedHeaderLineCsvGiven_throwApiException(): void
     {
         $this->expectException(ApiException::class);
-        $this->expectExceptionMessage('CSV header line did not match expected header line, given: 12345	1234567, expected: Date,Stock Splits');
+        $this->expectExceptionMessage('Response is not a valid JSON');
 
         $invalidCsvString = "12345\t1234567\t";
         $this->resultDecoder->transformSplitDataResult($invalidCsvString);
@@ -276,7 +278,7 @@ class ResultDecoderTest extends TestCase
     public function transformSplitDataResult_invalidDateTimeFormatCsvGiven_throwApiException(): void
     {
         $this->expectException(ApiException::class);
-        $this->expectExceptionMessage('Not a date in column "Date":2017-07');
+        $this->expectExceptionMessage('Response is not a valid JSON');
 
         $this->resultDecoder->transformSplitDataResult(file_get_contents(__DIR__.'/fixtures/invalidDateTimeFormatSplitData.csv'));
     }
