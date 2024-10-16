@@ -126,6 +126,17 @@ class ResultDecoderTest extends TestCase
     /**
      * @test
      */
+    public function transformHistoricalDataResult_noData(): void
+    {
+        $returnedResult = $this->resultDecoder->transformHistoricalDataResult(file_get_contents(__DIR__.'/fixtures/noData.json'));
+
+        $this->assertIsArray($returnedResult);
+        $this->assertCount(0, $returnedResult);
+    }
+
+    /**
+     * @test
+     */
     public function transformHistoricalDataResult_invalidColumnsCsvGiven_throwApiException(): void
     {
         $this->expectException(ApiException::class);
@@ -189,6 +200,17 @@ class ResultDecoderTest extends TestCase
     /**
      * @test
      */
+    public function transformDividendDataResult_noData(): void
+    {
+        $returnedResult = $this->resultDecoder->transformDividendDataResult(file_get_contents(__DIR__.'/fixtures/noData.json'));
+
+        $this->assertIsArray($returnedResult);
+        $this->assertCount(0, $returnedResult);
+    }
+
+    /**
+     * @test
+     */
     public function transformDividendDataResult_invalidColumnsCsvGiven_throwApiException(): void
     {
         $this->expectException(ApiException::class);
@@ -247,6 +269,17 @@ class ResultDecoderTest extends TestCase
             '4:1'
         );
         $this->assertEquals($expectedExchangeRate, $firstResult);
+    }
+
+    /**
+     * @test
+     */
+    public function transformSplitDataResult_noData(): void
+    {
+        $returnedResult = $this->resultDecoder->transformSplitDataResult(file_get_contents(__DIR__.'/fixtures/noData.json'));
+
+        $this->assertIsArray($returnedResult);
+        $this->assertCount(0, $returnedResult);
     }
 
     /**
