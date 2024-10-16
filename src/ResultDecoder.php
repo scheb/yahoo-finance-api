@@ -202,7 +202,13 @@ class ResultDecoder
         }
 
         $result = $decoded['chart']['result'][0];
-        $entryCount = \count($result['timestamp']);
+
+        if (0 === \count($result['indicators']['quote'][0])) {
+            return [];
+        }
+
+        $entryCount = \count($result['indicators']['quote'][0]['open']);
+
         $returnArray = [];
         for ($i = 0; $i < $entryCount; ++$i) {
             $returnArray[] = $this->createHistoricalData($result, $i);
@@ -249,6 +255,10 @@ class ResultDecoder
             throw new ApiException('Response is not a valid JSON', ApiException::INVALID_RESPONSE);
         }
 
+        if (!isset($decoded['chart']['result'][0]['events']['dividends'])) {
+            return [];
+        }
+
         return array_map(function (array $item) {
             return $this->createDividendData($item);
         }, $decoded['chart']['result'][0]['events']['dividends']);
@@ -273,6 +283,10 @@ class ResultDecoder
         $decoded = json_decode($responseBody, true);
         if ((!\is_array($decoded)) || (isset($decoded['chart']['error']))) {
             throw new ApiException('Response is not a valid JSON', ApiException::INVALID_RESPONSE);
+        }
+
+        if (!isset($decoded['chart']['result'][0]['events']['splits'])) {
+            return [];
         }
 
         return array_map(function (array $item) {
