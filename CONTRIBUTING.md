@@ -16,7 +16,9 @@ a pull requests or feature request in the issues section.
 For pull requests, please follow these guidelines:
 
 - Symfony code style (use `php_cs.xml` to configure the code style in your IDE)
-- PHP7.1 type hints for everything (including: return types, `void`, nullable types)
+- Do not use any PHP language features above the minimum supported version (see `composer.json`)
+- PHP 8.1 level type hints for everything (parameter types, return types, nullable types, union types, `void`),
+  including test cases
 - `declare(strict_types=1)` must be used
 - Please add/update test cases
 - Test methods should be named `[method]_[scenario]_[expectedResult]`
