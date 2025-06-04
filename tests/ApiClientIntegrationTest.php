@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Scheb\YahooFinanceApi\Tests;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Scheb\YahooFinanceApi\ApiClient;
 use Scheb\YahooFinanceApi\ApiClientFactory;
@@ -38,9 +40,7 @@ class ApiClientIntegrationTest extends TestCase
         }
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function search_withSearchTerm_returnSearchResults(): void
     {
         $returnValue = $this->client->search(self::APPLE_NAME);
@@ -80,10 +80,8 @@ class ApiClientIntegrationTest extends TestCase
         return null;
     }
 
-    /**
-     * @test
-     * @dataProvider getTestDataForHistoricalData
-     */
+    #[Test]
+    #[DataProvider('getTestDataForHistoricalData')]
     public function getHistoricalQuoteData_valuesForInterval_returnHistoricalData(string $interval, \DateTime $startDate, \DateTime $endDate): void
     {
         $returnValue = $this->client->getHistoricalQuoteData(self::APPLE_SYMBOL, $interval, $startDate, $endDate);
@@ -102,9 +100,7 @@ class ApiClientIntegrationTest extends TestCase
         $this->assertIsInt($historicalData->getVolume());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getHistoricalQuoteData_valuesForInvalidInterval_throwInvalidArgumentException(): void
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -112,9 +108,7 @@ class ApiClientIntegrationTest extends TestCase
         $this->client->getHistoricalQuoteData(self::APPLE_SYMBOL, 'invalid_interval', new \DateTime('-7 days'), new \DateTime('today'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getHistoricalQuoteData_startDateIsGreaterThanEndDate_throwInvalidArgumentException(): void
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -122,7 +116,7 @@ class ApiClientIntegrationTest extends TestCase
         $this->client->getHistoricalQuoteData(self::APPLE_SYMBOL, ApiClient::INTERVAL_1_DAY, new \DateTime('7 days'), new \DateTime('today'));
     }
 
-    public function getTestDataForHistoricalData(): array
+    public static function getTestDataForHistoricalData(): array
     {
         return [
             [ApiClient::INTERVAL_1_DAY, new \DateTime('-7 days'), new \DateTime('today')],
@@ -131,9 +125,7 @@ class ApiClientIntegrationTest extends TestCase
         ];
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getHistoricalDividendData_valuesForInterval_returnHistoricalData(): void
     {
         $returnValue = $this->client->getHistoricalDividendData(self::APPLE_SYMBOL, new \DateTime('2020-01-01'), new \DateTime());
@@ -150,9 +142,7 @@ class ApiClientIntegrationTest extends TestCase
         $this->assertEquals(0.1925, $historicalData->getDividends());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getHistoricalDividendData_startDateIsGreaterThanEndDate_throwInvalidArgumentException(): void
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -160,9 +150,7 @@ class ApiClientIntegrationTest extends TestCase
         $this->client->getHistoricalDividendData(self::APPLE_SYMBOL, new \DateTime('7 days'), new \DateTime('today'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getHistoricalSplitData_valuesForInterval_returnHistoricalData(): void
     {
         $returnValue = $this->client->getHistoricalSplitData(self::APPLE_SYMBOL, new \DateTime('2005-01-01'), new \DateTime());
@@ -178,9 +166,7 @@ class ApiClientIntegrationTest extends TestCase
         $this->assertEquals('2:1', $historicalData->getStockSplits());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getHistoricalSplitData_startDateIsGreaterThanEndDate_throwInvalidArgumentException(): void
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -188,9 +174,7 @@ class ApiClientIntegrationTest extends TestCase
         $this->client->getHistoricalSplitData(self::APPLE_SYMBOL, new \DateTime('7 days'), new \DateTime('today'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getQuote_singleSymbol_returnQuote(): void
     {
         $returnValue = $this->client->getQuote(self::APPLE_SYMBOL);
@@ -199,9 +183,7 @@ class ApiClientIntegrationTest extends TestCase
         $this->assertAppleQuote($returnValue);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getQuotes_multipleSymbols_returnListOfQuotes(): void
     {
         $returnValue = $this->client->getQuotes([self::APPLE_SYMBOL, self::GOOGLE_SYMBOL]);
@@ -219,9 +201,7 @@ class ApiClientIntegrationTest extends TestCase
         $this->assertEquals('AAPL', $quote->getSymbol());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getExchangeRate_singleRate_returnExchangeRate(): void
     {
         $returnValue = $this->client->getExchangeRate(self::CURRENCY_EUR, self::CURRENCY_USD);
@@ -230,9 +210,7 @@ class ApiClientIntegrationTest extends TestCase
         $this->assertEurUsdExchangeRate($returnValue);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function getExchangeRates_multipleOnes_returnListOfExchangeRates(): void
     {
         $query = [

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Scheb\YahooFinanceApi\Tests;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Scheb\YahooFinanceApi\Exception\ApiException;
 use Scheb\YahooFinanceApi\ResultDecoder;
@@ -24,7 +26,7 @@ class ResultDecoderTest extends TestCase
         $this->resultDecoder = new ResultDecoder(new ValueMapper());
     }
 
-    public function transformInvalidResponse(): array
+    public static function provideTransformInvalidResponse(): array
     {
         return [
             [
@@ -42,10 +44,8 @@ class ResultDecoderTest extends TestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider transformInvalidResponse
-     */
+    #[Test]
+    #[DataProvider('provideTransformInvalidResponse')]
     public function transformSearchResult_jsonGiven_createArrayOfInvalidResponse(array $responseBody): void
     {
         $this->expectException(ApiException::class);
@@ -54,9 +54,7 @@ class ResultDecoderTest extends TestCase
         $this->resultDecoder->transformSearchResult(json_encode($responseBody));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function transformSearchResult_jsonGiven_createArrayOfSearchResult(): void
     {
         $returnedResult = $this->resultDecoder->transformSearchResult(file_get_contents(__DIR__.'/fixtures/searchResult.json'));
@@ -76,18 +74,14 @@ class ResultDecoderTest extends TestCase
         $this->assertEquals($expectedItem, $returnedResult[0]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function extractCrumb_lookupPage_returnCrumbValue(): void
     {
         $returnedResult = $this->resultDecoder->extractCrumb(file_get_contents(__DIR__.'/fixtures/lookupPage.html'));
         $this->assertEquals('kWZQDiqqBck', $returnedResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function extractCrumb_invalidStringGiven_throwApiException(): void
     {
         $invalidHtmlString = '<html><head></head><body>The CrumbStore is not existed.</body></html>';
@@ -98,9 +92,7 @@ class ResultDecoderTest extends TestCase
         $this->resultDecoder->extractCrumb($invalidHtmlString);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function transformHistoricalDataResult_csvGiven_returnArrayOfHistoricalData(): void
     {
         $returnedResult = $this->resultDecoder->transformHistoricalDataResult(file_get_contents(__DIR__.'/fixtures/historicalData.json'));
@@ -120,9 +112,7 @@ class ResultDecoderTest extends TestCase
         $this->assertEquals($expectedExchangeRate, $returnedResult[0]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function transformHistoricalDataResult_noData(): void
     {
         $returnedResult = $this->resultDecoder->transformHistoricalDataResult(file_get_contents(__DIR__.'/fixtures/noData.json'));
@@ -131,9 +121,7 @@ class ResultDecoderTest extends TestCase
         $this->assertCount(0, $returnedResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function transformHistoricalDataResult_invalidColumnsCsvGiven_throwApiException(): void
     {
         $this->expectException(ApiException::class);
@@ -142,9 +130,7 @@ class ResultDecoderTest extends TestCase
         $this->resultDecoder->transformHistoricalDataResult(file_get_contents(__DIR__.'/fixtures/invalidColumnsHistoricalData.csv'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function transformHistoricalDataResult_unexpectedHeaderLineCsvGiven_throwApiException(): void
     {
         $this->expectException(ApiException::class);
@@ -154,9 +140,7 @@ class ResultDecoderTest extends TestCase
         $this->resultDecoder->transformHistoricalDataResult($invalidCsvString);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function transformHistoricalDataResult_invalidDateTimeFormatCsvGiven_throwApiException(): void
     {
         $this->expectException(ApiException::class);
@@ -165,9 +149,7 @@ class ResultDecoderTest extends TestCase
         $this->resultDecoder->transformHistoricalDataResult(file_get_contents(__DIR__.'/fixtures/invalidDateTimeFormatHistoricalData.csv'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function transformHistoricalDataResult_invalidNumericStringCsvGiven_throwApiException(): void
     {
         $this->expectException(ApiException::class);
@@ -176,9 +158,7 @@ class ResultDecoderTest extends TestCase
         $this->resultDecoder->transformHistoricalDataResult(file_get_contents(__DIR__.'/fixtures/invalidNumericStringHistoricalData.csv'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function transformDividendDataResult_csvGiven_returnArrayOfDividendData(): void
     {
         $returnedResult = $this->resultDecoder->transformDividendDataResult(file_get_contents(__DIR__.'/fixtures/dividendData.json'));
@@ -194,9 +174,7 @@ class ResultDecoderTest extends TestCase
         $this->assertEquals($expectedExchangeRate, $firstResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function transformDividendDataResult_noData(): void
     {
         $returnedResult = $this->resultDecoder->transformDividendDataResult(file_get_contents(__DIR__.'/fixtures/noData.json'));
@@ -205,9 +183,7 @@ class ResultDecoderTest extends TestCase
         $this->assertCount(0, $returnedResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function transformDividendDataResult_invalidColumnsCsvGiven_throwApiException(): void
     {
         $this->expectException(ApiException::class);
@@ -216,9 +192,7 @@ class ResultDecoderTest extends TestCase
         $this->resultDecoder->transformDividendDataResult(file_get_contents(__DIR__.'/fixtures/invalidColumnsDividendData.csv'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function transformDividendDataResult_unexpectedHeaderLineCsvGiven_throwApiException(): void
     {
         $this->expectException(ApiException::class);
@@ -228,9 +202,7 @@ class ResultDecoderTest extends TestCase
         $this->resultDecoder->transformDividendDataResult($invalidCsvString);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function transformDividendDataResult_invalidDateTimeFormatCsvGiven_throwApiException(): void
     {
         $this->expectException(ApiException::class);
@@ -239,9 +211,7 @@ class ResultDecoderTest extends TestCase
         $this->resultDecoder->transformDividendDataResult(file_get_contents(__DIR__.'/fixtures/invalidDateTimeFormatDividendData.csv'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function transformDividendDataResult_invalidNumericStringCsvGiven_throwApiException(): void
     {
         $this->expectException(ApiException::class);
@@ -250,9 +220,7 @@ class ResultDecoderTest extends TestCase
         $this->resultDecoder->transformDividendDataResult(file_get_contents(__DIR__.'/fixtures/invalidNumericStringDividendData.csv'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function transformSplitDataResult_csvGiven_returnArrayOfSplitData(): void
     {
         $returnedResult = $this->resultDecoder->transformSplitDataResult(file_get_contents(__DIR__.'/fixtures/splitData.json'));
@@ -268,9 +236,7 @@ class ResultDecoderTest extends TestCase
         $this->assertEquals($expectedExchangeRate, $firstResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function transformSplitDataResult_noData(): void
     {
         $returnedResult = $this->resultDecoder->transformSplitDataResult(file_get_contents(__DIR__.'/fixtures/noData.json'));
@@ -279,9 +245,7 @@ class ResultDecoderTest extends TestCase
         $this->assertCount(0, $returnedResult);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function transformSplitDataResult_invalidColumnsCsvGiven_throwApiException(): void
     {
         $this->expectException(ApiException::class);
@@ -290,9 +254,7 @@ class ResultDecoderTest extends TestCase
         $this->resultDecoder->transformSplitDataResult(file_get_contents(__DIR__.'/fixtures/invalidColumnsSplitData.csv'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function transformSplitDataResult_unexpectedHeaderLineCsvGiven_throwApiException(): void
     {
         $this->expectException(ApiException::class);
@@ -302,9 +264,7 @@ class ResultDecoderTest extends TestCase
         $this->resultDecoder->transformSplitDataResult($invalidCsvString);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function transformSplitDataResult_invalidDateTimeFormatCsvGiven_throwApiException(): void
     {
         $this->expectException(ApiException::class);
@@ -313,7 +273,7 @@ class ResultDecoderTest extends TestCase
         $this->resultDecoder->transformSplitDataResult(file_get_contents(__DIR__.'/fixtures/invalidDateTimeFormatSplitData.csv'));
     }
 
-    public function transformQuotesInvalidResult(): array
+    public static function provideTransformQuotesInvalidResult(): array
     {
         return [
             [
@@ -333,10 +293,8 @@ class ResultDecoderTest extends TestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider transformQuotesInvalidResult
-     */
+    #[Test]
+    #[DataProvider('provideTransformQuotesInvalidResult')]
     public function transformQuotes_jsonGiven_createArrayOfInvalidResult(array $responseBody): void
     {
         $this->expectException(ApiException::class);
@@ -345,9 +303,7 @@ class ResultDecoderTest extends TestCase
         $this->resultDecoder->transformQuotes(json_encode($responseBody));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function transformQuotes_jsonGiven_createArrayOfQuote(): void
     {
         $returnedResult = $this->resultDecoder->transformQuotes(file_get_contents(__DIR__.'/fixtures/quote.json'));
@@ -433,9 +389,7 @@ class ResultDecoderTest extends TestCase
         $this->assertEquals($expectedQuote, $returnedResult[0]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function transformQuotes_jsonWithNullGiven_createArrayOfQuote(): void
     {
         $returnedResult = $this->resultDecoder->transformQuotes(file_get_contents(__DIR__.'/fixtures/nullQuote.json'));
@@ -521,9 +475,7 @@ class ResultDecoderTest extends TestCase
         $this->assertEquals($expectedQuote, $returnedResult[0]);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function transformQuotes_jsonWithInvalidFloatGiven_createArrayOfQuote(): void
     {
         $this->expectException(ApiException::class);
@@ -532,9 +484,7 @@ class ResultDecoderTest extends TestCase
         $this->resultDecoder->transformQuotes(file_get_contents(__DIR__.'/fixtures/invalidFloatQuote.json'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function transformQuotes_jsonWithInvalidDateTimeGiven_createArrayOfQuote(): void
     {
         $this->expectException(ApiException::class);
@@ -543,9 +493,7 @@ class ResultDecoderTest extends TestCase
         $this->resultDecoder->transformQuotes(file_get_contents(__DIR__.'/fixtures/invalidDateTimeQuote.json'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function transformQuotes_jsonWithInvalidIntegerGiven_createArrayOfQuote(): void
     {
         $this->expectException(ApiException::class);
@@ -554,9 +502,7 @@ class ResultDecoderTest extends TestCase
         $this->resultDecoder->transformQuotes(file_get_contents(__DIR__.'/fixtures/invalidIntegerQuote.json'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function transformSearchResult_jsonWithMissedFieldGiven_createSearchResultFromJson(): void
     {
         $jsonArray = [
@@ -571,10 +517,8 @@ class ResultDecoderTest extends TestCase
         $this->resultDecoder->transformSearchResult(json_encode($jsonArray));
     }
 
-    /**
-     * @test
-     * @dataProvider transformQuotesInvalidResult
-     */
+    #[Test]
+    #[DataProvider('provideTransformQuotesInvalidResult')]
     public function transformOptionChains_jsonGiven_createArrayOfInvalidResult(array $responseBody): void
     {
         $this->expectException(ApiException::class);
@@ -583,9 +527,7 @@ class ResultDecoderTest extends TestCase
         $this->resultDecoder->transformOptionChains(json_encode($responseBody));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function transformOptionChains_jsonGiven_createArrayOfOptionChain(): void
     {
         $returnedResult = $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/optionChain.json'));
@@ -658,9 +600,7 @@ class ResultDecoderTest extends TestCase
         $this->assertEquals($expectedOptionChainData[0], $returnedResult[0]->jsonSerialize());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function transformOptionChains_jsonWithNullGiven_createArrayOfOptionChain(): void
     {
         $returnedResult = $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/nullOptionChain.json'));
@@ -689,9 +629,7 @@ class ResultDecoderTest extends TestCase
         $this->assertEquals($expectedOptionChainData[0], $returnedResult[0]->jsonSerialize());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function transformOptionChains_jsonWithInvalidFloatGivenInOptionChain_apiExceptionThrown(): void
     {
         $this->expectException(ApiException::class);
@@ -700,9 +638,7 @@ class ResultDecoderTest extends TestCase
         $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/invalidFloatOptionChain.json'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function transformOptionChains_jsonWithInvalidDateTimeGivenInOptionsChain_apiExceptionThrown(): void
     {
         $this->expectException(ApiException::class);
@@ -711,9 +647,7 @@ class ResultDecoderTest extends TestCase
         $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/invalidDateTimeOptionChain.json'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function transformOptionChains_jsonWithInvalidBooleanGivenInOptionsChain_apiExceptionThrown(): void
     {
         $this->expectException(ApiException::class);
@@ -722,9 +656,7 @@ class ResultDecoderTest extends TestCase
         $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/invalidBooleanOptionChain.json'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function transformOptionChains_jsonWithInvalidArrayGivenInOptionsChain_apiExceptionThrownForInvalidData(): void
     {
         $this->expectException(ApiException::class);
@@ -733,9 +665,7 @@ class ResultDecoderTest extends TestCase
         $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/invalidArrayOptionChain.json'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function transformOptionChains_jsonGiven_createArrayOfOptions(): void
     {
         $returnedResult = $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/optionChain.json'));
@@ -808,9 +738,7 @@ class ResultDecoderTest extends TestCase
         $this->assertEquals($expectedOptionChainData[0], $returnedResult[0]->jsonSerialize());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function transformOptionChains_jsonWithNullGiven_HandleNullResult(): void
     {
         $returnedResult = $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/nullOptionChain.json'));
@@ -839,9 +767,7 @@ class ResultDecoderTest extends TestCase
         $this->assertEquals($expectedOptionChainData[0], $returnedResult[0]->jsonSerialize());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function transformOptionChains_jsonWithInvalidArrayGivenInOption_apiExceptionThrown(): void
     {
         $this->expectException(ApiException::class);
@@ -850,9 +776,7 @@ class ResultDecoderTest extends TestCase
         $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/invalidArrayOption.json'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function transformOptionChains_jsonWithInvalidDateTimeGivenInOption_apiExceptionThrown(): void
     {
         $this->expectException(ApiException::class);
@@ -861,9 +785,7 @@ class ResultDecoderTest extends TestCase
         $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/invalidDateTimeOption.json'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function transformOptionChains_jsonWithInvalidBooleanGivenInOption_apiExceptionThrown(): void
     {
         $this->expectException(ApiException::class);
@@ -872,9 +794,7 @@ class ResultDecoderTest extends TestCase
         $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/invalidBooleanOption.json'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function transformOptionChains_jsonGiven_createArrayOfOptionContracts(): void
     {
         $returnedResult = $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/optionChain.json'));
@@ -947,9 +867,7 @@ class ResultDecoderTest extends TestCase
         $this->assertEquals($expectedOptionChainData[0], $returnedResult[0]->jsonSerialize());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function transformOptionChains_jsonWithNullGiven_createArrayOfOptionContracts(): void
     {
         $returnedResult = $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/nullOptionChain.json'));
@@ -978,9 +896,7 @@ class ResultDecoderTest extends TestCase
         $this->assertEquals($expectedOptionChainData[0], $returnedResult[0]->jsonSerialize());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function transformOptionChains_jsonWithInvalidFloatGiven_apiExceptionThrown(): void
     {
         $this->expectException(ApiException::class);
@@ -989,9 +905,7 @@ class ResultDecoderTest extends TestCase
         $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/invalidFloatOptionContract.json'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function transformOptionChains_jsonWithInvalidDateTimeGiven_apiExceptionThrown(): void
     {
         $this->expectException(ApiException::class);
@@ -1000,9 +914,7 @@ class ResultDecoderTest extends TestCase
         $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/invalidDateTimeOptionContract.json'));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function transformOptionChains_jsonWithInvalidBooleanGiven_apiExceptionThrown(): void
     {
         $this->expectException(ApiException::class);
