@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Scheb\YahooFinanceApi\Exception;
 
+/**
+ * @final
+ */
 class InvalidValueException extends \Exception
 {
     public function __construct(string $type)

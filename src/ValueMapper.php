@@ -6,6 +6,9 @@ namespace Scheb\YahooFinanceApi;
 
 use Scheb\YahooFinanceApi\Exception\InvalidValueException;
 
+/**
+ * @final
+ */
 class ValueMapper implements ValueMapperInterface
 {
     public function mapArray(array $rawValue, string $type): array

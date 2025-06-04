@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Scheb\YahooFinanceApi\Results;
 
+/**
+ * @final
+ */
 class OptionContract implements \JsonSerializable
 {
     private ?string $contractSymbol;

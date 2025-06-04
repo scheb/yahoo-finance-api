@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Scheb\YahooFinanceApi\Exception;
 
+/**
+ * @final
+ */
 class ApiException extends \Exception
 {
     public const INVALID_RESPONSE = 1;

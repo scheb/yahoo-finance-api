@@ -7,6 +7,9 @@ namespace Scheb\YahooFinanceApi;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 
+/**
+ * @final
+ */
 class ApiClientFactory
 {
     public static function createApiClient(?ClientInterface $guzzleClient = null): ApiClient

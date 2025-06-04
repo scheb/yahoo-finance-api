@@ -13,6 +13,9 @@ use Scheb\YahooFinanceApi\Results\Quote;
 use Scheb\YahooFinanceApi\Results\SearchResult;
 use Scheb\YahooFinanceApi\Results\SplitData;
 
+/**
+ * @final
+ */
 class ApiClient
 {
     public const INTERVAL_1_DAY = '1d';

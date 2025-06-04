@@ -15,6 +15,9 @@ use Scheb\YahooFinanceApi\Results\Quote;
 use Scheb\YahooFinanceApi\Results\SearchResult;
 use Scheb\YahooFinanceApi\Results\SplitData;
 
+/**
+ * @final
+ */
 class ResultDecoder
 {
     public const HISTORICAL_DATA_HEADER_LINE = ['Date', 'Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume'];

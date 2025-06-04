@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Scheb\YahooFinanceApi\Results;
 
+/**
+ * @final
+ */
 class Option implements \JsonSerializable
 {
     private ?\DateTimeInterface $expirationDate;
