@@ -21,6 +21,7 @@ class ResultDecoder
     public const DIVIDEND_DATA_HEADER_LINE = ['Date', 'Dividends'];
     public const SPLIT_DATA_HEADER_LINE = ['Date', 'Stock Splits'];
     public const SEARCH_RESULT_FIELDS = ['symbol', 'shortname', 'exchange', 'quoteType', 'exchDisp', 'typeDisp'];
+
     public const OPTION_CHAIN_FIELDS_MAP = [
         'underlyingSymbol' => ValueMapperInterface::TYPE_STRING,
         'expirationDates' => ValueMapperInterface::TYPE_ARRAY,
@@ -28,12 +29,14 @@ class ResultDecoder
         'hasMiniOptions' => ValueMapperInterface::TYPE_BOOL,
         'options' => ValueMapperInterface::TYPE_ARRAY,
     ];
+
     public const OPTION_FIELDS_MAP = [
         'expirationDate' => ValueMapperInterface::TYPE_DATE,
         'hasMiniOptions' => ValueMapperInterface::TYPE_BOOL,
         'calls' => ValueMapperInterface::TYPE_ARRAY,
         'puts' => ValueMapperInterface::TYPE_ARRAY,
     ];
+
     public const OPTION_CONTRACT_FIELDS_MAP = [
         'contractSymbol' => ValueMapperInterface::TYPE_STRING,
         'strike' => ValueMapperInterface::TYPE_FLOAT,
@@ -51,6 +54,7 @@ class ResultDecoder
         'impliedVolatility' => ValueMapperInterface::TYPE_FLOAT,
         'inTheMoney' => ValueMapperInterface::TYPE_BOOL,
     ];
+
     public const QUOTE_FIELDS_MAP = [
         'ask' => ValueMapperInterface::TYPE_FLOAT,
         'askSize' => ValueMapperInterface::TYPE_INT,
@@ -124,14 +128,8 @@ class ResultDecoder
         'twoHundredDayAverageChangePercent' => ValueMapperInterface::TYPE_FLOAT,
     ];
 
-    /**
-     * @var ValueMapperInterface
-     */
-    private $valueMapper;
-
-    public function __construct(ValueMapperInterface $valueMapper)
+    public function __construct(private readonly ValueMapperInterface $valueMapper)
     {
-        $this->valueMapper = $valueMapper;
     }
 
     public function transformSearchResult(string $responseBody): array
@@ -141,15 +139,13 @@ class ResultDecoder
             throw new ApiException('Yahoo Search API returned an invalid response', ApiException::INVALID_RESPONSE);
         }
 
-        return array_map(function (array $item) {
-            return $this->createSearchResultFromJson($item);
-        }, $decoded['quotes']);
+        return array_map(fn (array $item): SearchResult => $this->createSearchResultFromJson($item), $decoded['quotes']);
     }
 
     private function createSearchResultFromJson(array $json): SearchResult
     {
         $missingFields = array_diff(self::SEARCH_RESULT_FIELDS, array_keys($json));
-        if ($missingFields) {
+        if ([] !== $missingFields) {
             throw new ApiException(\sprintf('Search result is missing fields: %s', implode(', ', $missingFields)), ApiException::INVALID_RESPONSE);
         }
 
@@ -172,23 +168,11 @@ class ResultDecoder
         throw new ApiException('Could not extract crumb from response', ApiException::MISSING_CRUMB);
     }
 
-    private function validateHeaderLines(string $responseBody, array $expectedHeader): array
-    {
-        $lines = array_map('trim', explode("\n", trim($responseBody)));
-        $headerLine = array_shift($lines);
-        $expectedHeaderLine = implode(',', $expectedHeader);
-        if ($headerLine !== $expectedHeaderLine) {
-            throw new ApiException(\sprintf('CSV header line did not match expected header line, given: %s, expected: %s', $headerLine, $expectedHeaderLine), ApiException::INVALID_RESPONSE);
-        }
-
-        return $lines;
-    }
-
     private function validateDate(string $value): \DateTime
     {
         try {
             return new \DateTime($value, new \DateTimeZone('UTC'));
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             throw new ApiException(\sprintf('Not a date in column "Date":%s', $value), ApiException::INVALID_VALUE);
         }
     }
@@ -220,7 +204,7 @@ class ResultDecoder
     private function createHistoricalData(array $json, int $index): HistoricalData
     {
         $dateStr = date('Y-m-d', $json['timestamp'][$index]);
-        if ($dateStr) {
+        if ('0' !== $dateStr) {
             $date = $this->validateDate($dateStr);
         } else {
             throw new ApiException(\sprintf('Not a date in column "Date":%s', $json['timestamp'][$index]), ApiException::INVALID_VALUE);
@@ -259,15 +243,13 @@ class ResultDecoder
             return [];
         }
 
-        return array_map(function (array $item) {
-            return $this->createDividendData($item);
-        }, $decoded['chart']['result'][0]['events']['dividends']);
+        return array_map(fn (array $item): DividendData => $this->createDividendData($item), $decoded['chart']['result'][0]['events']['dividends']);
     }
 
     private function createDividendData(array $json): DividendData
     {
         $dateStr = date('Y-m-d', $json['date']);
-        if ($dateStr) {
+        if ('0' !== $dateStr) {
             $date = $this->validateDate($dateStr);
         } else {
             throw new ApiException(\sprintf('Not a date in column "Date":%s', $json['date']), ApiException::INVALID_VALUE);
@@ -289,15 +271,13 @@ class ResultDecoder
             return [];
         }
 
-        return array_map(function (array $item) {
-            return $this->createSplitData($item);
-        }, $decoded['chart']['result'][0]['events']['splits']);
+        return array_map(fn (array $item): SplitData => $this->createSplitData($item), $decoded['chart']['result'][0]['events']['splits']);
     }
 
     private function createSplitData(array $json): SplitData
     {
         $dateStr = date('Y-m-d', $json['date']);
-        if ($dateStr) {
+        if ('0' !== $dateStr) {
             $date = $this->validateDate($dateStr);
         } else {
             throw new ApiException(\sprintf('Not a date in column "Date":%s', $json['date']), ApiException::INVALID_VALUE);
@@ -318,9 +298,7 @@ class ResultDecoder
         $results = $decoded['quoteResponse']['result'];
 
         // Single element is returned directly in "quote"
-        return array_map(function (array $item) {
-            return $this->createQuote($item);
-        }, $results);
+        return array_map(fn (array $item): Quote => $this->createQuote($item), $results);
     }
 
     private function createQuote(array $json): Quote
@@ -360,9 +338,7 @@ class ResultDecoder
         $results = $decoded['optionChain']['result'];
 
         // Single element is returned directly in "OptionChain"
-        $final = array_map(function (array $item) {
-            return $this->createOptionChain($item);
-        }, $results);
+        $final = array_map(fn (array $item): OptionChain => $this->createOptionChain($item), $results);
 
         return $final;
     }
@@ -374,6 +350,7 @@ class ResultDecoder
             if (!\array_key_exists($field, self::OPTION_CHAIN_FIELDS_MAP)) {
                 continue;
             }
+
             $type = self::OPTION_CHAIN_FIELDS_MAP[$field];
             try {
                 if ('options' === $field) {
@@ -381,9 +358,7 @@ class ResultDecoder
                         throw new InvalidValueException($type);
                     }
 
-                    $mappedValues[$field] = array_map(function (array $option): Option {
-                        return $this->createOption($option);
-                    }, $value);
+                    $mappedValues[$field] = array_map(fn (array $option): Option => $this->createOption($option), $value);
                 } elseif ('expirationDates' === $field) {
                     $mappedValues[$field] = $this->valueMapper->mapValue($value, $type, ValueMapperInterface::TYPE_DATE);
                 } elseif ('strikes' === $field) {
@@ -406,6 +381,7 @@ class ResultDecoder
             if (!\array_key_exists($field, self::OPTION_FIELDS_MAP)) {
                 continue;
             }
+
             $type = self::OPTION_FIELDS_MAP[$field];
             try {
                 if ('calls' === $field || 'puts' === $field) {
@@ -413,9 +389,7 @@ class ResultDecoder
                         throw new InvalidValueException($type);
                     }
 
-                    $mappedValues[$field] = array_map(function (array $optionContract): OptionContract {
-                        return $this->createOptionContract($optionContract);
-                    }, $value);
+                    $mappedValues[$field] = array_map(fn (array $optionContract): OptionContract => $this->createOptionContract($optionContract), $value);
                 } else {
                     $mappedValues[$field] = $this->valueMapper->mapValue($value, $type);
                 }
@@ -434,6 +408,7 @@ class ResultDecoder
             if (!\array_key_exists($property, self::OPTION_CONTRACT_FIELDS_MAP)) {
                 continue;
             }
+
             try {
                 $mappedValues[$property] = $this->valueMapper->mapValue($value, self::OPTION_CONTRACT_FIELDS_MAP[$property]);
             } catch (InvalidValueException $e) {

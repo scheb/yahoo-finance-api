@@ -11,10 +11,7 @@ use Scheb\YahooFinanceApi\ValueMapperInterface;
 
 class ValueMapperTest extends TestCase
 {
-    /**
-     * @var ValueMapper
-     */
-    private $valueMapper;
+    private ValueMapper $valueMapper;
 
     protected function setUp(): void
     {
@@ -34,7 +31,7 @@ class ValueMapperTest extends TestCase
      * @test
      * @dataProvider provideValidValues
      */
-    public function mapValue_passValidValue_returnMappedValue(string $type, $inputValue, $expectedOutput): void
+    public function mapValue_passValidValue_returnMappedValue(string $type, string|float|int $inputValue, float|int|string|\DateTime|bool $expectedOutput): void
     {
         $returnValue = $this->valueMapper->mapValue($inputValue, $type);
         if (\is_object($expectedOutput)) {
@@ -84,7 +81,7 @@ class ValueMapperTest extends TestCase
      * @test
      * @dataProvider provideInvalidValues
      */
-    public function mapValue_passInvalidValue_throwInvalidValueException(string $type, $inputValue): void
+    public function mapValue_passInvalidValue_throwInvalidValueException(string $type, string $inputValue): void
     {
         $this->expectException(InvalidValueException::class);
         $this->valueMapper->mapValue($inputValue, $type);

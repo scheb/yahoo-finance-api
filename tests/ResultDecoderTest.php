@@ -17,12 +17,9 @@ use Scheb\YahooFinanceApi\ValueMapper;
 
 class ResultDecoderTest extends TestCase
 {
-    /**
-     * @var ResultDecoder
-     */
-    private $resultDecoder;
+    private ResultDecoder $resultDecoder;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->resultDecoder = new ResultDecoder(new ValueMapper());
     }
@@ -49,7 +46,7 @@ class ResultDecoderTest extends TestCase
      * @test
      * @dataProvider transformInvalidResponse
      */
-    public function transformSearchResult_jsonGiven_createArrayOfInvalidResponse($responseBody): void
+    public function transformSearchResult_jsonGiven_createArrayOfInvalidResponse(array $responseBody): void
     {
         $this->expectException(ApiException::class);
         $this->expectExceptionMessage('Yahoo Search API returned an invalid response');
@@ -340,7 +337,7 @@ class ResultDecoderTest extends TestCase
      * @test
      * @dataProvider transformQuotesInvalidResult
      */
-    public function transformQuotes_jsonGiven_createArrayOfInvalidResult($responseBody): void
+    public function transformQuotes_jsonGiven_createArrayOfInvalidResult(array $responseBody): void
     {
         $this->expectException(ApiException::class);
         $this->expectExceptionMessage('Yahoo Search API returned an invalid result');
@@ -578,7 +575,7 @@ class ResultDecoderTest extends TestCase
      * @test
      * @dataProvider transformQuotesInvalidResult
      */
-    public function transformOptionChains_jsonGiven_createArrayOfInvalidResult($responseBody): void
+    public function transformOptionChains_jsonGiven_createArrayOfInvalidResult(array $responseBody): void
     {
         $this->expectException(ApiException::class);
         $this->expectExceptionMessage('Yahoo Search API returned an invalid result');

@@ -19,30 +19,16 @@ class ApiClient
     public const INTERVAL_1_WEEK = '1wk';
     public const INTERVAL_1_MONTH = '1mo';
     public const CURRENCY_SYMBOL_SUFFIX = '=X';
-
     private const FILTER_HISTORICAL = 'history';
     private const FILTER_DIVIDENDS = 'div';
     private const FILTER_SPLITS = 'split';
 
-    /**
-     * @var ClientInterface
-     */
-    private $client;
+    private readonly string $userAgent;
 
-    /**
-     * @var ResultDecoder
-     */
-    private $resultDecoder;
-
-    /**
-     * @var string
-     */
-    private $userAgent;
-
-    public function __construct(ClientInterface $guzzleClient, ResultDecoder $resultDecoder)
-    {
-        $this->client = $guzzleClient;
-        $this->resultDecoder = $resultDecoder;
+    public function __construct(
+        private readonly ClientInterface $client,
+        private readonly ResultDecoder $resultDecoder,
+    ) {
         $this->userAgent = UserAgent::getRandomUserAgent();
     }
 
@@ -121,10 +107,9 @@ class ApiClient
         $responseBody = $this->getHistoricalDataResponseBodyJson($symbol, self::INTERVAL_1_MONTH, $startDate, $endDate, self::FILTER_DIVIDENDS);
 
         $historicData = $this->resultDecoder->transformDividendDataResult($responseBody);
-        usort($historicData, function (DividendData $a, DividendData $b): int {
+        usort($historicData, fn (DividendData $a, DividendData $b): int =>
             // Data is not necessary in order, so ensure ascending order by date
-            return $a->getDate() <=> $b->getDate();
-        });
+            $a->getDate() <=> $b->getDate());
 
         return $historicData;
     }
@@ -143,10 +128,9 @@ class ApiClient
         $responseBody = $this->getHistoricalDataResponseBodyJson($symbol, self::INTERVAL_1_MONTH, $startDate, $endDate, self::FILTER_SPLITS);
 
         $historicData = $this->resultDecoder->transformSplitDataResult($responseBody);
-        usort($historicData, function (SplitData $a, SplitData $b): int {
+        usort($historicData, fn (SplitData $a, SplitData $b): int =>
             // Data is not necessary in order, so ensure ascending order by date
-            return $a->getDate() <=> $b->getDate();
-        });
+            $a->getDate() <=> $b->getDate());
 
         return $historicData;
     }
@@ -158,7 +142,7 @@ class ApiClient
     {
         $list = $this->fetchQuotes([$symbol]);
 
-        return isset($list[0]) ? $list[0] : null;
+        return $list[0] ?? null;
     }
 
     /**
@@ -178,7 +162,7 @@ class ApiClient
     {
         $list = $this->getExchangeRates([[$currency1, $currency2]]);
 
-        return isset($list[0]) ? $list[0] : null;
+        return $list[0] ?? null;
     }
 
     /**
@@ -190,8 +174,8 @@ class ApiClient
      */
     public function getExchangeRates(array $currencyPairs): array
     {
-        $currencySymbols = array_map(function (array $currencies) {
-            return implode($currencies).self::CURRENCY_SYMBOL_SUFFIX; // Currency pairs are suffixed with "=X"
+        $currencySymbols = array_map(function (array $currencies): string {
+            return implode('', $currencies).self::CURRENCY_SYMBOL_SUFFIX; // Currency pairs are suffixed with "=X"
         }, $currencyPairs);
 
         return $this->fetchQuotes($currencySymbols);
@@ -266,7 +250,7 @@ class ApiClient
 
     private function getRandomQueryServer(): int
     {
-        return rand(1, 2);
+        return random_int(1, 2);
     }
 
     /**
@@ -328,8 +312,8 @@ class ApiClient
 
         // Fetch options
         $url = 'https://query'.$qs.'.finance.yahoo.com/v7/finance/options/'.$symbol.'?crumb='.$crumb;
-        if ($expiryDate) {
-            $url .= '&date='.(string) $expiryDate->getTimestamp();
+        if ($expiryDate instanceof \DateTimeInterface) {
+            $url .= '&date='.$expiryDate->getTimestamp();
         }
         $responseBody = (string) $this->client->request('GET', $url, ['cookies' => $cookieJar, 'headers' => $this->getHeaders()])->getBody();
 

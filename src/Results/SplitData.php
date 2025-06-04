@@ -6,13 +6,10 @@ namespace Scheb\YahooFinanceApi\Results;
 
 class SplitData implements \JsonSerializable
 {
-    private $date;
-    private $stockSplits;
-
-    public function __construct(\DateTime $date, ?string $stockSplits)
-    {
-        $this->date = $date;
-        $this->stockSplits = $stockSplits;
+    public function __construct(
+        private readonly \DateTime $date,
+        private readonly ?string $stockSplits,
+    ) {
     }
 
     public function jsonSerialize(): array

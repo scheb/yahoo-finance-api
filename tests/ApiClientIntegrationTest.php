@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Scheb\YahooFinanceApi\Tests;
 
-use GuzzleHttp\Exception\TransferException;
 use PHPUnit\Framework\TestCase;
 use Scheb\YahooFinanceApi\ApiClient;
 use Scheb\YahooFinanceApi\ApiClientFactory;
@@ -22,23 +21,14 @@ class ApiClientIntegrationTest extends TestCase
 {
     private const APPLE_NAME = 'Apple';
     private const APPLE_SYMBOL = 'AAPL';
-    private const APPLE_SYMBOL_FRANKFURT = 'APC.F';
     private const GOOGLE_SYMBOL = 'GOOG';
-
     private const CURRENCY_USD = 'USD';
     private const CURRENCY_EUR = 'EUR';
-    private const TRY_COUNT = 3;
-    private const RETRY_SLEEP_SECONDS = 1;
-    private const REGION_US = 'en_US';
-    private const REGION_GERMANY = 'de_DE';
     private const USER_AGENT_CHROME_116 = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36';
 
-    /**
-     * @var ApiClient
-     */
-    private $client;
+    private ApiClient $client;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->client = ApiClientFactory::createApiClient();
 
@@ -79,7 +69,7 @@ class ApiClientIntegrationTest extends TestCase
     /**
      * @param SearchResult[] $searchResult
      */
-    private function findApple($searchResult, $symbol = self::APPLE_SYMBOL): ?SearchResult
+    private function findApple(array $searchResult, $symbol = self::APPLE_SYMBOL): ?SearchResult
     {
         foreach ($searchResult as $result) {
             if ($symbol === $result->getSymbol()) {
@@ -94,7 +84,7 @@ class ApiClientIntegrationTest extends TestCase
      * @test
      * @dataProvider getTestDataForHistoricalData
      */
-    public function getHistoricalQuoteData_valuesForInterval_returnHistoricalData($interval, \DateTime $startDate, \DateTime $endDate): void
+    public function getHistoricalQuoteData_valuesForInterval_returnHistoricalData(string $interval, \DateTime $startDate, \DateTime $endDate): void
     {
         $returnValue = $this->client->getHistoricalQuoteData(self::APPLE_SYMBOL, $interval, $startDate, $endDate);
 
@@ -270,27 +260,6 @@ class ApiClientIntegrationTest extends TestCase
         $this->assertIsFloat($exchangeRate->getRegularMarketPrice());
         $this->assertIsFloat($exchangeRate->getAsk());
         $this->assertIsFloat($exchangeRate->getBid());
-    }
-
-    public function runBare(): void
-    {
-        // I'll leave this part to you. PHPUnit supplies methods for parsing annotations.
-        for ($i = 0; $i < self::TRY_COUNT; ++$i) {
-            try {
-                parent::runBare();
-
-                return;
-            } catch (TransferException $e) {
-                // Catch all Guzzle network exceptions for retry
-                if ($i < self::TRY_COUNT - 1) {
-                    sleep(self::RETRY_SLEEP_SECONDS);
-                }
-            }
-        }
-
-        if ($e) {
-            throw $e; // Throw the last exception
-        }
     }
 
     public function testGetStockSummary(): void

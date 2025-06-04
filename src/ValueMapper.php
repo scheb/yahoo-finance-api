@@ -16,19 +16,15 @@ class ValueMapper implements ValueMapperInterface
              *
              * @return mixed
              */
-            function ($value) use ($type) {
-                return $this->mapValue($value, $type);
-            },
+            fn ($value): float|int|\DateTimeInterface|string|bool|array|null => $this->mapValue($value, $type),
             $rawValue
         );
     }
 
     /**
      * @param mixed $rawValue
-     *
-     * @return mixed
      */
-    public function mapValue($rawValue, string $type, ?string $subType = null)
+    public function mapValue($rawValue, string $type, ?string $subType = null): float|int|\DateTimeInterface|string|bool|array|null
     {
         if (null === $rawValue) {
             return null;
@@ -96,14 +92,11 @@ class ValueMapper implements ValueMapperInterface
         return $rawValue;
     }
 
-    /**
-     * @param mixed $rawValue
-     */
-    private function mapDateValue($rawValue): \DateTimeInterface
+    private function mapDateValue(mixed $rawValue): \DateTimeInterface
     {
         try {
             return new \DateTime('@'.$rawValue);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             throw new InvalidValueException(ValueMapperInterface::TYPE_DATE);
         }
     }

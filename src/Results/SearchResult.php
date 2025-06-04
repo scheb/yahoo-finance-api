@@ -6,21 +6,14 @@ namespace Scheb\YahooFinanceApi\Results;
 
 class SearchResult implements \JsonSerializable
 {
-    private $symbol;
-    private $name;
-    private $exch;
-    private $type;
-    private $exchDisp;
-    private $typeDisp;
-
-    public function __construct(?string $symbol, ?string $name, ?string $exch, ?string $type, ?string $exchDisp, ?string $typeDisp)
-    {
-        $this->symbol = $symbol;
-        $this->name = $name;
-        $this->exch = $exch;
-        $this->type = $type;
-        $this->exchDisp = $exchDisp;
-        $this->typeDisp = $typeDisp;
+    public function __construct(
+        private readonly ?string $symbol,
+        private readonly ?string $name,
+        private readonly ?string $exch,
+        private readonly ?string $type,
+        private readonly ?string $exchDisp,
+        private readonly ?string $typeDisp,
+    ) {
     }
 
     public function jsonSerialize(): ?array

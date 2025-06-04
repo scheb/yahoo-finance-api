@@ -6,23 +6,15 @@ namespace Scheb\YahooFinanceApi\Results;
 
 class HistoricalData implements \JsonSerializable
 {
-    private $date;
-    private $open;
-    private $high;
-    private $low;
-    private $close;
-    private $adjClose;
-    private $volume;
-
-    public function __construct(\DateTime $date, ?float $open, ?float $high, ?float $low, ?float $close, ?float $adjClose, ?int $volume)
-    {
-        $this->date = $date;
-        $this->open = $open;
-        $this->high = $high;
-        $this->low = $low;
-        $this->close = $close;
-        $this->adjClose = $adjClose;
-        $this->volume = $volume;
+    public function __construct(
+        private readonly \DateTime $date,
+        private readonly ?float $open,
+        private readonly ?float $high,
+        private readonly ?float $low,
+        private readonly ?float $close,
+        private readonly ?float $adjClose,
+        private readonly ?int $volume,
+    ) {
     }
 
     public function jsonSerialize(): array
