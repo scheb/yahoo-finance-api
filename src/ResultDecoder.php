@@ -370,7 +370,7 @@ class ResultDecoder
                     $mappedValues[$field] = $this->valueMapper->mapValue($value, $type);
                 }
             } catch (InvalidValueException $e) {
-                throw new ApiException(\sprintf('%s in field "%s": %s', $e->getMessage(), $field, json_encode($value)), ApiException::INVALID_VALUE, $e);
+                throw new ApiException(\sprintf('%s in field "%s": %s', $e->getMessage(), $field, $this->jsonEncodeValue($value)), ApiException::INVALID_VALUE, $e);
             }
         }
 
@@ -397,7 +397,7 @@ class ResultDecoder
                     $mappedValues[$field] = $this->valueMapper->mapValue($value, $type);
                 }
             } catch (InvalidValueException $e) {
-                throw new ApiException(\sprintf('%s in field "%s": %s', $e->getMessage(), $field, json_encode($value)), ApiException::INVALID_VALUE, $e);
+                throw new ApiException(\sprintf('%s in field "%s": %s', $e->getMessage(), $field, $this->jsonEncodeValue($value)), ApiException::INVALID_VALUE, $e);
             }
         }
 
@@ -415,10 +415,20 @@ class ResultDecoder
             try {
                 $mappedValues[$property] = $this->valueMapper->mapValue($value, self::OPTION_CONTRACT_FIELDS_MAP[$property]);
             } catch (InvalidValueException $e) {
-                throw new ApiException(\sprintf('%s in field "%s": %s', $e->getMessage(), $property, json_encode($value)), ApiException::INVALID_VALUE, $e);
+                throw new ApiException(\sprintf('%s in field "%s": %s', $e->getMessage(), $property, $this->jsonEncodeValue($value)), ApiException::INVALID_VALUE, $e);
             }
         }
 
         return new OptionContract($mappedValues);
+    }
+
+    private function jsonEncodeValue(mixed $value): string
+    {
+        $encoded = json_encode($value);
+        if (false === $encoded) {
+            return 'unknown value';
+        }
+
+        return $encoded;
     }
 }
