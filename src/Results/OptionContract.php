@@ -36,7 +36,10 @@ class OptionContract implements \JsonSerializable
 
     public function jsonSerialize(): array
     {
-        return get_object_vars($this);
+        return array_merge(
+            get_class_vars(self::class),
+            get_object_vars($this)
+        );
     }
 
     public function getContractSymbol(): ?string
