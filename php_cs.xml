@@ -14,4 +14,7 @@
 		<exclude-pattern>*/tests/*</exclude-pattern>
 	</rule>
 	<rule ref="Generic.PHP.RequireStrictTypes" />
+	<rule ref="PEAR.Functions.FunctionCallSignature.Indent">
+		<severity>0</severity>
+	</rule>
 </ruleset>
