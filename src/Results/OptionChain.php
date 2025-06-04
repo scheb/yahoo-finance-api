@@ -6,6 +6,8 @@ namespace Scheb\YahooFinanceApi\Results;
 
 /**
  * @final
+ *
+ * @psalm-suppress PropertyNotSetInConstructor
  */
 class OptionChain implements \JsonSerializable
 {
