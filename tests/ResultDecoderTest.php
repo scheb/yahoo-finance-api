@@ -398,6 +398,8 @@ class ResultDecoderTest extends TestCase
         $this->assertCount(1, $returnedResult);
         $this->assertContainsOnlyInstancesOf(Quote::class, $returnedResult);
 
+        // Values undefined in the JSON are not to be initialized with null
+        // Being null and "not set" is no longer the same under PHP 8
         $expectedQuoteData = [
             'language' => null,
             'quoteType' => 'EQUITY',
@@ -429,17 +431,12 @@ class ResultDecoderTest extends TestCase
             'fiftyDayAverageChangePercent' => 0.064477004,
             'marketState' => 'POST',
             'priceToBook' => 6.6890492,
-            'openInterest' => null,
             'sourceInterval' => 15,
             'exchangeTimezoneName' => 'America/New_York',
             'exchangeTimezoneShortName' => 'EST',
             'gmtOffSetMilliseconds' => -18000000,
             'tradeable' => true,
             'priceHint' => 2,
-            'preMarketChange' => null,
-            'preMarketChangePercent' => null,
-            'preMarketTime' => null,
-            'preMarketPrice' => null,
             'regularMarketPrice' => 171.34,
             'exchangeDataDelayedBy' => 0,
             'regularMarketPreviousClose' => 173.97,
