@@ -9,6 +9,8 @@ Minimum required PHP version is now 8.1.
 fetched. See method description for a list of known modules. Feel free to explore what kind of data you can retrieve
 with that function. An example dataset for the Apple stock can be found in [stockSummaryExample.json](doc/stockSummaryExample.json).
 
+`getHistoricalData()` has been removed. Use `getHistoricalQuoteData()` instead.
+
 ## From 3.x to 4.x
 
 Minimum required PHP version is now 7.1.3.

@@ -61,22 +61,6 @@ class ApiClient
     }
 
     /**
-     * Get historical data for a symbol (deprecated).
-     *
-     * @deprecated In future versions, this function will be removed. Please consider using getHistoricalQuoteData() instead.
-     *
-     * @return HistoricalData[]
-     *
-     * @throws ApiException
-     */
-    public function getHistoricalData(string $symbol, string $interval, \DateTimeInterface $startDate, \DateTimeInterface $endDate): array
-    {
-        @trigger_error('[scheb/yahoo-finance-api] getHistoricalData() is deprecated and will be removed in a future release', \E_USER_DEPRECATED);
-
-        return $this->getHistoricalQuoteData($symbol, $interval, $startDate, $endDate);
-    }
-
-    /**
      * Get historical data for a symbol.
      *
      * @return HistoricalData[]
@@ -224,14 +208,6 @@ class ApiClient
         if ($startDate > $endDate) {
             throw new \InvalidArgumentException('Start date must be before end date');
         }
-    }
-
-    /**
-     * @deprecated In future versions, this function will be removed. Please consider using getStockSummary() instead.
-     */
-    public function stockSummary(string $symbol): array
-    {
-        return $this->getStockSummary($symbol);
     }
 
     /**
