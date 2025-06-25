@@ -265,7 +265,7 @@ class ApiClientIntegrationTest extends TestCase
         $this->assertEquals(self::APPLE_SYMBOL, $returnValue[0]['quoteType']['symbol']);
     }
 
-    public function testgetOptionChain(): void
+    public function testGetOptionChain(): void
     {
         $returnValue = $this->client->getOptionChain(self::APPLE_SYMBOL);
 
