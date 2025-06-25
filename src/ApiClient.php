@@ -88,7 +88,7 @@ class ApiClient
         $this->validateIntervals($interval);
         $this->validateDates($startDate, $endDate);
 
-        $responseBody = $this->getHistoricalDataResponseBodyJson($symbol, $interval, $startDate, $endDate, self::FILTER_HISTORICAL);
+        $responseBody = $this->getHistoricalDataResponse($symbol, $interval, $startDate, $endDate, self::FILTER_HISTORICAL);
 
         return $this->resultDecoder->transformHistoricalDataResult($responseBody);
     }
@@ -104,7 +104,7 @@ class ApiClient
     {
         $this->validateDates($startDate, $endDate);
 
-        $responseBody = $this->getHistoricalDataResponseBodyJson($symbol, self::INTERVAL_1_MONTH, $startDate, $endDate, self::FILTER_DIVIDENDS);
+        $responseBody = $this->getHistoricalDataResponse($symbol, self::INTERVAL_1_MONTH, $startDate, $endDate, self::FILTER_DIVIDENDS);
 
         $historicData = $this->resultDecoder->transformDividendDataResult($responseBody);
         usort($historicData, fn (DividendData $a, DividendData $b): int =>
@@ -125,7 +125,7 @@ class ApiClient
     {
         $this->validateDates($startDate, $endDate);
 
-        $responseBody = $this->getHistoricalDataResponseBodyJson($symbol, self::INTERVAL_1_MONTH, $startDate, $endDate, self::FILTER_SPLITS);
+        $responseBody = $this->getHistoricalDataResponse($symbol, self::INTERVAL_1_MONTH, $startDate, $endDate, self::FILTER_SPLITS);
 
         $historicData = $this->resultDecoder->transformSplitDataResult($responseBody);
         usort($historicData, fn (SplitData $a, SplitData $b): int =>
@@ -203,7 +203,7 @@ class ApiClient
         return $this->resultDecoder->transformQuotes($responseBody);
     }
 
-    private function getHistoricalDataResponseBodyJson(string $symbol, string $interval, \DateTimeInterface $startDate, \DateTimeInterface $endDate, string $filter): string
+    private function getHistoricalDataResponse(string $symbol, string $interval, \DateTimeInterface $startDate, \DateTimeInterface $endDate, string $filter): string
     {
         $qs = QueryServer::getRandomQueryServer();
         $dataUrl = 'https://query'.$qs.'.finance.yahoo.com/v8/finance/chart/'.urlencode($symbol).'?period1='.$startDate->getTimestamp().'&period2='.$endDate->getTimestamp().'&interval='.$interval.'&events='.$filter;
