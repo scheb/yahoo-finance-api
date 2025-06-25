@@ -243,11 +243,22 @@ class ApiClientIntegrationTest extends TestCase
     public function testGetStockSummary(): void
     {
         $returnValue = $this->client->getStockSummary(self::APPLE_SYMBOL, [
-            'financialData',
-            'quoteType',
-            'defaultKeyStatistics',
-            'assetProfile',
             'summaryDetail',
+            'quoteType',
+            'assetProfile',
+            'defaultKeyStatistics',
+            'financialData',
+            'recommendationTrend',
+            'upgradeDowngradeHistory',
+            'majorHoldersBreakdown',
+            'insiderHolders',
+            'netSharePurchaseActivity',
+            'earnings',
+            'earningsHistory',
+            'earningsTrend',
+            'industryTrend',
+            'indexTrend',
+            'sectorTrend',
         ]);
 
         $this->assertIsArray($returnValue);

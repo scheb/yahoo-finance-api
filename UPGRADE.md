@@ -5,6 +5,10 @@ Upgrade
 
 Minimum required PHP version is now 8.1.
 
+`stockSummary()` has been removed. Use `getStockSummary()` instead. The new method requires a list of modules to be
+fetched. See method description for a list of known modules. Feel free to explore what kind of data you can retrieve
+with that function. An example dataset for the Apple stock can be found in [stockSummaryExample.json](doc/stockSummaryExample.json).
+
 ## From 3.x to 4.x
 
 Minimum required PHP version is now 7.1.3.
