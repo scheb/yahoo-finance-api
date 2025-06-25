@@ -32,12 +32,12 @@ class ApiClientIntegrationTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->client = ApiClientFactory::createApiClient();
-
         // Set user agent when impersonating Chrome 116 browser
         if ('chrome116' === getenv('CURL_IMPERSONATE')) {
             UserAgent::setUserAgents([self::USER_AGENT_CHROME_116]);
         }
+
+        $this->client = ApiClientFactory::createApiClient();
     }
 
     #[Test]
