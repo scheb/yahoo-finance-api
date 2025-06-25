@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Scheb\YahooFinanceApi;
 
 use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Cookie\CookieJarInterface;
 use Scheb\YahooFinanceApi\Context\CookieProvider;
+use Scheb\YahooFinanceApi\Context\CrumbProvider;
+use Scheb\YahooFinanceApi\Context\QueryServer;
 use Scheb\YahooFinanceApi\Exception\ApiException;
 use Scheb\YahooFinanceApi\Results\DividendData;
 use Scheb\YahooFinanceApi\Results\HistoricalData;
@@ -28,12 +29,14 @@ class ApiClient
     private const FILTER_SPLITS = 'split';
 
     private CookieProvider $cookieProvider;
+    private CrumbProvider $crumbProvider;
 
     public function __construct(
         private readonly ClientInterface $client,
         private readonly ResultDecoder $resultDecoder,
     ) {
         $this->cookieProvider = new CookieProvider($this->client);
+        $this->crumbProvider = new CrumbProvider($this->client);
     }
 
     /**
@@ -45,7 +48,7 @@ class ApiClient
      */
     public function search(string $searchTerm, string $locale = 'en-US', int $limit = 10): array
     {
-        $qs = $this->getRandomQueryServer();
+        $qs = QueryServer::getRandomQueryServer();
         $url = 'https://query'.$qs.'.finance.yahoo.com/v1/finance/search?'
             .'q='.urlencode($searchTerm)
             .'&lang='.urlencode($locale)
@@ -179,30 +182,19 @@ class ApiClient
     }
 
     /**
-     * Get the crumb value from the Yahoo Finance API.
-     */
-    private function getCrumb(int $qs, CookieJarInterface $cookies): string
-    {
-        // Get crumb value
-        $initialUrl = 'https://query'.$qs.'.finance.yahoo.com/v1/test/getcrumb';
-
-        return (string) $this->client->request('GET', $initialUrl, ['cookies' => $cookies])->getBody();
-    }
-
-    /**
      * Fetch quote data from API.
      *
      * @return Quote[]
      */
     private function fetchQuotes(array $symbols)
     {
-        $qs = $this->getRandomQueryServer();
+        $qs = QueryServer::getRandomQueryServer();
 
         // Initialize session cookies
         $cookieJar = $this->cookieProvider->acquireCookies();
 
         // Get crumb value
-        $crumb = $this->getCrumb($qs, $cookieJar);
+        $crumb = $this->crumbProvider->acquireCrumb($cookieJar);
 
         // Fetch quotes
         $url = 'https://query'.$qs.'.finance.yahoo.com/v7/finance/quote?crumb='.$crumb.'&symbols='.urlencode(implode(',', $symbols));
@@ -213,7 +205,7 @@ class ApiClient
 
     private function getHistoricalDataResponseBodyJson(string $symbol, string $interval, \DateTimeInterface $startDate, \DateTimeInterface $endDate, string $filter): string
     {
-        $qs = $this->getRandomQueryServer();
+        $qs = QueryServer::getRandomQueryServer();
         $dataUrl = 'https://query'.$qs.'.finance.yahoo.com/v8/finance/chart/'.urlencode($symbol).'?period1='.$startDate->getTimestamp().'&period2='.$endDate->getTimestamp().'&interval='.$interval.'&events='.$filter;
 
         return (string) $this->client->request('GET', $dataUrl)->getBody();
@@ -232,11 +224,6 @@ class ApiClient
         if ($startDate > $endDate) {
             throw new \InvalidArgumentException('Start date must be before end date');
         }
-    }
-
-    private function getRandomQueryServer(): int
-    {
-        return random_int(1, 2);
     }
 
     /**
@@ -270,13 +257,13 @@ class ApiClient
      */
     public function getStockSummary(string $symbol, array $modules = []): array
     {
-        $qs = $this->getRandomQueryServer();
+        $qs = QueryServer::getRandomQueryServer();
 
         // Initialize session cookies
         $cookieJar = $this->cookieProvider->acquireCookies();
 
         // Get crumb value
-        $crumb = $this->getCrumb($qs, $cookieJar);
+        $crumb = $this->crumbProvider->acquireCrumb($cookieJar);
 
         // Fetch quotes
         $url = 'https://query'.$qs.'.finance.yahoo.com/v10/finance/quoteSummary/'.$symbol.'?crumb='.$crumb.'&modules='.implode(',', $modules);
@@ -287,13 +274,13 @@ class ApiClient
 
     public function getOptionChain(string $symbol, ?\DateTimeInterface $expiryDate = null): array
     {
-        $qs = $this->getRandomQueryServer();
+        $qs = QueryServer::getRandomQueryServer();
 
         // Initialize session cookies
         $cookieJar = $this->cookieProvider->acquireCookies();
 
         // Get crumb value
-        $crumb = $this->getCrumb($qs, $cookieJar);
+        $crumb = $this->crumbProvider->acquireCrumb($cookieJar);
 
         // Fetch options
         $url = 'https://query'.$qs.'.finance.yahoo.com/v7/finance/options/'.$symbol.'?crumb='.$crumb;
