@@ -1,6 +1,10 @@
 Upgrade
 =======
 
+## From 4.x to 5.x
+
+Minimum required PHP version is now 8.1.
+
 ## From 3.x to 4.x
 
 Minimum required PHP version is now 7.1.3.
