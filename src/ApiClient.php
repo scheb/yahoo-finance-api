@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Scheb\YahooFinanceApi;
 
 use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Cookie\CookieJar;
+use GuzzleHttp\Cookie\CookieJarInterface;
+use Scheb\YahooFinanceApi\Context\CookieProvider;
 use Scheb\YahooFinanceApi\Exception\ApiException;
 use Scheb\YahooFinanceApi\Results\DividendData;
 use Scheb\YahooFinanceApi\Results\HistoricalData;
@@ -26,10 +27,13 @@ class ApiClient
     private const FILTER_DIVIDENDS = 'div';
     private const FILTER_SPLITS = 'split';
 
+    private CookieProvider $cookieProvider;
+
     public function __construct(
         private readonly ClientInterface $client,
         private readonly ResultDecoder $resultDecoder,
     ) {
+        $this->cookieProvider = new CookieProvider($this->client);
     }
 
     /**
@@ -174,24 +178,13 @@ class ApiClient
         return $this->fetchQuotes($currencySymbols);
     }
 
-    private function getCookies(): CookieJar
-    {
-        $cookieJar = new CookieJar();
-
-        // Initialize session cookies
-        $initialUrl = 'https://fc.yahoo.com';
-        $this->client->request('GET', $initialUrl, ['cookies' => $cookieJar, 'http_errors' => false]);
-
-        return $cookieJar;
-    }
-
     /**
      * Get the crumb value from the Yahoo Finance API.
      */
-    private function getCrumb(int $qs, CookieJar $cookies): string
+    private function getCrumb(int $qs, CookieJarInterface $cookies): string
     {
         // Get crumb value
-        $initialUrl = 'https://query'.(string) $qs.'.finance.yahoo.com/v1/test/getcrumb';
+        $initialUrl = 'https://query'.$qs.'.finance.yahoo.com/v1/test/getcrumb';
 
         return (string) $this->client->request('GET', $initialUrl, ['cookies' => $cookies])->getBody();
     }
@@ -206,7 +199,7 @@ class ApiClient
         $qs = $this->getRandomQueryServer();
 
         // Initialize session cookies
-        $cookieJar = $this->getCookies();
+        $cookieJar = $this->cookieProvider->acquireCookies();
 
         // Get crumb value
         $crumb = $this->getCrumb($qs, $cookieJar);
@@ -280,7 +273,7 @@ class ApiClient
         $qs = $this->getRandomQueryServer();
 
         // Initialize session cookies
-        $cookieJar = $this->getCookies();
+        $cookieJar = $this->cookieProvider->acquireCookies();
 
         // Get crumb value
         $crumb = $this->getCrumb($qs, $cookieJar);
@@ -297,7 +290,7 @@ class ApiClient
         $qs = $this->getRandomQueryServer();
 
         // Initialize session cookies
-        $cookieJar = $this->getCookies();
+        $cookieJar = $this->cookieProvider->acquireCookies();
 
         // Get crumb value
         $crumb = $this->getCrumb($qs, $cookieJar);
