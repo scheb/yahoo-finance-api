@@ -14,7 +14,8 @@ class ApiClientFactory
 {
     public static function createApiClient(?ClientInterface $guzzleClient = null): ApiClient
     {
-        $guzzleClient = $guzzleClient ? $guzzleClient : new Client();
+        $userAgent = UserAgent::getRandomUserAgent();
+        $guzzleClient = $guzzleClient ?: new Client(['headers' => ['User-Agent' => $userAgent]]);
         $resultDecoder = new ResultDecoder(new ValueMapper());
 
         return new ApiClient($guzzleClient, $resultDecoder);

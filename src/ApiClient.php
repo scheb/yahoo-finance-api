@@ -26,20 +26,10 @@ class ApiClient
     private const FILTER_DIVIDENDS = 'div';
     private const FILTER_SPLITS = 'split';
 
-    private readonly string $userAgent;
-
     public function __construct(
         private readonly ClientInterface $client,
         private readonly ResultDecoder $resultDecoder,
     ) {
-        $this->userAgent = UserAgent::getRandomUserAgent();
-    }
-
-    public function getHeaders(): array
-    {
-        return [
-            'User-Agent' => $this->userAgent,
-        ];
     }
 
     /**
@@ -58,7 +48,7 @@ class ApiClient
             .'&region=US&quotesCount='.$limit
             .'&quotesQueryId=tss_match_phrase_query&multiQuoteQueryId=multi_quote_single_token_query&enableCb=false&enableNavLinks=true&enableCulturalAssets=true&enableNews=false&enableResearchReports=false&enableLists=false&listsCount=0&recommendCount=0&enablePrivateCompany=true';
 
-        $responseBody = (string) $this->client->request('GET', $url, ['headers' => $this->getHeaders()])->getBody();
+        $responseBody = (string) $this->client->request('GET', $url)->getBody();
 
         return $this->resultDecoder->transformSearchResult($responseBody);
     }
@@ -190,7 +180,7 @@ class ApiClient
 
         // Initialize session cookies
         $initialUrl = 'https://fc.yahoo.com';
-        $this->client->request('GET', $initialUrl, ['cookies' => $cookieJar, 'http_errors' => false, 'headers' => $this->getHeaders()]);
+        $this->client->request('GET', $initialUrl, ['cookies' => $cookieJar, 'http_errors' => false]);
 
         return $cookieJar;
     }
@@ -203,7 +193,7 @@ class ApiClient
         // Get crumb value
         $initialUrl = 'https://query'.(string) $qs.'.finance.yahoo.com/v1/test/getcrumb';
 
-        return (string) $this->client->request('GET', $initialUrl, ['cookies' => $cookies, 'headers' => $this->getHeaders()])->getBody();
+        return (string) $this->client->request('GET', $initialUrl, ['cookies' => $cookies])->getBody();
     }
 
     /**
@@ -223,7 +213,7 @@ class ApiClient
 
         // Fetch quotes
         $url = 'https://query'.$qs.'.finance.yahoo.com/v7/finance/quote?crumb='.$crumb.'&symbols='.urlencode(implode(',', $symbols));
-        $responseBody = (string) $this->client->request('GET', $url, ['cookies' => $cookieJar, 'headers' => $this->getHeaders()])->getBody();
+        $responseBody = (string) $this->client->request('GET', $url, ['cookies' => $cookieJar])->getBody();
 
         return $this->resultDecoder->transformQuotes($responseBody);
     }
@@ -233,7 +223,7 @@ class ApiClient
         $qs = $this->getRandomQueryServer();
         $dataUrl = 'https://query'.$qs.'.finance.yahoo.com/v8/finance/chart/'.urlencode($symbol).'?period1='.$startDate->getTimestamp().'&period2='.$endDate->getTimestamp().'&interval='.$interval.'&events='.$filter;
 
-        return (string) $this->client->request('GET', $dataUrl, ['headers' => $this->getHeaders()])->getBody();
+        return (string) $this->client->request('GET', $dataUrl)->getBody();
     }
 
     private function validateIntervals(string $interval): void
@@ -296,9 +286,8 @@ class ApiClient
         $crumb = $this->getCrumb($qs, $cookieJar);
 
         // Fetch quotes
-        $modulesParam = implode(',', $modules);
-        $url = 'https://query'.$qs.'.finance.yahoo.com/v10/finance/quoteSummary/'.$symbol.'?crumb='.$crumb.'&modules='.$modulesParam;
-        $responseBody = (string) $this->client->request('GET', $url, ['cookies' => $cookieJar, 'headers' => $this->getHeaders()])->getBody();
+        $url = 'https://query'.$qs.'.finance.yahoo.com/v10/finance/quoteSummary/'.$symbol.'?crumb='.$crumb.'&modules='.implode(',', $modules);
+        $responseBody = (string) $this->client->request('GET', $url, ['cookies' => $cookieJar])->getBody();
 
         return $this->resultDecoder->transformQuotesSummary($responseBody);
     }
@@ -318,7 +307,7 @@ class ApiClient
         if ($expiryDate instanceof \DateTimeInterface) {
             $url .= '&date='.$expiryDate->getTimestamp();
         }
-        $responseBody = (string) $this->client->request('GET', $url, ['cookies' => $cookieJar, 'headers' => $this->getHeaders()])->getBody();
+        $responseBody = (string) $this->client->request('GET', $url, ['cookies' => $cookieJar])->getBody();
 
         return $this->resultDecoder->transformOptionChains($responseBody);
     }
