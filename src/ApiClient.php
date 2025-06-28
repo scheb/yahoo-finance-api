@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Scheb\YahooFinanceApi;
 
+use Scheb\YahooFinanceApi\Context\SessionManager;
 use Scheb\YahooFinanceApi\Exception\ApiException;
 use Scheb\YahooFinanceApi\Results\DividendData;
 use Scheb\YahooFinanceApi\Results\HistoricalData;
 use Scheb\YahooFinanceApi\Results\Quote;
 use Scheb\YahooFinanceApi\Results\SearchResult;
 use Scheb\YahooFinanceApi\Results\SplitData;
-use Scheb\YahooFinanceApi\Session\SessionManager;
 
 /**
  * @final

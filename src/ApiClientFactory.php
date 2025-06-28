@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Scheb\YahooFinanceApi;
 
+use Scheb\YahooFinanceApi\Context\SessionManager;
 use Scheb\YahooFinanceApi\HttpClient\GuzzleHttpClientFactory;
-use Scheb\YahooFinanceApi\Session\SessionManager;
 
 /**
  * @final

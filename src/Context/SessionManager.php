@@ -2,12 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Scheb\YahooFinanceApi\Session;
+namespace Scheb\YahooFinanceApi\Context;
 
 use Psr\Http\Message\ResponseInterface;
-use Scheb\YahooFinanceApi\Context\CookieProvider;
-use Scheb\YahooFinanceApi\Context\CrumbProvider;
-use Scheb\YahooFinanceApi\Context\QueryServer;
 use Scheb\YahooFinanceApi\HttpClient\HttpClientFactoryInterface;
 
 /**

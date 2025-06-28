@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Scheb\YahooFinanceApi\Tests;
 
 use PHPUnit\Framework\TestCase;
+use Scheb\YahooFinanceApi\Context\SessionManager;
 use Scheb\YahooFinanceApi\HttpClient\GuzzleHttpClientFactory;
-use Scheb\YahooFinanceApi\Session\SessionManager;
 
 class DebugTest extends TestCase
 {
