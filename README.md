@@ -51,7 +51,7 @@ $client = ApiClientFactory::createApiClient();
 
 // Or configure with options
 $client = ApiClientFactory::createApiClient(
-    clientOptions: [/* ... */],
+    clientOptions: [/* ... */], // Guzzle client options
     retries: 3,
     retryDelay: 1000, // milliseconds
 );
