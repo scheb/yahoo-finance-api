@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Scheb\YahooFinanceApi;
 
+use GuzzleHttp\Exception\GuzzleException;
 use Scheb\YahooFinanceApi\Context\SessionManagerInterface;
 use Scheb\YahooFinanceApi\Exception\ApiException;
 use Scheb\YahooFinanceApi\Results\DividendData;
@@ -36,7 +37,7 @@ class ApiClient
      *
      * @return SearchResult[]
      *
-     * @throws ApiException
+     * @throws GuzzleException|ApiException
      */
     public function search(string $searchTerm, string $locale = 'en-US', int $limit = 10): array
     {
@@ -56,7 +57,7 @@ class ApiClient
      *
      * @return HistoricalData[]
      *
-     * @throws ApiException
+     * @throws GuzzleException|ApiException|\InvalidArgumentException
      */
     public function getHistoricalQuoteData(string $symbol, string $interval, \DateTimeInterface $startDate, \DateTimeInterface $endDate): array
     {
@@ -73,7 +74,7 @@ class ApiClient
      *
      * @return DividendData[]
      *
-     * @throws ApiException
+     * @throws GuzzleException|ApiException|\InvalidArgumentException
      */
     public function getHistoricalDividendData(string $symbol, \DateTimeInterface $startDate, \DateTimeInterface $endDate): array
     {
@@ -94,7 +95,7 @@ class ApiClient
      *
      * @return SplitData[]
      *
-     * @throws ApiException
+     * @throws GuzzleException|ApiException
      */
     public function getHistoricalSplitData(string $symbol, \DateTimeInterface $startDate, \DateTimeInterface $endDate): array
     {
@@ -112,6 +113,8 @@ class ApiClient
 
     /**
      * Get quote for a single symbol.
+     *
+     * @throws GuzzleException|ApiException
      */
     public function getQuote(string $symbol): ?Quote
     {
@@ -124,6 +127,8 @@ class ApiClient
      * Get quotes for one or multiple symbols.
      *
      * @return Quote[]
+     *
+     * @throws GuzzleException|ApiException
      */
     public function getQuotes(array $symbols): array
     {
@@ -132,6 +137,8 @@ class ApiClient
 
     /**
      * Get exchange rate for two currencies. Accepts concatenated ISO 4217 currency codes such as "GBP" or "USD".
+     *
+     * @throws GuzzleException|ApiException
      */
     public function getExchangeRate(string $currency1, string $currency2): ?Quote
     {
@@ -146,6 +153,8 @@ class ApiClient
      * @param string[][] $currencyPairs List of pairs of currencies, e.g. [["USD", "GBP"]]
      *
      * @return Quote[]
+     *
+     * @throws GuzzleException|ApiException
      */
     public function getExchangeRates(array $currencyPairs): array
     {
@@ -160,8 +169,10 @@ class ApiClient
      * Fetch quote data from API.
      *
      * @return Quote[]
+     *
+     * @throws GuzzleException|ApiException
      */
-    private function fetchQuotes(array $symbols)
+    private function fetchQuotes(array $symbols): array
     {
         // Fetch quotes
         $url = 'https://query{queryServer}.finance.yahoo.com/v7/finance/quote?crumb={crumb}&symbols='.urlencode(implode(',', $symbols));
@@ -170,6 +181,9 @@ class ApiClient
         return $this->resultDecoder->transformQuotes($responseBody);
     }
 
+    /**
+     * @throws GuzzleException
+     */
     private function getHistoricalDataResponse(string $symbol, string $interval, \DateTimeInterface $startDate, \DateTimeInterface $endDate, string $filter): string
     {
         $url = 'https://query{queryServer}.finance.yahoo.com/v8/finance/chart/'.urlencode($symbol).'?period1='.$startDate->getTimestamp().'&period2='.$endDate->getTimestamp().'&interval='.$interval.'&events='.$filter;
@@ -178,6 +192,9 @@ class ApiClient
         return (string) $response->getBody();
     }
 
+    /**
+     * @throws \InvalidArgumentException
+     */
     private function validateIntervals(string $interval): void
     {
         $allowedIntervals = [self::INTERVAL_1_DAY, self::INTERVAL_1_WEEK, self::INTERVAL_1_MONTH];
@@ -186,6 +203,9 @@ class ApiClient
         }
     }
 
+    /**
+     * @throws \InvalidArgumentException
+     */
     private function validateDates(\DateTimeInterface $startDate, \DateTimeInterface $endDate): void
     {
         if ($startDate > $endDate) {
@@ -213,6 +233,8 @@ class ApiClient
      *   industryTrend,
      *   indexTrend,
      *   sectorTrend
+     *
+     * @throws GuzzleException|ApiException
      */
     public function getStockSummary(string $symbol, array $modules = []): array
     {
@@ -224,6 +246,9 @@ class ApiClient
         return $this->resultDecoder->transformQuotesSummary((string) $response->getBody());
     }
 
+    /**
+     * @throws GuzzleException|ApiException
+     */
     public function getOptionChain(string $symbol, ?\DateTimeInterface $expiryDate = null): array
     {
         // Fetch options
