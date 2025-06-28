@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace Scheb\YahooFinanceApi;
 
-use GuzzleHttp\ClientInterface;
-use Scheb\YahooFinanceApi\Context\CookieProvider;
-use Scheb\YahooFinanceApi\Context\CrumbProvider;
 use Scheb\YahooFinanceApi\Context\QueryServer;
 use Scheb\YahooFinanceApi\Exception\ApiException;
+use Scheb\YahooFinanceApi\HttpClient\GuzzleHttpClientFactory;
 use Scheb\YahooFinanceApi\Results\DividendData;
 use Scheb\YahooFinanceApi\Results\HistoricalData;
 use Scheb\YahooFinanceApi\Results\Quote;
 use Scheb\YahooFinanceApi\Results\SearchResult;
 use Scheb\YahooFinanceApi\Results\SplitData;
+use Scheb\YahooFinanceApi\Session\SessionManager;
 
 /**
  * @final
@@ -28,15 +27,13 @@ class ApiClient
     private const FILTER_DIVIDENDS = 'div';
     private const FILTER_SPLITS = 'split';
 
-    private CookieProvider $cookieProvider;
-    private CrumbProvider $crumbProvider;
+    private SessionManager $sessionManager;
 
     public function __construct(
-        private readonly ClientInterface $client,
         private readonly ResultDecoder $resultDecoder,
     ) {
-        $this->cookieProvider = new CookieProvider($this->client);
-        $this->crumbProvider = new CrumbProvider($this->client);
+        // TODO: Injection
+        $this->sessionManager = new SessionManager(new GuzzleHttpClientFactory(['User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36']));
     }
 
     /**
@@ -48,16 +45,15 @@ class ApiClient
      */
     public function search(string $searchTerm, string $locale = 'en-US', int $limit = 10): array
     {
-        $qs = QueryServer::getRandomQueryServer();
-        $url = 'https://query'.$qs.'.finance.yahoo.com/v1/finance/search?'
+        $url = 'https://query{queryServer}.finance.yahoo.com/v1/finance/search?'
             .'q='.urlencode($searchTerm)
             .'&lang='.urlencode($locale)
             .'&region=US&quotesCount='.$limit
             .'&quotesQueryId=tss_match_phrase_query&multiQuoteQueryId=multi_quote_single_token_query&enableCb=false&enableNavLinks=true&enableCulturalAssets=true&enableNews=false&enableResearchReports=false&enableLists=false&listsCount=0&recommendCount=0&enablePrivateCompany=true';
 
-        $responseBody = (string) $this->client->request('GET', $url)->getBody();
+        $response = $this->sessionManager->request('GET', $url);
 
-        return $this->resultDecoder->transformSearchResult($responseBody);
+        return $this->resultDecoder->transformSearchResult((string) $response->getBody());
     }
 
     /**
@@ -172,27 +168,19 @@ class ApiClient
      */
     private function fetchQuotes(array $symbols)
     {
-        $qs = QueryServer::getRandomQueryServer();
-
-        // Initialize session cookies
-        $cookieJar = $this->cookieProvider->acquireCookies();
-
-        // Get crumb value
-        $crumb = $this->crumbProvider->acquireCrumb($cookieJar);
-
         // Fetch quotes
-        $url = 'https://query'.$qs.'.finance.yahoo.com/v7/finance/quote?crumb='.$crumb.'&symbols='.urlencode(implode(',', $symbols));
-        $responseBody = (string) $this->client->request('GET', $url, ['cookies' => $cookieJar])->getBody();
+        $url = 'https://query{queryServer}.finance.yahoo.com/v7/finance/quote?crumb={crumb}&symbols='.urlencode(implode(',', $symbols));
+        $responseBody = (string) $this->sessionManager->request('GET', $url)->getBody();
 
         return $this->resultDecoder->transformQuotes($responseBody);
     }
 
     private function getHistoricalDataResponse(string $symbol, string $interval, \DateTimeInterface $startDate, \DateTimeInterface $endDate, string $filter): string
     {
-        $qs = QueryServer::getRandomQueryServer();
-        $dataUrl = 'https://query'.$qs.'.finance.yahoo.com/v8/finance/chart/'.urlencode($symbol).'?period1='.$startDate->getTimestamp().'&period2='.$endDate->getTimestamp().'&interval='.$interval.'&events='.$filter;
+        $url = 'https://query{queryServer}.finance.yahoo.com/v8/finance/chart/'.urlencode($symbol).'?period1='.$startDate->getTimestamp().'&period2='.$endDate->getTimestamp().'&interval='.$interval.'&events='.$filter;
+        $response = $this->sessionManager->request('GET', $url);
 
-        return (string) $this->client->request('GET', $dataUrl)->getBody();
+        return (string) $response->getBody();
     }
 
     private function validateIntervals(string $interval): void
@@ -233,38 +221,23 @@ class ApiClient
      */
     public function getStockSummary(string $symbol, array $modules = []): array
     {
-        $qs = QueryServer::getRandomQueryServer();
-
-        // Initialize session cookies
-        $cookieJar = $this->cookieProvider->acquireCookies();
-
-        // Get crumb value
-        $crumb = $this->crumbProvider->acquireCrumb($cookieJar);
-
         // Fetch quotes
-        $url = 'https://query'.$qs.'.finance.yahoo.com/v10/finance/quoteSummary/'.$symbol.'?crumb='.$crumb.'&modules='.implode(',', $modules);
-        $responseBody = (string) $this->client->request('GET', $url, ['cookies' => $cookieJar])->getBody();
+        $url = 'https://query{queryServer}.finance.yahoo.com/v10/finance/quoteSummary/'.$symbol.'?crumb={crumb}&modules='.implode(',', $modules);
 
-        return $this->resultDecoder->transformQuotesSummary($responseBody);
+        $response = $this->sessionManager->request('GET', $url);
+
+        return $this->resultDecoder->transformQuotesSummary((string) $response->getBody());
     }
 
     public function getOptionChain(string $symbol, ?\DateTimeInterface $expiryDate = null): array
     {
-        $qs = QueryServer::getRandomQueryServer();
-
-        // Initialize session cookies
-        $cookieJar = $this->cookieProvider->acquireCookies();
-
-        // Get crumb value
-        $crumb = $this->crumbProvider->acquireCrumb($cookieJar);
-
         // Fetch options
-        $url = 'https://query'.$qs.'.finance.yahoo.com/v7/finance/options/'.$symbol.'?crumb='.$crumb;
+        $url = 'https://query{queryServer}.finance.yahoo.com/v7/finance/options/'.$symbol.'?crumb={crumb}';
         if ($expiryDate instanceof \DateTimeInterface) {
             $url .= '&date='.$expiryDate->getTimestamp();
         }
-        $responseBody = (string) $this->client->request('GET', $url, ['cookies' => $cookieJar])->getBody();
+        $response = $this->sessionManager->request('GET', $url);
 
-        return $this->resultDecoder->transformOptionChains($responseBody);
+        return $this->resultDecoder->transformOptionChains((string) $response->getBody());
     }
 }
