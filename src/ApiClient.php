@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Scheb\YahooFinanceApi;
 
-use Scheb\YahooFinanceApi\Context\QueryServer;
 use Scheb\YahooFinanceApi\Exception\ApiException;
-use Scheb\YahooFinanceApi\HttpClient\GuzzleHttpClientFactory;
 use Scheb\YahooFinanceApi\Results\DividendData;
 use Scheb\YahooFinanceApi\Results\HistoricalData;
 use Scheb\YahooFinanceApi\Results\Quote;
@@ -27,13 +25,10 @@ class ApiClient
     private const FILTER_DIVIDENDS = 'div';
     private const FILTER_SPLITS = 'split';
 
-    private SessionManager $sessionManager;
-
     public function __construct(
+        private readonly SessionManager $sessionManager,
         private readonly ResultDecoder $resultDecoder,
     ) {
-        // TODO: Injection
-        $this->sessionManager = new SessionManager(new GuzzleHttpClientFactory(['User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36']));
     }
 
     /**

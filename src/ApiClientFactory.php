@@ -4,20 +4,19 @@ declare(strict_types=1);
 
 namespace Scheb\YahooFinanceApi;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\ClientInterface;
+use Scheb\YahooFinanceApi\HttpClient\GuzzleHttpClientFactory;
+use Scheb\YahooFinanceApi\Session\SessionManager;
 
 /**
  * @final
  */
 class ApiClientFactory
 {
-    public static function createApiClient(?ClientInterface $guzzleClient = null): ApiClient
+    public static function createApiClient(array $clientOptions = []): ApiClient
     {
-        $userAgent = UserAgent::getRandomUserAgent();
-        $guzzleClient = $guzzleClient ?: new Client(['headers' => ['User-Agent' => $userAgent]]);
         $resultDecoder = new ResultDecoder(new ValueMapper());
+        $sessionManager = new SessionManager(new GuzzleHttpClientFactory($clientOptions));
 
-        return new ApiClient($guzzleClient, $resultDecoder);
+        return new ApiClient($sessionManager, $resultDecoder);
     }
 }

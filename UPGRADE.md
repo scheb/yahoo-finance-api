@@ -11,6 +11,24 @@ with that function. An example dataset for the Apple stock can be found in [stoc
 
 `getHistoricalData()` has been removed. Use `getHistoricalQuoteData()` instead.
 
+Instead of passing a Guzzle client to `ApiClientFactory`, now just pass the client `$options`. The Guzzle client
+instance will be automatically created with these options.
+
+Before:
+
+```
+$guzzleClientOptions = [/* ... */];
+$guzzleClient = new Client($guzzleClientOptions);
+$client = ApiClientFactory::createApiClient($guzzleClient);
+```
+
+After:
+
+```
+$guzzleClientOptions = [/* ... */];
+$client = ApiClientFactory::createApiClient($guzzleClientOptions);
+```
+
 ## From 3.x to 4.x
 
 Minimum required PHP version is now 7.1.3.
