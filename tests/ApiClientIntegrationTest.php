@@ -233,7 +233,8 @@ class ApiClientIntegrationTest extends TestCase
         $this->assertIsFloat($exchangeRate->getBid());
     }
 
-    public function testGetStockSummary(): void
+    #[Test]
+    public function stockSummary_modulesGiven_returnsModulesData(): void
     {
         $returnValue = $this->client->getStockSummary(self::APPLE_SYMBOL, [
             'summaryDetail',
@@ -258,7 +259,8 @@ class ApiClientIntegrationTest extends TestCase
         $this->assertEquals(self::APPLE_SYMBOL, $returnValue[0]['quoteType']['symbol']);
     }
 
-    public function testGetOptionChain(): void
+    #[Test]
+    public function getOptionChain_symbolGiven_returnsContracts(): void
     {
         $returnValue = $this->client->getOptionChain(self::APPLE_SYMBOL);
 
@@ -277,7 +279,8 @@ class ApiClientIntegrationTest extends TestCase
         }
     }
 
-    public function testGetStockOptions_historicExpiryDate(): void
+    #[Test]
+    public function getStockOptions_historicExpiryDate_returnsContracts(): void
     {
         $returnValue = $this->client->getOptionChain(self::APPLE_SYMBOL, new \DateTime('2024-01-04'));
 
