@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Scheb\YahooFinanceApi;
 
-use Scheb\YahooFinanceApi\Context\SessionManager;
+use Scheb\YahooFinanceApi\Context\SessionManagerInterface;
 use Scheb\YahooFinanceApi\Exception\ApiException;
 use Scheb\YahooFinanceApi\Results\DividendData;
 use Scheb\YahooFinanceApi\Results\HistoricalData;
@@ -26,7 +26,7 @@ class ApiClient
     private const FILTER_SPLITS = 'split';
 
     public function __construct(
-        private readonly SessionManager $sessionManager,
+        private readonly SessionManagerInterface $sessionManager,
         private readonly ResultDecoder $resultDecoder,
     ) {
     }

@@ -49,9 +49,12 @@ use GuzzleHttp\Client;
 // Create a new client from the factory
 $client = ApiClientFactory::createApiClient();
 
-// Or configure Guzzle HTTP client with options
-$guzzleClientOptions = [/* ... */];
-$client = ApiClientFactory::createApiClient($guzzleClientOptions);
+// Or configure with options
+$client = ApiClientFactory::createApiClient(
+    clientOptions: [/* ... */],
+    retries: 3,
+    retryDelay: 1000, // milliseconds
+);
 
 // Returns an array of Scheb\YahooFinanceApi\Results\SearchResult
 $searchResult = $client->search("Apple");

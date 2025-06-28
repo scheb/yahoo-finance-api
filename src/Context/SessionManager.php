@@ -10,7 +10,7 @@ use Scheb\YahooFinanceApi\HttpClient\HttpClientFactoryInterface;
 /**
  * @final
  */
-class SessionManager
+class SessionManager implements SessionManagerInterface
 {
     private ?SessionContext $sessionContext = null;
 

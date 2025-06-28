@@ -30,7 +30,7 @@ class ApiClientIntegrationTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->client = ApiClientFactory::createApiClient();
+        $this->client = ApiClientFactory::createApiClient(retries: 1);
     }
 
     #[Test]
