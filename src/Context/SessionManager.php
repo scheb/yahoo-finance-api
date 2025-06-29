@@ -37,7 +37,9 @@ class SessionManager implements SessionManagerInterface
 
         // Acquire crumb
         if (str_contains($url, '{crumb}')) {
-            $sessionContext = $this->crumbProvider->acquireCrumb($sessionContext);
+            if (null === $sessionContext->crumb) {
+                $sessionContext = $this->crumbProvider->acquireCrumb($sessionContext);
+            }
 
             /** @psalm-suppress PossiblyNullArgument Crumb will always be set at this point */
             $url = str_replace('{crumb}', $sessionContext->crumb, $url);
