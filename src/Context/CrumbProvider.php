@@ -4,26 +4,23 @@ declare(strict_types=1);
 
 namespace Scheb\YahooFinanceApi\Context;
 
-use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Cookie\CookieJarInterface;
-
 /**
  * @final
  */
 class CrumbProvider
 {
-    public function __construct(
-        private readonly ClientInterface $client,
-    ) {
+    public function __construct(private readonly CookieProvider $cookieProvider)
+    {
     }
 
-    public function acquireCrumb(CookieJarInterface $cookieJar): string
+    public function acquireCrumb(SessionContext $sessionContext): SessionContext
     {
-        $qs = QueryServer::getRandomQueryServer();
+        $sessionContext = $this->cookieProvider->acquireCookies($sessionContext);
 
         // Get crumb value
-        $initialUrl = 'https://query'.$qs.'.finance.yahoo.com/v1/test/getcrumb';
+        $initialUrl = 'https://query'.$sessionContext->queryServer.'.finance.yahoo.com/v1/test/getcrumb';
+        $sessionContext->crumb = (string) $sessionContext->httpClient->request('GET', $initialUrl, ['cookies' => $sessionContext->cookies])->getBody();
 
-        return (string) $this->client->request('GET', $initialUrl, ['cookies' => $cookieJar])->getBody();
+        return $sessionContext;
     }
 }

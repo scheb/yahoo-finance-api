@@ -16,6 +16,7 @@ class SessionManager implements SessionManagerInterface
 
     public function __construct(
         private readonly HttpClientFactoryInterface $httpClientFactory,
+        private readonly CrumbProvider $crumbProvider,
     ) {
     }
 
@@ -45,13 +46,9 @@ class SessionManager implements SessionManagerInterface
 
         // Acquire crumb
         if (str_contains($url, '{crumb}')) {
-            $cookieProvider = new CookieProvider($sessionContext->httpClient);
-            $crumbProvider = new CrumbProvider($sessionContext->httpClient);
+            $sessionContext = $this->crumbProvider->acquireCrumb($sessionContext);
 
-            // TODO: Injection
-            $sessionContext->cookies = $cookieProvider->acquireCookies();
-            $sessionContext->crumb = $crumbProvider->acquireCrumb($sessionContext->cookies);
-
+            /** @psalm-suppress PossiblyNullArgument Crumb will always be set at this point */
             $url = str_replace('{crumb}', $sessionContext->crumb, $url);
             $requestOptions = ['cookies' => $sessionContext->cookies];
         }

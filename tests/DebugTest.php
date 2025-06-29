@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Scheb\YahooFinanceApi\Tests;
 
 use PHPUnit\Framework\TestCase;
+use Scheb\YahooFinanceApi\Context\CookieProvider;
+use Scheb\YahooFinanceApi\Context\CrumbProvider;
 use Scheb\YahooFinanceApi\Context\SessionManager;
 use Scheb\YahooFinanceApi\HttpClient\GuzzleHttpClientFactory;
 
@@ -12,7 +14,10 @@ class DebugTest extends TestCase
 {
     public function test(): void
     {
-        $sessionManager = new SessionManager(new GuzzleHttpClientFactory());
+        $sessionManager = new SessionManager(
+            new GuzzleHttpClientFactory(),
+            new CrumbProvider(new CookieProvider())
+        );
 
         $response = $sessionManager->request('GET', 'https://echo.free.beeceptor.com');
         echo $response->getBody();

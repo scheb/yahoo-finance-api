@@ -4,28 +4,22 @@ declare(strict_types=1);
 
 namespace Scheb\YahooFinanceApi\Context;
 
-use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Cookie\CookieJar;
-use GuzzleHttp\Cookie\CookieJarInterface;
 
 /**
  * @final
  */
 class CookieProvider
 {
-    public function __construct(
-        private readonly ClientInterface $client,
-    ) {
-    }
-
-    public function acquireCookies(): CookieJarInterface
+    public function acquireCookies(SessionContext $sessionContext): SessionContext
     {
         $cookieJar = new CookieJar();
 
         // Initialize session cookies
         $initialUrl = 'https://fc.yahoo.com';
-        $this->client->request('GET', $initialUrl, ['cookies' => $cookieJar, 'http_errors' => false]);
+        $sessionContext->httpClient->request('GET', $initialUrl, ['cookies' => $cookieJar, 'http_errors' => false]);
+        $sessionContext->cookies = $cookieJar;
 
-        return $cookieJar;
+        return $sessionContext;
     }
 }
