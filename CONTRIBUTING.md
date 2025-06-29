@@ -15,7 +15,7 @@ a pull requests or feature request in the issues section.
 
 For pull requests, please follow these guidelines:
 
-- Symfony code style (use `php_cs.xml` to configure the code style in your IDE)
+- Symfony code style (use `phpcs.xml.dist` to configure the code style in your IDE)
 - Do not use any PHP language features above the minimum supported version (see `composer.json`)
 - PHP 8.1 level type hints for everything (parameter types, return types, nullable types, union types, `void`),
   including test cases
@@ -31,5 +31,5 @@ Before you create a pull request, please make sure your changes fulfill the qual
 2) Run [PHP-CS-Fixer](https://github.com/FriendsOfPHP/PHP-CS-Fixer) v3 (not provided with the library, has to be
    installed locally): `php-cs-fixer fix`
 3) Run the unit tests with `vendor/bin/phpunit`
-4) Run PHP CodeSniffer with `vendor/bin/phpcs --standard=php_cs.xml src tests`
+4) Run PHP CodeSniffer with `vendor/bin/phpcs`
 5) Run Psalm with `vendor/bin/psalm` and address any error-level issues
