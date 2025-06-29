@@ -141,8 +141,8 @@ jobs:
             -   name: 'Run tests'
                 run: vendor/bin/phpunit --testsuite=integration
                 env:
-                    LD_PRELOAD: /home/runner/curl-impersonate/libcurl-impersonate-chrome.so
-                    CURL_IMPERSONATE: chrome116
+                    LD_PRELOAD: /home/runner/curl-impersonate/libcurl-impersonate.so
+                    CURL_IMPERSONATE: chrome136
 
     code-coverage:
         name: 'Code Coverage - PHP ${{ matrix.php-version }}'
@@ -186,8 +186,8 @@ jobs:
             -   name: 'Run tests with coverage'
                 run: vendor/bin/phpunit --coverage-clover coverage/clover.xml
                 env:
-                    LD_PRELOAD: /home/runner/curl-impersonate/libcurl-impersonate-chrome.so
-                    CURL_IMPERSONATE: chrome116
+                    LD_PRELOAD: /home/runner/curl-impersonate/libcurl-impersonate.so
+                    CURL_IMPERSONATE: chrome136
 
             -   name: 'Send Coverage to Codecov'
                 uses: codecov/codecov-action@v3
