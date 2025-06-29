@@ -8,12 +8,12 @@ use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Cookie\CookieJarInterface;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use Scheb\YahooFinanceApi\Context\CookieProvider;
 use Scheb\YahooFinanceApi\Context\CrumbProvider;
 use Scheb\YahooFinanceApi\Context\SessionContext;
+use Scheb\YahooFinanceApi\Tests\TestCase;
 
 class CrumbProviderTest extends TestCase
 {

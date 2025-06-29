@@ -8,12 +8,12 @@ use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Cookie\CookieJarInterface;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Scheb\YahooFinanceApi\Context\CrumbProvider;
 use Scheb\YahooFinanceApi\Context\SessionContext;
 use Scheb\YahooFinanceApi\Context\SessionManager;
 use Scheb\YahooFinanceApi\HttpClient\HttpClientFactoryInterface;
+use Scheb\YahooFinanceApi\Tests\TestCase;
 
 class SessionManagerTest extends TestCase
 {

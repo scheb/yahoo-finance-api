@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Scheb\YahooFinanceApi\Tests\Integration;
 
-use PHPUnit\Framework\TestCase;
 use Scheb\YahooFinanceApi\Context\CookieProvider;
 use Scheb\YahooFinanceApi\Context\CrumbProvider;
 use Scheb\YahooFinanceApi\Context\SessionManager;
 use Scheb\YahooFinanceApi\HttpClient\GuzzleHttpClientFactory;
+use Scheb\YahooFinanceApi\Tests\TestCase;
 
 class DebugTest extends TestCase
 {

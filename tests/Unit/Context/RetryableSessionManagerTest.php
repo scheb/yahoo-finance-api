@@ -6,11 +6,11 @@ namespace Scheb\YahooFinanceApi\Tests\Unit\Context;
 
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Scheb\YahooFinanceApi\Context\RetryableSessionManager;
 use Scheb\YahooFinanceApi\Context\SessionContext;
 use Scheb\YahooFinanceApi\Context\SessionManagerInterface;
+use Scheb\YahooFinanceApi\Tests\TestCase;
 
 class RetryableSessionManagerTest extends TestCase
 {

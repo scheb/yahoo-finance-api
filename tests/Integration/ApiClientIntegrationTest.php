@@ -6,7 +6,6 @@ namespace Scheb\YahooFinanceApi\Tests\Integration;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\TestCase;
 use Scheb\YahooFinanceApi\ApiClient;
 use Scheb\YahooFinanceApi\ApiClientFactory;
 use Scheb\YahooFinanceApi\Results\DividendData;
@@ -17,6 +16,7 @@ use Scheb\YahooFinanceApi\Results\OptionContract;
 use Scheb\YahooFinanceApi\Results\Quote;
 use Scheb\YahooFinanceApi\Results\SearchResult;
 use Scheb\YahooFinanceApi\Results\SplitData;
+use Scheb\YahooFinanceApi\Tests\TestCase;
 
 class ApiClientIntegrationTest extends TestCase
 {

@@ -6,8 +6,8 @@ namespace Scheb\YahooFinanceApi\Tests\Unit;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
-use PHPUnit\Framework\TestCase;
 use Scheb\YahooFinanceApi\Exception\InvalidValueException;
+use Scheb\YahooFinanceApi\Tests\TestCase;
 use Scheb\YahooFinanceApi\ValueMapper;
 use Scheb\YahooFinanceApi\ValueMapperInterface;
 
