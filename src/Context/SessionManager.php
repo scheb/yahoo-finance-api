@@ -24,7 +24,7 @@ class SessionManager implements SessionManagerInterface
 
     public function request(string $method, string $url): ResponseInterface
     {
-        $sessionContext = $this->sessionContextStorage->getSessionContext();
+        $initialSessionContext = $sessionContext = $this->sessionContextStorage->getSessionContext();
 
         $requestOptions = [];
         $url = str_replace('{queryServer}', (string) $sessionContext->queryServer, $url);
@@ -40,6 +40,13 @@ class SessionManager implements SessionManagerInterface
             $requestOptions = ['cookies' => $sessionContext->cookies];
         }
 
-        return $sessionContext->httpClient->request($method, $url, $requestOptions);
+        $response = $sessionContext->httpClient->request($method, $url, $requestOptions);
+
+        // Store the new session context when it changed
+        if ($sessionContext !== $initialSessionContext) {
+            $this->sessionContextStorage->setSessionContext($sessionContext);
+        }
+
+        return $response;
     }
 }
