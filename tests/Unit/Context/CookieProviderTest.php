@@ -20,19 +20,19 @@ class CookieProviderTest extends TestCase
     private MockObject|ClientInterface $mockHttpClient;
     private MockObject|ResponseInterface $mockResponse;
     private CookieProvider $cookieProvider;
-    private SessionContext $sessionContext;
 
     protected function setUp(): void
     {
         $this->mockHttpClient = $this->createMock(ClientInterface::class);
         $this->mockResponse = $this->createMock(ResponseInterface::class);
         $this->cookieProvider = new CookieProvider();
-        $this->sessionContext = new SessionContext($this->mockHttpClient, self::QUERY_SERVER);
     }
 
     #[Test]
-    public function acquireCookies_withValidSessionContext_returnsSessionContextWithCookies(): void
+    public function acquireCookies_withValidSessionContext_returnsNewSessionContextWithCookies(): void
     {
+        $sessionContext = new SessionContext($this->mockHttpClient, self::QUERY_SERVER);
+
         $this->mockHttpClient
             ->expects($this->once())
             ->method('request')
@@ -43,24 +43,26 @@ class CookieProviderTest extends TestCase
             )
             ->willReturn($this->mockResponse);
 
-        $result = $this->cookieProvider->acquireCookies($this->sessionContext);
+        $result = $this->cookieProvider->acquireCookies($sessionContext);
 
-        $this->assertSame($this->sessionContext, $result);
+        $this->assertSame($this->mockHttpClient, $result->httpClient);
+        $this->assertEquals(self::QUERY_SERVER, $result->queryServer);
         $this->assertInstanceOf(CookieJarInterface::class, $result->cookies);
+        $this->assertNull($result->crumb);
     }
 
     #[Test]
     public function acquireCookies_withExistingCookies_overwritesExistingCookies(): void
     {
         $existingCookieJar = $this->createMock(CookieJarInterface::class);
-        $this->sessionContext->cookies = $existingCookieJar;
+        $sessionContext = new SessionContext($this->mockHttpClient, self::QUERY_SERVER, $existingCookieJar);
 
         $this->mockHttpClient
             ->expects($this->once())
             ->method('request')
             ->willReturn($this->mockResponse);
 
-        $result = $this->cookieProvider->acquireCookies($this->sessionContext);
+        $result = $this->cookieProvider->acquireCookies($sessionContext);
 
         $this->assertNotSame($existingCookieJar, $result->cookies);
         $this->assertInstanceOf(CookieJarInterface::class, $result->cookies);
@@ -69,6 +71,7 @@ class CookieProviderTest extends TestCase
     #[Test]
     public function acquireCookies_withHttpClientException_throwsException(): void
     {
+        $sessionContext = new SessionContext($this->mockHttpClient, self::QUERY_SERVER);
         $exception = new \Exception('Network error');
 
         $this->mockHttpClient
@@ -79,6 +82,6 @@ class CookieProviderTest extends TestCase
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Network error');
 
-        $this->cookieProvider->acquireCookies($this->sessionContext);
+        $this->cookieProvider->acquireCookies($sessionContext);
     }
 }

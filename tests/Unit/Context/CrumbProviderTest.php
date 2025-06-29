@@ -24,7 +24,6 @@ class CrumbProviderTest extends TestCase
     private MockObject|CookieProvider $mockCookieProvider;
     private MockObject|CookieJarInterface $cookieJar;
     private CrumbProvider $crumbProvider;
-    private SessionContext $sessionContext;
 
     protected function setUp(): void
     {
@@ -32,9 +31,6 @@ class CrumbProviderTest extends TestCase
         $this->mockCookieProvider = $this->createMock(CookieProvider::class);
         $this->crumbProvider = new CrumbProvider($this->mockCookieProvider);
         $this->cookieJar = $this->createMock(CookieJarInterface::class);
-
-        $this->sessionContext = new SessionContext($this->mockHttpClient, self::QUERY_SERVER);
-        $this->sessionContext->cookies = $this->createMock(CookieJarInterface::class);
     }
 
     private function createCrumbResponse(): MockObject|ResponseInterface
@@ -57,11 +53,14 @@ class CrumbProviderTest extends TestCase
     #[Test]
     public function acquireCrumb_successfulRequest_returnsSessionContextWithCrumb(): void
     {
+        $initialSessionContext = new SessionContext($this->mockHttpClient, self::QUERY_SERVER);
+        $withCookiesSessionContext = new SessionContext($this->mockHttpClient, self::QUERY_SERVER, $this->cookieJar);
+
         $this->mockCookieProvider
             ->expects($this->once())
             ->method('acquireCookies')
-            ->with($this->sessionContext)
-            ->willReturn($this->sessionContext);
+            ->with($initialSessionContext)
+            ->willReturn($withCookiesSessionContext);
 
         $this->mockHttpClient
             ->expects($this->once())
@@ -73,28 +72,30 @@ class CrumbProviderTest extends TestCase
             )
             ->willReturn($this->createCrumbResponse());
 
-        $result = $this->crumbProvider->acquireCrumb($this->sessionContext);
+        $result = $this->crumbProvider->acquireCrumb($initialSessionContext);
 
-        $this->assertSame($this->sessionContext, $result);
+        $this->assertSame($this->mockHttpClient, $result->httpClient);
+        $this->assertEquals(self::QUERY_SERVER, $result->queryServer);
+        $this->assertSame($this->cookieJar, $result->cookies);
         $this->assertEquals(self::CRUMB_VALUE, $result->crumb);
     }
 
     #[Test]
     public function acquireCrumb_withExistingCrumb_overwritesExistingCrumb(): void
     {
-        $this->sessionContext->crumb = 'old-crumb';
+        $sessionContext = new SessionContext($this->mockHttpClient, self::QUERY_SERVER, $this->cookieJar, 'old-crumb');
 
         $this->mockCookieProvider
             ->expects($this->once())
             ->method('acquireCookies')
-            ->willReturn($this->sessionContext);
+            ->willReturn($sessionContext);
 
         $this->mockHttpClient
             ->expects($this->once())
             ->method('request')
             ->willReturn($this->createCrumbResponse());
 
-        $result = $this->crumbProvider->acquireCrumb($this->sessionContext);
+        $result = $this->crumbProvider->acquireCrumb($sessionContext);
 
         $this->assertEquals(self::CRUMB_VALUE, $result->crumb);
     }
@@ -102,12 +103,13 @@ class CrumbProviderTest extends TestCase
     #[Test]
     public function acquireCrumb_withHttpClientException_throwsException(): void
     {
+        $sessionContext = new SessionContext($this->mockHttpClient, self::QUERY_SERVER, $this->cookieJar);
         $exception = new \Exception('Network error');
 
         $this->mockCookieProvider
             ->expects($this->once())
             ->method('acquireCookies')
-            ->willReturn($this->sessionContext);
+            ->willReturn($sessionContext);
 
         $this->mockHttpClient
             ->expects($this->once())
@@ -117,12 +119,13 @@ class CrumbProviderTest extends TestCase
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Network error');
 
-        $this->crumbProvider->acquireCrumb($this->sessionContext);
+        $this->crumbProvider->acquireCrumb($sessionContext);
     }
 
     #[Test]
     public function acquireCrumb_withCookieProviderException_throwsException(): void
     {
+        $sessionContext = new SessionContext($this->mockHttpClient, self::QUERY_SERVER, $this->cookieJar);
         $exception = new \Exception('Cookie provider error');
 
         $this->mockCookieProvider
@@ -133,6 +136,6 @@ class CrumbProviderTest extends TestCase
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Cookie provider error');
 
-        $this->crumbProvider->acquireCrumb($this->sessionContext);
+        $this->crumbProvider->acquireCrumb($sessionContext);
     }
 }

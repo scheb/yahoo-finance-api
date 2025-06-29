@@ -12,12 +12,11 @@ use GuzzleHttp\Cookie\CookieJarInterface;
  */
 class SessionContext
 {
-    public ?CookieJarInterface $cookies = null;
-    public ?string $crumb = null;
-
     public function __construct(
         public readonly ClientInterface $httpClient,
         public readonly int $queryServer,
+        public readonly ?CookieJarInterface $cookies = null,
+        public readonly ?string $crumb = null,
     ) {
     }
 }

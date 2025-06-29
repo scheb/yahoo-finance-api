@@ -19,8 +19,13 @@ class CrumbProvider
 
         // Get crumb value
         $initialUrl = 'https://query'.$sessionContext->queryServer.'.finance.yahoo.com/v1/test/getcrumb';
-        $sessionContext->crumb = (string) $sessionContext->httpClient->request('GET', $initialUrl, ['cookies' => $sessionContext->cookies])->getBody();
+        $crumb = (string) $sessionContext->httpClient->request('GET', $initialUrl, ['cookies' => $sessionContext->cookies])->getBody();
 
-        return $sessionContext;
+        return new SessionContext(
+            $sessionContext->httpClient,
+            $sessionContext->queryServer,
+            $sessionContext->cookies,
+            $crumb,
+        );
     }
 }

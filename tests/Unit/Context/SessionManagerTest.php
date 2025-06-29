@@ -116,14 +116,12 @@ class SessionManagerTest extends TestCase
         $url = 'https://example.com/api/data?crumb={crumb}';
         $expectedUrl = 'https://example.com/api/data?crumb='.self::CRUMB_VALUE;
 
-        $newSessionContext = new SessionContext($this->mockHttpClient, self::QUERY_SERVER);
-        $newSessionContext->crumb = self::CRUMB_VALUE;
-        $newSessionContext->cookies = $this->mockCookieJar;
+        $sessionContext = new SessionContext($this->mockHttpClient, self::QUERY_SERVER, $this->mockCookieJar, self::CRUMB_VALUE);
 
         $this->mockCrumbProvider
             ->expects($this->once())
             ->method('acquireCrumb')
-            ->willReturn($newSessionContext);
+            ->willReturn($sessionContext);
 
         $this->mockHttpClient
             ->expects($this->once())
