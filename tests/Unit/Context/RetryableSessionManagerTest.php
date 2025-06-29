@@ -8,7 +8,6 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Http\Message\ResponseInterface;
 use Scheb\YahooFinanceApi\Context\RetryableSessionManager;
-use Scheb\YahooFinanceApi\Context\SessionContext;
 use Scheb\YahooFinanceApi\Context\SessionManagerInterface;
 use Scheb\YahooFinanceApi\Tests\TestCase;
 
@@ -33,16 +32,11 @@ class RetryableSessionManagerTest extends TestCase
     #[Test]
     public function renewSession_whenCalled_delegatesToWrappedSessionManager(): void
     {
-        $expectedContext = $this->createMock(SessionContext::class);
-
         $this->mockSessionManager
             ->expects($this->once())
-            ->method('renewSession')
-            ->willReturn($expectedContext);
+            ->method('renewSession');
 
-        $result = $this->retryableSessionManager->renewSession();
-
-        $this->assertSame($expectedContext, $result);
+        $this->retryableSessionManager->renewSession();
     }
 
     #[Test]

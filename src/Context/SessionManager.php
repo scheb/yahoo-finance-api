@@ -5,32 +5,26 @@ declare(strict_types=1);
 namespace Scheb\YahooFinanceApi\Context;
 
 use Psr\Http\Message\ResponseInterface;
-use Scheb\YahooFinanceApi\HttpClient\HttpClientFactoryInterface;
 
 /**
  * @final
  */
 class SessionManager implements SessionManagerInterface
 {
-    private ?SessionContext $sessionContext = null;
-
     public function __construct(
-        private readonly HttpClientFactoryInterface $httpClientFactory,
+        private readonly SessionContextStorage $sessionContextStorage,
         private readonly CrumbProvider $crumbProvider,
     ) {
     }
 
-    public function renewSession(): SessionContext
+    public function renewSession(): void
     {
-        return $this->sessionContext = new SessionContext(
-            $this->httpClientFactory->createHttpClient(),
-            QueryServer::getRandomQueryServer(),
-        );
+        $this->sessionContextStorage->invalidateSessionContext();
     }
 
     public function request(string $method, string $url): ResponseInterface
     {
-        $sessionContext = $this->getSessionContext();
+        $sessionContext = $this->sessionContextStorage->getSessionContext();
 
         $requestOptions = [];
         $url = str_replace('{queryServer}', (string) $sessionContext->queryServer, $url);
@@ -47,14 +41,5 @@ class SessionManager implements SessionManagerInterface
         }
 
         return $sessionContext->httpClient->request($method, $url, $requestOptions);
-    }
-
-    private function getSessionContext(): SessionContext
-    {
-        if (null === $this->sessionContext) {
-            return $this->renewSession();
-        }
-
-        return $this->sessionContext;
     }
 }

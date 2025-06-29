@@ -18,9 +18,9 @@ class RetryableSessionManager implements SessionManagerInterface
     ) {
     }
 
-    public function renewSession(): SessionContext
+    public function renewSession(): void
     {
-        return $this->sessionManager->renewSession();
+        $this->sessionManager->renewSession();
     }
 
     public function request(string $method, string $url): ResponseInterface

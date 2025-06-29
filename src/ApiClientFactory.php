@@ -7,6 +7,7 @@ namespace Scheb\YahooFinanceApi;
 use Scheb\YahooFinanceApi\Context\CookieProvider;
 use Scheb\YahooFinanceApi\Context\CrumbProvider;
 use Scheb\YahooFinanceApi\Context\RetryableSessionManager;
+use Scheb\YahooFinanceApi\Context\SessionContextStorage;
 use Scheb\YahooFinanceApi\Context\SessionManager;
 use Scheb\YahooFinanceApi\HttpClient\GuzzleHttpClientFactory;
 
@@ -22,7 +23,7 @@ class ApiClientFactory
     ): ApiClient {
         $resultDecoder = new ResultDecoder(new ValueMapper());
         $sessionManager = new SessionManager(
-            new GuzzleHttpClientFactory($clientOptions),
+            new SessionContextStorage(new GuzzleHttpClientFactory($clientOptions)),
             new CrumbProvider(new CookieProvider())
         );
         if ($retries > 0) {

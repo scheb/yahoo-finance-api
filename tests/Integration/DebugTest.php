@@ -6,6 +6,7 @@ namespace Scheb\YahooFinanceApi\Tests\Integration;
 
 use Scheb\YahooFinanceApi\Context\CookieProvider;
 use Scheb\YahooFinanceApi\Context\CrumbProvider;
+use Scheb\YahooFinanceApi\Context\SessionContextStorage;
 use Scheb\YahooFinanceApi\Context\SessionManager;
 use Scheb\YahooFinanceApi\HttpClient\GuzzleHttpClientFactory;
 use Scheb\YahooFinanceApi\Tests\TestCase;
@@ -15,7 +16,7 @@ class DebugTest extends TestCase
     public function test(): void
     {
         $sessionManager = new SessionManager(
-            new GuzzleHttpClientFactory(),
+            new SessionContextStorage(new GuzzleHttpClientFactory()),
             new CrumbProvider(new CookieProvider())
         );
 

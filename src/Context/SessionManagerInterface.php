@@ -12,7 +12,7 @@ use Psr\Http\Message\ResponseInterface;
  */
 interface SessionManagerInterface
 {
-    public function renewSession(): SessionContext;
+    public function renewSession(): void;
 
     /**
      * @throws GuzzleException
