@@ -5,8 +5,11 @@
          colors="true"
 >
     <testsuites>
-        <testsuite name="Test suite">
-            <directory suffix="Test.php">./tests</directory>
+        <testsuite name="unit">
+            <directory suffix="Test.php">./tests/Unit</directory>
+        </testsuite>
+        <testsuite name="integration">
+            <directory suffix="Test.php">./tests/Integration</directory>
         </testsuite>
     </testsuites>
 

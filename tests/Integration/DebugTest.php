@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Scheb\YahooFinanceApi\Tests;
+namespace Scheb\YahooFinanceApi\Tests\Integration;
 
 use PHPUnit\Framework\TestCase;
 use Scheb\YahooFinanceApi\Context\CookieProvider;

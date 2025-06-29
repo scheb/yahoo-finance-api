@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Scheb\YahooFinanceApi\Tests;
+namespace Scheb\YahooFinanceApi\Tests\Unit;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;

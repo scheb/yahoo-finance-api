@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Scheb\YahooFinanceApi\Tests;
+namespace Scheb\YahooFinanceApi\Tests\Unit;
 
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -57,7 +57,7 @@ class ResultDecoderTest extends TestCase
     #[Test]
     public function transformSearchResult_jsonGiven_createArrayOfSearchResult(): void
     {
-        $returnedResult = $this->resultDecoder->transformSearchResult(file_get_contents(__DIR__.'/fixtures/searchResult.json'));
+        $returnedResult = $this->resultDecoder->transformSearchResult(file_get_contents(__DIR__.'/../fixtures/searchResult.json'));
 
         $this->assertIsArray($returnedResult);
         $this->assertContainsOnlyInstancesOf(SearchResult::class, $returnedResult);
@@ -77,7 +77,7 @@ class ResultDecoderTest extends TestCase
     #[Test]
     public function extractCrumb_lookupPage_returnCrumbValue(): void
     {
-        $returnedResult = $this->resultDecoder->extractCrumb(file_get_contents(__DIR__.'/fixtures/lookupPage.html'));
+        $returnedResult = $this->resultDecoder->extractCrumb(file_get_contents(__DIR__.'/../fixtures/lookupPage.html'));
         $this->assertEquals('kWZQDiqqBck', $returnedResult);
     }
 
@@ -95,7 +95,7 @@ class ResultDecoderTest extends TestCase
     #[Test]
     public function transformHistoricalDataResult_csvGiven_returnArrayOfHistoricalData(): void
     {
-        $returnedResult = $this->resultDecoder->transformHistoricalDataResult(file_get_contents(__DIR__.'/fixtures/historicalData.json'));
+        $returnedResult = $this->resultDecoder->transformHistoricalDataResult(file_get_contents(__DIR__.'/../fixtures/historicalData.json'));
 
         $this->assertIsArray($returnedResult);
         $this->assertContainsOnlyInstancesOf(HistoricalData::class, $returnedResult);
@@ -115,7 +115,7 @@ class ResultDecoderTest extends TestCase
     #[Test]
     public function transformHistoricalDataResult_noData(): void
     {
-        $returnedResult = $this->resultDecoder->transformHistoricalDataResult(file_get_contents(__DIR__.'/fixtures/noData.json'));
+        $returnedResult = $this->resultDecoder->transformHistoricalDataResult(file_get_contents(__DIR__.'/../fixtures/noData.json'));
 
         $this->assertIsArray($returnedResult);
         $this->assertCount(0, $returnedResult);
@@ -127,7 +127,7 @@ class ResultDecoderTest extends TestCase
         $this->expectException(ApiException::class);
         $this->expectExceptionMessage('Response is not a valid JSON');
 
-        $this->resultDecoder->transformHistoricalDataResult(file_get_contents(__DIR__.'/fixtures/invalidColumnsHistoricalData.csv'));
+        $this->resultDecoder->transformHistoricalDataResult(file_get_contents(__DIR__.'/../fixtures/invalidColumnsHistoricalData.csv'));
     }
 
     #[Test]
@@ -146,7 +146,7 @@ class ResultDecoderTest extends TestCase
         $this->expectException(ApiException::class);
         $this->expectExceptionMessage('Response is not a valid JSON');
 
-        $this->resultDecoder->transformHistoricalDataResult(file_get_contents(__DIR__.'/fixtures/invalidDateTimeFormatHistoricalData.csv'));
+        $this->resultDecoder->transformHistoricalDataResult(file_get_contents(__DIR__.'/../fixtures/invalidDateTimeFormatHistoricalData.csv'));
     }
 
     #[Test]
@@ -155,13 +155,13 @@ class ResultDecoderTest extends TestCase
         $this->expectException(ApiException::class);
         $this->expectExceptionMessage('Response is not a valid JSON');
 
-        $this->resultDecoder->transformHistoricalDataResult(file_get_contents(__DIR__.'/fixtures/invalidNumericStringHistoricalData.csv'));
+        $this->resultDecoder->transformHistoricalDataResult(file_get_contents(__DIR__.'/../fixtures/invalidNumericStringHistoricalData.csv'));
     }
 
     #[Test]
     public function transformDividendDataResult_csvGiven_returnArrayOfDividendData(): void
     {
-        $returnedResult = $this->resultDecoder->transformDividendDataResult(file_get_contents(__DIR__.'/fixtures/dividendData.json'));
+        $returnedResult = $this->resultDecoder->transformDividendDataResult(file_get_contents(__DIR__.'/../fixtures/dividendData.json'));
 
         $this->assertIsArray($returnedResult);
         $this->assertContainsOnlyInstancesOf(DividendData::class, $returnedResult);
@@ -177,7 +177,7 @@ class ResultDecoderTest extends TestCase
     #[Test]
     public function transformDividendDataResult_noData(): void
     {
-        $returnedResult = $this->resultDecoder->transformDividendDataResult(file_get_contents(__DIR__.'/fixtures/noData.json'));
+        $returnedResult = $this->resultDecoder->transformDividendDataResult(file_get_contents(__DIR__.'/../fixtures/noData.json'));
 
         $this->assertIsArray($returnedResult);
         $this->assertCount(0, $returnedResult);
@@ -189,7 +189,7 @@ class ResultDecoderTest extends TestCase
         $this->expectException(ApiException::class);
         $this->expectExceptionMessage('Response is not a valid JSON');
 
-        $this->resultDecoder->transformDividendDataResult(file_get_contents(__DIR__.'/fixtures/invalidColumnsDividendData.csv'));
+        $this->resultDecoder->transformDividendDataResult(file_get_contents(__DIR__.'/../fixtures/invalidColumnsDividendData.csv'));
     }
 
     #[Test]
@@ -208,7 +208,7 @@ class ResultDecoderTest extends TestCase
         $this->expectException(ApiException::class);
         $this->expectExceptionMessage('Response is not a valid JSON');
 
-        $this->resultDecoder->transformDividendDataResult(file_get_contents(__DIR__.'/fixtures/invalidDateTimeFormatDividendData.csv'));
+        $this->resultDecoder->transformDividendDataResult(file_get_contents(__DIR__.'/../fixtures/invalidDateTimeFormatDividendData.csv'));
     }
 
     #[Test]
@@ -217,13 +217,13 @@ class ResultDecoderTest extends TestCase
         $this->expectException(ApiException::class);
         $this->expectExceptionMessage('Response is not a valid JSON');
 
-        $this->resultDecoder->transformDividendDataResult(file_get_contents(__DIR__.'/fixtures/invalidNumericStringDividendData.csv'));
+        $this->resultDecoder->transformDividendDataResult(file_get_contents(__DIR__.'/../fixtures/invalidNumericStringDividendData.csv'));
     }
 
     #[Test]
     public function transformSplitDataResult_csvGiven_returnArrayOfSplitData(): void
     {
-        $returnedResult = $this->resultDecoder->transformSplitDataResult(file_get_contents(__DIR__.'/fixtures/splitData.json'));
+        $returnedResult = $this->resultDecoder->transformSplitDataResult(file_get_contents(__DIR__.'/../fixtures/splitData.json'));
 
         $this->assertIsArray($returnedResult);
         $this->assertContainsOnlyInstancesOf(SplitData::class, $returnedResult);
@@ -239,7 +239,7 @@ class ResultDecoderTest extends TestCase
     #[Test]
     public function transformSplitDataResult_noData(): void
     {
-        $returnedResult = $this->resultDecoder->transformSplitDataResult(file_get_contents(__DIR__.'/fixtures/noData.json'));
+        $returnedResult = $this->resultDecoder->transformSplitDataResult(file_get_contents(__DIR__.'/../fixtures/noData.json'));
 
         $this->assertIsArray($returnedResult);
         $this->assertCount(0, $returnedResult);
@@ -251,7 +251,7 @@ class ResultDecoderTest extends TestCase
         $this->expectException(ApiException::class);
         $this->expectExceptionMessage('Response is not a valid JSON');
 
-        $this->resultDecoder->transformSplitDataResult(file_get_contents(__DIR__.'/fixtures/invalidColumnsSplitData.csv'));
+        $this->resultDecoder->transformSplitDataResult(file_get_contents(__DIR__.'/../fixtures/invalidColumnsSplitData.csv'));
     }
 
     #[Test]
@@ -270,7 +270,7 @@ class ResultDecoderTest extends TestCase
         $this->expectException(ApiException::class);
         $this->expectExceptionMessage('Response is not a valid JSON');
 
-        $this->resultDecoder->transformSplitDataResult(file_get_contents(__DIR__.'/fixtures/invalidDateTimeFormatSplitData.csv'));
+        $this->resultDecoder->transformSplitDataResult(file_get_contents(__DIR__.'/../fixtures/invalidDateTimeFormatSplitData.csv'));
     }
 
     public static function provideTransformQuotesInvalidResult(): array
@@ -306,7 +306,7 @@ class ResultDecoderTest extends TestCase
     #[Test]
     public function transformQuotes_jsonGiven_createArrayOfQuote(): void
     {
-        $returnedResult = $this->resultDecoder->transformQuotes(file_get_contents(__DIR__.'/fixtures/quote.json'));
+        $returnedResult = $this->resultDecoder->transformQuotes(file_get_contents(__DIR__.'/../fixtures/quote.json'));
 
         $this->assertIsArray($returnedResult);
         $this->assertCount(1, $returnedResult);
@@ -392,7 +392,7 @@ class ResultDecoderTest extends TestCase
     #[Test]
     public function transformQuotes_jsonWithNullGiven_createArrayOfQuote(): void
     {
-        $returnedResult = $this->resultDecoder->transformQuotes(file_get_contents(__DIR__.'/fixtures/nullQuote.json'));
+        $returnedResult = $this->resultDecoder->transformQuotes(file_get_contents(__DIR__.'/../fixtures/nullQuote.json'));
 
         $this->assertIsArray($returnedResult);
         $this->assertCount(1, $returnedResult);
@@ -478,7 +478,7 @@ class ResultDecoderTest extends TestCase
         $this->expectException(ApiException::class);
         $this->expectExceptionMessage('Not a float in field "trailingPE": 19.45277%');
 
-        $this->resultDecoder->transformQuotes(file_get_contents(__DIR__.'/fixtures/invalidFloatQuote.json'));
+        $this->resultDecoder->transformQuotes(file_get_contents(__DIR__.'/../fixtures/invalidFloatQuote.json'));
     }
 
     #[Test]
@@ -487,7 +487,7 @@ class ResultDecoderTest extends TestCase
         $this->expectException(ApiException::class);
         $this->expectExceptionMessage('Not a date in field "postMarketTime": invalid_date_time');
 
-        $this->resultDecoder->transformQuotes(file_get_contents(__DIR__.'/fixtures/invalidDateTimeQuote.json'));
+        $this->resultDecoder->transformQuotes(file_get_contents(__DIR__.'/../fixtures/invalidDateTimeQuote.json'));
     }
 
     #[Test]
@@ -496,7 +496,7 @@ class ResultDecoderTest extends TestCase
         $this->expectException(ApiException::class);
         $this->expectExceptionMessage('Not a int in field "priceHint": invalid_integer');
 
-        $this->resultDecoder->transformQuotes(file_get_contents(__DIR__.'/fixtures/invalidIntegerQuote.json'));
+        $this->resultDecoder->transformQuotes(file_get_contents(__DIR__.'/../fixtures/invalidIntegerQuote.json'));
     }
 
     #[Test]
@@ -527,7 +527,7 @@ class ResultDecoderTest extends TestCase
     #[Test]
     public function transformOptionChains_jsonGiven_createArrayOfOptionChain(): void
     {
-        $returnedResult = $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/optionChain.json'));
+        $returnedResult = $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/../fixtures/optionChain.json'));
 
         $this->assertIsArray($returnedResult);
         $this->assertCount(1, $returnedResult);
@@ -600,7 +600,7 @@ class ResultDecoderTest extends TestCase
     #[Test]
     public function transformOptionChains_jsonWithNullGiven_createArrayOfOptionChain(): void
     {
-        $returnedResult = $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/nullOptionChain.json'));
+        $returnedResult = $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/../fixtures/nullOptionChain.json'));
 
         $this->assertIsArray($returnedResult);
         $this->assertCount(1, $returnedResult);
@@ -632,7 +632,7 @@ class ResultDecoderTest extends TestCase
         $this->expectException(ApiException::class);
         $this->expectExceptionMessage('Not a float in field "strikes": ["invalid_float",105,265]');
 
-        $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/invalidFloatOptionChain.json'));
+        $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/../fixtures/invalidFloatOptionChain.json'));
     }
 
     #[Test]
@@ -641,7 +641,7 @@ class ResultDecoderTest extends TestCase
         $this->expectException(ApiException::class);
         $this->expectExceptionMessage('Not a date in field "expirationDates": ["invalid_date_time",1711584000,1781740800]');
 
-        $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/invalidDateTimeOptionChain.json'));
+        $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/../fixtures/invalidDateTimeOptionChain.json'));
     }
 
     #[Test]
@@ -650,7 +650,7 @@ class ResultDecoderTest extends TestCase
         $this->expectException(ApiException::class);
         $this->expectExceptionMessage('Not a bool in field "hasMiniOptions": "invalid_boolean"');
 
-        $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/invalidBooleanOptionChain.json'));
+        $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/../fixtures/invalidBooleanOptionChain.json'));
     }
 
     #[Test]
@@ -659,13 +659,13 @@ class ResultDecoderTest extends TestCase
         $this->expectException(ApiException::class);
         $this->expectExceptionMessage('Not a array in field "options": "invalid_array"');
 
-        $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/invalidArrayOptionChain.json'));
+        $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/../fixtures/invalidArrayOptionChain.json'));
     }
 
     #[Test]
     public function transformOptionChains_jsonGiven_createArrayOfOptions(): void
     {
-        $returnedResult = $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/optionChain.json'));
+        $returnedResult = $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/../fixtures/optionChain.json'));
 
         $this->assertIsArray($returnedResult);
         $this->assertCount(1, $returnedResult);
@@ -738,7 +738,7 @@ class ResultDecoderTest extends TestCase
     #[Test]
     public function transformOptionChains_jsonWithNullGiven_HandleNullResult(): void
     {
-        $returnedResult = $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/nullOptionChain.json'));
+        $returnedResult = $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/../fixtures/nullOptionChain.json'));
 
         $this->assertIsArray($returnedResult);
         $this->assertCount(1, $returnedResult);
@@ -770,7 +770,7 @@ class ResultDecoderTest extends TestCase
         $this->expectException(ApiException::class);
         $this->expectExceptionMessage('Not a array in field "calls": ""');
 
-        $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/invalidArrayOption.json'));
+        $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/../fixtures/invalidArrayOption.json'));
     }
 
     #[Test]
@@ -779,7 +779,7 @@ class ResultDecoderTest extends TestCase
         $this->expectException(ApiException::class);
         $this->expectExceptionMessage('Not a date in field "expirationDate": "invalid_date_time"');
 
-        $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/invalidDateTimeOption.json'));
+        $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/../fixtures/invalidDateTimeOption.json'));
     }
 
     #[Test]
@@ -788,13 +788,13 @@ class ResultDecoderTest extends TestCase
         $this->expectException(ApiException::class);
         $this->expectExceptionMessage('Not a bool in field "hasMiniOptions": "invalid_boolean"');
 
-        $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/invalidBooleanOption.json'));
+        $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/../fixtures/invalidBooleanOption.json'));
     }
 
     #[Test]
     public function transformOptionChains_jsonGiven_createArrayOfOptionContracts(): void
     {
-        $returnedResult = $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/optionChain.json'));
+        $returnedResult = $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/../fixtures/optionChain.json'));
 
         $this->assertIsArray($returnedResult);
         $this->assertCount(1, $returnedResult);
@@ -867,7 +867,7 @@ class ResultDecoderTest extends TestCase
     #[Test]
     public function transformOptionChains_jsonWithNullGiven_createArrayOfOptionContracts(): void
     {
-        $returnedResult = $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/nullOptionChain.json'));
+        $returnedResult = $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/../fixtures/nullOptionChain.json'));
 
         $this->assertIsArray($returnedResult);
         $this->assertCount(1, $returnedResult);
@@ -899,7 +899,7 @@ class ResultDecoderTest extends TestCase
         $this->expectException(ApiException::class);
         $this->expectExceptionMessage('Not a float in field "percentChange": "7.7744565%"');
 
-        $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/invalidFloatOptionContract.json'));
+        $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/../fixtures/invalidFloatOptionContract.json'));
     }
 
     #[Test]
@@ -908,7 +908,7 @@ class ResultDecoderTest extends TestCase
         $this->expectException(ApiException::class);
         $this->expectExceptionMessage('Not a date in field "expiration": "invalid_date_time"');
 
-        $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/invalidDateTimeOptionContract.json'));
+        $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/../fixtures/invalidDateTimeOptionContract.json'));
     }
 
     #[Test]
@@ -917,6 +917,6 @@ class ResultDecoderTest extends TestCase
         $this->expectException(ApiException::class);
         $this->expectExceptionMessage('Not a bool in field "inTheMoney": "invalid_boolean"');
 
-        $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/fixtures/invalidBooleanOptionContract.json'));
+        $this->resultDecoder->transformOptionChains(file_get_contents(__DIR__.'/../fixtures/invalidBooleanOptionContract.json'));
     }
 }

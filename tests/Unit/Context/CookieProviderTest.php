@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Scheb\YahooFinanceApi\Tests\Context;
+namespace Scheb\YahooFinanceApi\Tests\Unit\Context;
 
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Cookie\CookieJarInterface;
