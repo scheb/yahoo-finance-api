@@ -12,8 +12,6 @@ use Psr\Http\Message\ResponseInterface;
  */
 interface SessionManagerInterface
 {
-    public function getSessionContext(): SessionContext;
-
     public function renewSession(): SessionContext;
 
     /**

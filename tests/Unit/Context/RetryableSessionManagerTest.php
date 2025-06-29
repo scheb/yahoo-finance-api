@@ -31,21 +31,6 @@ class RetryableSessionManagerTest extends TestCase
     }
 
     #[Test]
-    public function getSessionContext_whenCalled_delegatesToWrappedSessionManager(): void
-    {
-        $expectedContext = $this->createMock(SessionContext::class);
-
-        $this->mockSessionManager
-            ->expects($this->once())
-            ->method('getSessionContext')
-            ->willReturn($expectedContext);
-
-        $result = $this->retryableSessionManager->getSessionContext();
-
-        $this->assertSame($expectedContext, $result);
-    }
-
-    #[Test]
     public function renewSession_whenCalled_delegatesToWrappedSessionManager(): void
     {
         $expectedContext = $this->createMock(SessionContext::class);

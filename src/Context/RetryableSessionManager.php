@@ -18,11 +18,6 @@ class RetryableSessionManager implements SessionManagerInterface
     ) {
     }
 
-    public function getSessionContext(): SessionContext
-    {
-        return $this->sessionManager->getSessionContext();
-    }
-
     public function renewSession(): SessionContext
     {
         return $this->sessionManager->renewSession();

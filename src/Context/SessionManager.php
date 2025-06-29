@@ -20,15 +20,6 @@ class SessionManager implements SessionManagerInterface
     ) {
     }
 
-    public function getSessionContext(): SessionContext
-    {
-        if (null === $this->sessionContext) {
-            return $this->renewSession();
-        }
-
-        return $this->sessionContext;
-    }
-
     public function renewSession(): SessionContext
     {
         return $this->sessionContext = new SessionContext(
@@ -54,5 +45,14 @@ class SessionManager implements SessionManagerInterface
         }
 
         return $sessionContext->httpClient->request($method, $url, $requestOptions);
+    }
+
+    private function getSessionContext(): SessionContext
+    {
+        if (null === $this->sessionContext) {
+            return $this->renewSession();
+        }
+
+        return $this->sessionContext;
     }
 }

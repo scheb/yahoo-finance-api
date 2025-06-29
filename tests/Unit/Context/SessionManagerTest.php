@@ -47,32 +47,12 @@ class SessionManagerTest extends TestCase
     }
 
     #[Test]
-    public function getSessionContext_whenSessionContextIsNull_createsNewSessionContext(): void
-    {
-        $result = $this->sessionManager->getSessionContext();
-
-        $this->assertSame($this->mockHttpClient, $result->httpClient);
-        $this->assertIsInt($result->queryServer);
-    }
-
-    #[Test]
-    public function getSessionContext_whenSessionContextExists_returnsExistingSessionContext(): void
-    {
-        $firstResult = $this->sessionManager->getSessionContext();
-        $secondResult = $this->sessionManager->getSessionContext();
-
-        $this->assertSame($firstResult, $secondResult);
-    }
-
-    #[Test]
     public function renewSession_whenSessionContextExists_createsNewSessionContextAndReturnsIt(): void
     {
-        $firstResult = $this->sessionManager->getSessionContext();
-        $renewResult = $this->sessionManager->renewSession();
-        $secondResult = $this->sessionManager->getSessionContext();
+        $firstResult = $this->sessionManager->renewSession();
+        $secondResult = $this->sessionManager->renewSession();
 
-        $this->assertNotSame($firstResult, $renewResult);
-        $this->assertSame($renewResult, $secondResult);
+        $this->assertNotSame($firstResult, $secondResult);
     }
 
     #[Test]
