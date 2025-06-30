@@ -9,7 +9,7 @@ use Scheb\YahooFinanceApi\HttpClient\HttpClientFactoryInterface;
 /**
  * @final
  */
-class SessionContextStorage
+class SessionContextStorage implements SessionContextStorageInterface
 {
     private ?SessionContext $sessionContext = null;
 

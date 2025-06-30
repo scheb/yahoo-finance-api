@@ -11,7 +11,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Http\Message\ResponseInterface;
 use Scheb\YahooFinanceApi\Context\CrumbProvider;
 use Scheb\YahooFinanceApi\Context\SessionContext;
-use Scheb\YahooFinanceApi\Context\SessionContextStorage;
+use Scheb\YahooFinanceApi\Context\SessionContextStorageInterface;
 use Scheb\YahooFinanceApi\Context\SessionManager;
 use Scheb\YahooFinanceApi\Tests\TestCase;
 
@@ -20,7 +20,7 @@ class SessionManagerTest extends TestCase
     private const QUERY_SERVER = 2;
     private const CRUMB_VALUE = 'test-crumb-value';
 
-    private MockObject|SessionContextStorage $sessionContextStorage;
+    private MockObject|SessionContextStorageInterface $sessionContextStorage;
     private MockObject|CrumbProvider $mockCrumbProvider;
     private MockObject|ClientInterface $mockHttpClient;
     private MockObject|ResponseInterface $mockResponse;
@@ -30,7 +30,7 @@ class SessionManagerTest extends TestCase
     protected function setUp(): void
     {
         $this->mockHttpClient = $this->createMock(ClientInterface::class);
-        $this->sessionContextStorage = $this->createMock(SessionContextStorage::class);
+        $this->sessionContextStorage = $this->createMock(SessionContextStorageInterface::class);
         $this->mockCrumbProvider = $this->createMock(CrumbProvider::class);
         $this->mockResponse = $this->createMock(ResponseInterface::class);
         $this->mockCookieJar = $this->createMock(CookieJarInterface::class);

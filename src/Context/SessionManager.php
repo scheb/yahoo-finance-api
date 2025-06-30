@@ -12,7 +12,7 @@ use Psr\Http\Message\ResponseInterface;
 class SessionManager implements SessionManagerInterface
 {
     public function __construct(
-        private readonly SessionContextStorage $sessionContextStorage,
+        private readonly SessionContextStorageInterface $sessionContextStorage,
         private readonly CrumbProvider $crumbProvider,
     ) {
     }
