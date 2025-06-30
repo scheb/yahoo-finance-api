@@ -20,13 +20,13 @@ use Scheb\YahooFinanceApi\Tests\TestCase;
 
 class ApiClientIntegrationTest extends TestCase
 {
-    private const APPLE_NAME = 'Apple';
-    private const APPLE_SYMBOL = 'AAPL';
-    private const GOOGLE_SYMBOL = 'GOOG';
-    private const CURRENCY_USD = 'USD';
-    private const CURRENCY_EUR = 'EUR';
+    protected const APPLE_NAME = 'Apple';
+    protected const APPLE_SYMBOL = 'AAPL';
+    protected const GOOGLE_SYMBOL = 'GOOG';
+    protected const CURRENCY_USD = 'USD';
+    protected const CURRENCY_EUR = 'EUR';
 
-    private ApiClient $client;
+    protected ApiClient $client;
 
     protected function setUp(): void
     {
