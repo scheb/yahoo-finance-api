@@ -11,11 +11,11 @@ namespace Scheb\YahooFinanceApi\Results;
  */
 class OptionChain implements \JsonSerializable
 {
-    private ?string $underlyingSymbol;
-    private ?array $expirationDates;
-    private ?array $strikes;
-    private ?bool $hasMiniOptions;
-    private ?array $options;
+    private ?string $underlyingSymbol = null;
+    private ?array $expirationDates = null;
+    private ?array $strikes = null;
+    private ?bool $hasMiniOptions = null;
+    private ?array $options = null;
 
     public function __construct(array $values)
     {

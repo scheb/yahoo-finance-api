@@ -11,21 +11,21 @@ namespace Scheb\YahooFinanceApi\Results;
  */
 class OptionContract implements \JsonSerializable
 {
-    private ?string $contractSymbol;
-    private ?float $strike;
-    private ?string $currency;
-    private ?float $lastPrice;
-    private ?float $change;
-    private ?float $percentChange;
-    private ?int $volume;
-    private ?int $openInterest;
-    private ?float $bid;
-    private ?float $ask;
-    private ?string $contractSize;
-    private ?\DateTimeInterface $expiration;
-    private ?\DateTimeInterface $lastTradeDate;
-    private ?float $impliedVolatility;
-    private ?bool $inTheMoney;
+    private ?string $contractSymbol = null;
+    private ?float $strike = null;
+    private ?string $currency = null;
+    private ?float $lastPrice = null;
+    private ?float $change = null;
+    private ?float $percentChange = null;
+    private ?int $volume = null;
+    private ?int $openInterest = null;
+    private ?float $bid = null;
+    private ?float $ask = null;
+    private ?string $contractSize = null;
+    private ?\DateTimeInterface $expiration = null;
+    private ?\DateTimeInterface $lastTradeDate = null;
+    private ?float $impliedVolatility = null;
+    private ?bool $inTheMoney = null;
 
     public function __construct(array $values)
     {

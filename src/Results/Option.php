@@ -11,10 +11,10 @@ namespace Scheb\YahooFinanceApi\Results;
  */
 class Option implements \JsonSerializable
 {
-    private ?\DateTimeInterface $expirationDate;
-    private ?bool $hasMiniOptions;
-    private ?array $calls;
-    private ?array $puts;
+    private ?\DateTimeInterface $expirationDate = null;
+    private ?bool $hasMiniOptions = null;
+    private ?array $calls = null;
+    private ?array $puts = null;
 
     public function __construct(array $values)
     {
