@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Scheb\YahooFinanceApi\Context;
+namespace Scheb\YahooFinanceApi\Context\Provider;
 
 /**
  * @final
  */
-class QueryServer
+class QueryServerProvider
 {
     public static function getRandomQueryServer(): int
     {

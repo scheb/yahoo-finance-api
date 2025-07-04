@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Scheb\YahooFinanceApi\Context;
 
+use Scheb\YahooFinanceApi\Context\Provider\QueryServerProvider;
 use Scheb\YahooFinanceApi\HttpClient\HttpClientFactoryInterface;
 
 /**
@@ -27,7 +28,7 @@ class SessionContextStorage implements SessionContextStorageInterface
         if (null === $this->sessionContext) {
             $this->sessionContext = new SessionContext(
                 $this->httpClientFactory->createHttpClient(),
-                QueryServer::getRandomQueryServer(),
+                QueryServerProvider::getRandomQueryServer(),
             );
         }
 

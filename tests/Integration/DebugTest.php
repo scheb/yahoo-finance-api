@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Scheb\YahooFinanceApi\Tests\Integration;
 
-use Scheb\YahooFinanceApi\Context\CookieProvider;
-use Scheb\YahooFinanceApi\Context\CrumbProvider;
+use Scheb\YahooFinanceApi\Context\Provider\CookieProvider;
+use Scheb\YahooFinanceApi\Context\Provider\CrumbProvider;
 use Scheb\YahooFinanceApi\Context\SessionContextStorage;
 use Scheb\YahooFinanceApi\Context\SessionManager;
 use Scheb\YahooFinanceApi\HttpClient\GuzzleHttpClientFactory;

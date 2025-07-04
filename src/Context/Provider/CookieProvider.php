@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Scheb\YahooFinanceApi\Context;
+namespace Scheb\YahooFinanceApi\Context\Provider;
 
 use GuzzleHttp\Cookie\CookieJar;
+use Scheb\YahooFinanceApi\Context\SessionContext;
 
 /**
  * @final

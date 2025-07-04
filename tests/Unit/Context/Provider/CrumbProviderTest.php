@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Scheb\YahooFinanceApi\Tests\Unit\Context;
+namespace Scheb\YahooFinanceApi\Tests\Unit\Context\Provider;
 
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Cookie\CookieJarInterface;
@@ -10,8 +10,8 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
-use Scheb\YahooFinanceApi\Context\CookieProvider;
-use Scheb\YahooFinanceApi\Context\CrumbProvider;
+use Scheb\YahooFinanceApi\Context\Provider\CookieProvider;
+use Scheb\YahooFinanceApi\Context\Provider\CrumbProvider;
 use Scheb\YahooFinanceApi\Context\SessionContext;
 use Scheb\YahooFinanceApi\Tests\TestCase;
 

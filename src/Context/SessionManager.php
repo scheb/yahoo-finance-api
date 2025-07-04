@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Scheb\YahooFinanceApi\Context;
 
 use Psr\Http\Message\ResponseInterface;
+use Scheb\YahooFinanceApi\Context\Provider\CrumbProvider;
 
 /**
  * @final

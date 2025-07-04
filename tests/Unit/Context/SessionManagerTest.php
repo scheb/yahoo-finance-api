@@ -9,7 +9,7 @@ use GuzzleHttp\Cookie\CookieJarInterface;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Http\Message\ResponseInterface;
-use Scheb\YahooFinanceApi\Context\CrumbProvider;
+use Scheb\YahooFinanceApi\Context\Provider\CrumbProvider;
 use Scheb\YahooFinanceApi\Context\SessionContext;
 use Scheb\YahooFinanceApi\Context\SessionContextStorageInterface;
 use Scheb\YahooFinanceApi\Context\SessionManager;

@@ -7,6 +7,7 @@ namespace Scheb\YahooFinanceApi\Context;
 use GuzzleHttp\Cookie\CookieJar;
 use GuzzleHttp\Cookie\SetCookie;
 use Psr\Cache\CacheItemPoolInterface;
+use Scheb\YahooFinanceApi\Context\Provider\QueryServerProvider;
 use Scheb\YahooFinanceApi\HttpClient\HttpClientFactoryInterface;
 
 /**
@@ -43,7 +44,7 @@ class CachedSessionContextStorage implements SessionContextStorageInterface
 
         $sessionContext = new SessionContext(
             $this->httpClientFactory->createHttpClient(),
-            QueryServer::getRandomQueryServer(),
+            QueryServerProvider::getRandomQueryServer(),
         );
         $this->setSessionContext($sessionContext);
 
@@ -70,7 +71,7 @@ class CachedSessionContextStorage implements SessionContextStorageInterface
 
             return new SessionContext(
                 $this->httpClientFactory->createHttpClient(),
-                $cacheData['queryServer'] ?? QueryServer::getRandomQueryServer(),
+                $cacheData['queryServer'] ?? QueryServerProvider::getRandomQueryServer(),
                 $cookieJar,
                 $cacheData['crumb'] ?? null,
             );

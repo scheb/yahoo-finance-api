@@ -6,8 +6,8 @@ namespace Scheb\YahooFinanceApi;
 
 use Psr\Cache\CacheItemPoolInterface;
 use Scheb\YahooFinanceApi\Context\CachedSessionContextStorage;
-use Scheb\YahooFinanceApi\Context\CookieProvider;
-use Scheb\YahooFinanceApi\Context\CrumbProvider;
+use Scheb\YahooFinanceApi\Context\Provider\CookieProvider;
+use Scheb\YahooFinanceApi\Context\Provider\CrumbProvider;
 use Scheb\YahooFinanceApi\Context\RetryableSessionManager;
 use Scheb\YahooFinanceApi\Context\SessionContextStorage;
 use Scheb\YahooFinanceApi\Context\SessionManager;
