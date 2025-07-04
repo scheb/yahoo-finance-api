@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Scheb\YahooFinanceApi;
 
 use Psr\Cache\CacheItemPoolInterface;
-use Scheb\YahooFinanceApi\Context\CachedSessionContextStorage;
 use Scheb\YahooFinanceApi\Context\Provider\CookieProvider;
 use Scheb\YahooFinanceApi\Context\Provider\CrumbProvider;
 use Scheb\YahooFinanceApi\Context\RetryableSessionManager;
-use Scheb\YahooFinanceApi\Context\SessionContextStorage;
 use Scheb\YahooFinanceApi\Context\SessionManager;
 use Scheb\YahooFinanceApi\Context\SessionManagerInterface;
+use Scheb\YahooFinanceApi\Context\Storage\CachedSessionContextStorage;
+use Scheb\YahooFinanceApi\Context\Storage\SessionContextStorage;
 use Scheb\YahooFinanceApi\HttpClient\GuzzleHttpClientFactory;
 
 /**

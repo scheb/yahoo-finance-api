@@ -6,6 +6,7 @@ namespace Scheb\YahooFinanceApi\Context;
 
 use Psr\Http\Message\ResponseInterface;
 use Scheb\YahooFinanceApi\Context\Provider\CrumbProvider;
+use Scheb\YahooFinanceApi\Context\Storage\SessionContextStorageInterface;
 
 /**
  * @final

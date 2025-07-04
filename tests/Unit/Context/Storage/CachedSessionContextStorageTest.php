@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Scheb\YahooFinanceApi\Tests\Unit\Context;
+namespace Scheb\YahooFinanceApi\Tests\Unit\Context\Storage;
 
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Cookie\CookieJar;
@@ -11,8 +11,8 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
-use Scheb\YahooFinanceApi\Context\CachedSessionContextStorage;
 use Scheb\YahooFinanceApi\Context\SessionContext;
+use Scheb\YahooFinanceApi\Context\Storage\CachedSessionContextStorage;
 use Scheb\YahooFinanceApi\HttpClient\HttpClientFactoryInterface;
 use Scheb\YahooFinanceApi\Tests\TestCase;
 

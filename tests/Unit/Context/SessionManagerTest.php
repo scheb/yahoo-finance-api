@@ -11,8 +11,8 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Http\Message\ResponseInterface;
 use Scheb\YahooFinanceApi\Context\Provider\CrumbProvider;
 use Scheb\YahooFinanceApi\Context\SessionContext;
-use Scheb\YahooFinanceApi\Context\SessionContextStorageInterface;
 use Scheb\YahooFinanceApi\Context\SessionManager;
+use Scheb\YahooFinanceApi\Context\Storage\SessionContextStorageInterface;
 use Scheb\YahooFinanceApi\Tests\TestCase;
 
 class SessionManagerTest extends TestCase

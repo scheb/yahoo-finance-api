@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Scheb\YahooFinanceApi\Context;
+namespace Scheb\YahooFinanceApi\Context\Storage;
 
 use Scheb\YahooFinanceApi\Context\Provider\QueryServerProvider;
+use Scheb\YahooFinanceApi\Context\SessionContext;
 use Scheb\YahooFinanceApi\HttpClient\HttpClientFactoryInterface;
 
 /**

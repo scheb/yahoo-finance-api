@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Scheb\YahooFinanceApi\Context;
+namespace Scheb\YahooFinanceApi\Context\Storage;
+
+use Scheb\YahooFinanceApi\Context\SessionContext;
 
 interface SessionContextStorageInterface
 {

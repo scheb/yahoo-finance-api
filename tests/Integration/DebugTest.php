@@ -6,8 +6,8 @@ namespace Scheb\YahooFinanceApi\Tests\Integration;
 
 use Scheb\YahooFinanceApi\Context\Provider\CookieProvider;
 use Scheb\YahooFinanceApi\Context\Provider\CrumbProvider;
-use Scheb\YahooFinanceApi\Context\SessionContextStorage;
 use Scheb\YahooFinanceApi\Context\SessionManager;
+use Scheb\YahooFinanceApi\Context\Storage\SessionContextStorage;
 use Scheb\YahooFinanceApi\HttpClient\GuzzleHttpClientFactory;
 use Scheb\YahooFinanceApi\Tests\TestCase;
 
