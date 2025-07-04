@@ -7,7 +7,7 @@ namespace Scheb\YahooFinanceApi\Exception;
 /**
  * @final
  */
-class InvalidValueException extends \Exception
+class InvalidValueException extends YahooFinanceApiException
 {
     public function __construct(string $type)
     {

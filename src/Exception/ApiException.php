@@ -7,7 +7,7 @@ namespace Scheb\YahooFinanceApi\Exception;
 /**
  * @final
  */
-class ApiException extends \Exception
+class ApiException extends YahooFinanceApiException
 {
     public const INVALID_RESPONSE = 1;
     public const INVALID_VALUE = 2;
