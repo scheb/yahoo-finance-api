@@ -36,7 +36,7 @@ class SessionManager implements SessionManagerInterface
             }
 
             /** @psalm-suppress PossiblyNullArgument Crumb will always be set at this point */
-            $url = str_replace('{crumb}', $sessionContext->crumb, $url);
+            $url = str_replace('{crumb}', urlencode($sessionContext->crumb), $url);
             $requestOptions = ['cookies' => $sessionContext->cookies];
         }
 

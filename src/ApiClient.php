@@ -239,7 +239,7 @@ class ApiClient
     public function getStockSummary(string $symbol, array $modules = []): array
     {
         // Fetch quotes
-        $url = 'https://query{queryServer}.finance.yahoo.com/v10/finance/quoteSummary/'.$symbol.'?crumb={crumb}&modules='.implode(',', $modules);
+        $url = 'https://query{queryServer}.finance.yahoo.com/v10/finance/quoteSummary/'.urlencode($symbol).'?crumb={crumb}&modules='.urlencode(implode(',', $modules));
 
         $response = $this->sessionManager->request('GET', $url);
 
@@ -252,7 +252,7 @@ class ApiClient
     public function getOptionChain(string $symbol, ?\DateTimeInterface $expiryDate = null): array
     {
         // Fetch options
-        $url = 'https://query{queryServer}.finance.yahoo.com/v7/finance/options/'.$symbol.'?crumb={crumb}';
+        $url = 'https://query{queryServer}.finance.yahoo.com/v7/finance/options/'.urlencode($symbol).'?crumb={crumb}';
         if ($expiryDate instanceof \DateTimeInterface) {
             $url .= '&date='.$expiryDate->getTimestamp();
         }
