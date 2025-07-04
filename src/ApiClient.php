@@ -269,7 +269,36 @@ class ApiClient
         return rand(1, 2);
     }
 
+    /**
+     * @deprecated In future versions, this function will be removed. Please consider using getStockSummary() instead.
+     */
     public function stockSummary(string $symbol): array
+    {
+        return $this->getStockSummary($symbol);
+    }
+
+    /**
+     * @param array $modules List of modules to be fetched.
+     *
+     * Known modules:
+     *   summaryDetail,
+     *   quoteType,
+     *   assetProfile,
+     *   defaultKeyStatistics,
+     *   financialData,
+     *   recommendationTrend,
+     *   upgradeDowngradeHistory,
+     *   majorHoldersBreakdown,
+     *   insiderHolders,
+     *   netSharePurchaseActivity,
+     *   earnings,
+     *   earningsHistory,
+     *   earningsTrend,
+     *   industryTrend,
+     *   indexTrend,
+     *   sectorTrend
+     */
+    public function getStockSummary(string $symbol, array $modules = []): array
     {
         $qs = $this->getRandomQueryServer();
 
@@ -280,8 +309,8 @@ class ApiClient
         $crumb = $this->getCrumb($qs, $cookieJar);
 
         // Fetch quotes
-        $modules = 'financialData,quoteType,defaultKeyStatistics,assetProfile,summaryDetail';
-        $url = 'https://query'.$qs.'.finance.yahoo.com/v10/finance/quoteSummary/'.$symbol.'?crumb='.$crumb.'&modules='.$modules;
+        $modulesParam = implode(',', $modules);
+        $url = 'https://query'.$qs.'.finance.yahoo.com/v10/finance/quoteSummary/'.$symbol.'?crumb='.$crumb.'&modules='.$modulesParam;
         $responseBody = (string) $this->client->request('GET', $url, ['cookies' => $cookieJar, 'headers' => $this->getHeaders()])->getBody();
 
         return $this->resultDecoder->transformQuotesSummary($responseBody);
