@@ -7,36 +7,36 @@ namespace Scheb\YahooFinanceApi\Tests\Unit\Context;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Http\Message\ResponseInterface;
-use Scheb\YahooFinanceApi\Context\RetryableSessionManager;
-use Scheb\YahooFinanceApi\Context\SessionManagerInterface;
+use Scheb\YahooFinanceApi\Context\ContextManagerInterface;
+use Scheb\YahooFinanceApi\Context\RetryableContextManager;
 use Scheb\YahooFinanceApi\Tests\TestCase;
 
-class RetryableSessionManagerTest extends TestCase
+class RetryableContextManagerTest extends TestCase
 {
     public const MAX_TRIES = 3;
     public const RETRY_DELAY = 0;
 
-    private MockObject|SessionManagerInterface $mockSessionManager;
-    private RetryableSessionManager $retryableSessionManager;
+    private MockObject|ContextManagerInterface $mockContextManager;
+    private RetryableContextManager $retryableContextManager;
 
     protected function setUp(): void
     {
-        $this->mockSessionManager = $this->createMock(SessionManagerInterface::class);
-        $this->retryableSessionManager = new RetryableSessionManager(
-            $this->mockSessionManager,
+        $this->mockContextManager = $this->createMock(ContextManagerInterface::class);
+        $this->retryableContextManager = new RetryableContextManager(
+            $this->mockContextManager,
             self::MAX_TRIES,
             self::RETRY_DELAY,
         );
     }
 
     #[Test]
-    public function renewSession_whenCalled_delegatesToWrappedSessionManager(): void
+    public function renewSession_whenCalled_delegatesToWrappedContextManager(): void
     {
-        $this->mockSessionManager
+        $this->mockContextManager
             ->expects($this->once())
             ->method('renewSession');
 
-        $this->retryableSessionManager->renewSession();
+        $this->retryableContextManager->renewSession();
     }
 
     #[Test]
@@ -44,13 +44,13 @@ class RetryableSessionManagerTest extends TestCase
     {
         $expectedResponse = $this->createMock(ResponseInterface::class);
 
-        $this->mockSessionManager
+        $this->mockContextManager
             ->expects($this->once())
             ->method('request')
             ->with('GET', 'https://example.com')
             ->willReturn($expectedResponse);
 
-        $result = $this->retryableSessionManager->request('GET', 'https://example.com');
+        $result = $this->retryableContextManager->request('GET', 'https://example.com');
 
         $this->assertSame($expectedResponse, $result);
     }
@@ -61,7 +61,7 @@ class RetryableSessionManagerTest extends TestCase
         $expectedResponse = $this->createMock(ResponseInterface::class);
         $exception = new \Exception('Network error');
 
-        $this->mockSessionManager
+        $this->mockContextManager
             ->expects($this->exactly(2))
             ->method('request')
             ->with('GET', 'https://example.com')
@@ -70,11 +70,11 @@ class RetryableSessionManagerTest extends TestCase
                 $expectedResponse
             );
 
-        $this->mockSessionManager
+        $this->mockContextManager
             ->expects($this->once())
             ->method('renewSession');
 
-        $result = $this->retryableSessionManager->request('GET', 'https://example.com');
+        $result = $this->retryableContextManager->request('GET', 'https://example.com');
 
         $this->assertSame($expectedResponse, $result);
     }
@@ -86,7 +86,7 @@ class RetryableSessionManagerTest extends TestCase
         $exception2 = new \Exception('Second error');
         $exception3 = new \Exception('Third error');
 
-        $this->mockSessionManager
+        $this->mockContextManager
             ->expects($this->exactly(3))
             ->method('request')
             ->with('GET', 'https://example.com')
@@ -96,28 +96,28 @@ class RetryableSessionManagerTest extends TestCase
                 $this->throwException($exception3)
             );
 
-        $this->mockSessionManager
+        $this->mockContextManager
             ->expects($this->exactly(2))
             ->method('renewSession');
 
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Third error');
 
-        $this->retryableSessionManager->request('GET', 'https://example.com');
+        $this->retryableContextManager->request('GET', 'https://example.com');
     }
 
     #[Test]
     public function request_withRetryDelay_retryDelayIsApplied(): void
     {
-        $retryableSessionManager = new RetryableSessionManager(
-            $this->mockSessionManager,
+        $retryableContextManager = new RetryableContextManager(
+            $this->mockContextManager,
             2,  // maxTries
             500 // retryDelay (500ms)
         );
 
         $exception = new \Exception('Network error');
 
-        $this->mockSessionManager
+        $this->mockContextManager
             ->expects($this->exactly(2))
             ->method('request')
             ->with('GET', 'https://example.com')
@@ -127,7 +127,7 @@ class RetryableSessionManagerTest extends TestCase
             );
 
         $startTime = microtime(true);
-        $retryableSessionManager->request('GET', 'https://example.com');
+        $retryableContextManager->request('GET', 'https://example.com');
         $endTime = microtime(true);
 
         // Verify that some delay was applied (allowing for some tolerance)

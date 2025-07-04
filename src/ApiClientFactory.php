@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Scheb\YahooFinanceApi;
 
 use Psr\Cache\CacheItemPoolInterface;
+use Scheb\YahooFinanceApi\Context\ContextManager;
+use Scheb\YahooFinanceApi\Context\ContextManagerInterface;
 use Scheb\YahooFinanceApi\Context\Provider\CookieProvider;
 use Scheb\YahooFinanceApi\Context\Provider\CrumbProvider;
-use Scheb\YahooFinanceApi\Context\RetryableSessionManager;
-use Scheb\YahooFinanceApi\Context\SessionManager;
-use Scheb\YahooFinanceApi\Context\SessionManagerInterface;
+use Scheb\YahooFinanceApi\Context\RetryableContextManager;
 use Scheb\YahooFinanceApi\Context\Storage\CachedSessionContextStorage;
 use Scheb\YahooFinanceApi\Context\Storage\SessionContextStorage;
 use Scheb\YahooFinanceApi\HttpClient\GuzzleHttpClientFactory;
@@ -32,27 +32,27 @@ class ApiClientFactory
         int $cacheTtl = self::DEFAULT_TTL,
         string $cacheKey = self::DEFAULT_CACHE_KEY,
     ): ApiClient {
-        $sessionManager = self::createSessionManager($clientOptions, $retries, $retryDelay, $cache, $cacheTtl, $cacheKey);
+        $contextManager = self::createContextManager($clientOptions, $retries, $retryDelay, $cache, $cacheTtl, $cacheKey);
         $resultDecoder = new ResultDecoder(new ValueMapper());
 
-        return new ApiClient($sessionManager, $resultDecoder);
+        return new ApiClient($contextManager, $resultDecoder);
     }
 
-    public static function createSessionManager(
+    public static function createContextManager(
         array $clientOptions = [],
         int $retries = self::DEFAULT_RETRIES,
         int $retryDelay = self::DEFAULT_RETRY_DELAY,
         ?CacheItemPoolInterface $cache = null,
         int $cacheTtl = self::DEFAULT_TTL,
         string $cacheKey = self::DEFAULT_CACHE_KEY,
-    ): SessionManagerInterface {
+    ): ContextManagerInterface {
         $sessionContextStorage = self::createSessionContextStorage($clientOptions, $cache, $cacheTtl, $cacheKey);
-        $sessionManager = new SessionManager($sessionContextStorage, new CrumbProvider(new CookieProvider()));
+        $contextManager = new ContextManager($sessionContextStorage, new CrumbProvider(new CookieProvider()));
         if ($retries > 0) {
-            $sessionManager = new RetryableSessionManager($sessionManager, $retries + 1, $retryDelay);
+            $contextManager = new RetryableContextManager($contextManager, $retries + 1, $retryDelay);
         }
 
-        return $sessionManager;
+        return $contextManager;
     }
 
     private static function createSessionContextStorage(array $clientOptions, ?CacheItemPoolInterface $cache, int $cacheTtl, string $cacheKey): CachedSessionContextStorage|SessionContextStorage

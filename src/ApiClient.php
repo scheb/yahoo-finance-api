@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Scheb\YahooFinanceApi;
 
 use GuzzleHttp\Exception\GuzzleException;
-use Scheb\YahooFinanceApi\Context\SessionManagerInterface;
+use Scheb\YahooFinanceApi\Context\ContextManagerInterface;
 use Scheb\YahooFinanceApi\Exception\ApiException;
 use Scheb\YahooFinanceApi\Results\DividendData;
 use Scheb\YahooFinanceApi\Results\HistoricalData;
@@ -27,7 +27,7 @@ class ApiClient
     private const FILTER_SPLITS = 'split';
 
     public function __construct(
-        private readonly SessionManagerInterface $sessionManager,
+        private readonly ContextManagerInterface $contextManager,
         private readonly ResultDecoder $resultDecoder,
     ) {
     }
@@ -47,7 +47,7 @@ class ApiClient
             .'&region=US&quotesCount='.$limit
             .'&quotesQueryId=tss_match_phrase_query&multiQuoteQueryId=multi_quote_single_token_query&enableCb=false&enableNavLinks=true&enableCulturalAssets=true&enableNews=false&enableResearchReports=false&enableLists=false&listsCount=0&recommendCount=0&enablePrivateCompany=true';
 
-        $response = $this->sessionManager->request('GET', $url);
+        $response = $this->contextManager->request('GET', $url);
 
         return $this->resultDecoder->transformSearchResult((string) $response->getBody());
     }
@@ -176,7 +176,7 @@ class ApiClient
     {
         // Fetch quotes
         $url = 'https://query{queryServer}.finance.yahoo.com/v7/finance/quote?crumb={crumb}&symbols='.urlencode(implode(',', $symbols));
-        $responseBody = (string) $this->sessionManager->request('GET', $url)->getBody();
+        $responseBody = (string) $this->contextManager->request('GET', $url)->getBody();
 
         return $this->resultDecoder->transformQuotes($responseBody);
     }
@@ -187,7 +187,7 @@ class ApiClient
     private function getHistoricalDataResponse(string $symbol, string $interval, \DateTimeInterface $startDate, \DateTimeInterface $endDate, string $filter): string
     {
         $url = 'https://query{queryServer}.finance.yahoo.com/v8/finance/chart/'.urlencode($symbol).'?period1='.$startDate->getTimestamp().'&period2='.$endDate->getTimestamp().'&interval='.$interval.'&events='.$filter;
-        $response = $this->sessionManager->request('GET', $url);
+        $response = $this->contextManager->request('GET', $url);
 
         return (string) $response->getBody();
     }
@@ -241,7 +241,7 @@ class ApiClient
         // Fetch quotes
         $url = 'https://query{queryServer}.finance.yahoo.com/v10/finance/quoteSummary/'.urlencode($symbol).'?crumb={crumb}&modules='.urlencode(implode(',', $modules));
 
-        $response = $this->sessionManager->request('GET', $url);
+        $response = $this->contextManager->request('GET', $url);
 
         return $this->resultDecoder->transformQuotesSummary((string) $response->getBody());
     }
@@ -256,7 +256,7 @@ class ApiClient
         if ($expiryDate instanceof \DateTimeInterface) {
             $url .= '&date='.$expiryDate->getTimestamp();
         }
-        $response = $this->sessionManager->request('GET', $url);
+        $response = $this->contextManager->request('GET', $url);
 
         return $this->resultDecoder->transformOptionChains((string) $response->getBody());
     }

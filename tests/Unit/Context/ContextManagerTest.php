@@ -9,13 +9,13 @@ use GuzzleHttp\Cookie\CookieJarInterface;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Http\Message\ResponseInterface;
+use Scheb\YahooFinanceApi\Context\ContextManager;
 use Scheb\YahooFinanceApi\Context\Provider\CrumbProvider;
 use Scheb\YahooFinanceApi\Context\SessionContext;
-use Scheb\YahooFinanceApi\Context\SessionManager;
 use Scheb\YahooFinanceApi\Context\Storage\SessionContextStorageInterface;
 use Scheb\YahooFinanceApi\Tests\TestCase;
 
-class SessionManagerTest extends TestCase
+class ContextManagerTest extends TestCase
 {
     private const QUERY_SERVER = 2;
     private const CRUMB_VALUE = 'test-crumb-value';
@@ -25,7 +25,7 @@ class SessionManagerTest extends TestCase
     private MockObject|ClientInterface $mockHttpClient;
     private MockObject|ResponseInterface $mockResponse;
     private MockObject|CookieJarInterface $mockCookieJar;
-    private SessionManager $sessionManager;
+    private ContextManager $contextManager;
 
     protected function setUp(): void
     {
@@ -35,7 +35,7 @@ class SessionManagerTest extends TestCase
         $this->mockResponse = $this->createMock(ResponseInterface::class);
         $this->mockCookieJar = $this->createMock(CookieJarInterface::class);
 
-        $this->sessionManager = new SessionManager(
+        $this->contextManager = new ContextManager(
             $this->sessionContextStorage,
             $this->mockCrumbProvider
         );
@@ -48,7 +48,7 @@ class SessionManagerTest extends TestCase
             ->expects($this->once())
             ->method('invalidateSessionContext');
 
-        $this->sessionManager->renewSession();
+        $this->contextManager->renewSession();
     }
 
     #[Test]
@@ -69,7 +69,7 @@ class SessionManagerTest extends TestCase
             ->with($method, $url, [])
             ->willReturn($this->mockResponse);
 
-        $result = $this->sessionManager->request($method, $url);
+        $result = $this->contextManager->request($method, $url);
 
         $this->assertSame($this->mockResponse, $result);
     }
@@ -92,7 +92,7 @@ class SessionManagerTest extends TestCase
             ->with($method, $this->callback(fn (string $actualUrl) => !str_contains($actualUrl, '{queryServer}')), [])
             ->willReturn($this->mockResponse);
 
-        $result = $this->sessionManager->request($method, $url);
+        $result = $this->contextManager->request($method, $url);
 
         $this->assertSame($this->mockResponse, $result);
     }
@@ -128,7 +128,7 @@ class SessionManagerTest extends TestCase
             ->with($method, $expectedUrl, ['cookies' => $this->mockCookieJar])
             ->willReturn($this->mockResponse);
 
-        $result = $this->sessionManager->request($method, $url);
+        $result = $this->contextManager->request($method, $url);
 
         $this->assertSame($this->mockResponse, $result);
     }
@@ -160,7 +160,7 @@ class SessionManagerTest extends TestCase
             ->with($method, $expectedUrl, ['cookies' => $this->mockCookieJar])
             ->willReturn($this->mockResponse);
 
-        $result = $this->sessionManager->request($method, $url);
+        $result = $this->contextManager->request($method, $url);
 
         $this->assertSame($this->mockResponse, $result);
     }
@@ -181,7 +181,7 @@ class SessionManagerTest extends TestCase
             ->expects($this->never())
             ->method('setSessionContext');
 
-        $this->sessionManager->request($method, $url);
+        $this->contextManager->request($method, $url);
     }
 
     #[Test]
@@ -200,7 +200,7 @@ class SessionManagerTest extends TestCase
             ->expects($this->never())
             ->method('setSessionContext');
 
-        $this->sessionManager->request($method, $url);
+        $this->contextManager->request($method, $url);
     }
 
     #[Test]
@@ -227,7 +227,7 @@ class SessionManagerTest extends TestCase
             ->method('setSessionContext')
             ->with($newSessionContext);
 
-        $this->sessionManager->request($method, $url);
+        $this->contextManager->request($method, $url);
     }
 
     #[Test]
@@ -251,7 +251,7 @@ class SessionManagerTest extends TestCase
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Crumb provider error');
 
-        $this->sessionManager->request($method, $url);
+        $this->contextManager->request($method, $url);
     }
 
     #[Test]
@@ -275,6 +275,6 @@ class SessionManagerTest extends TestCase
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('HTTP client error');
 
-        $this->sessionManager->request($method, $url);
+        $this->contextManager->request($method, $url);
     }
 }

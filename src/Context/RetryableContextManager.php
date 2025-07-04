@@ -9,10 +9,10 @@ use Psr\Http\Message\ResponseInterface;
 /**
  * @final
  */
-class RetryableSessionManager implements SessionManagerInterface
+class RetryableContextManager implements ContextManagerInterface
 {
     public function __construct(
-        private readonly SessionManagerInterface $sessionManager,
+        private readonly ContextManagerInterface $contextManager,
         private readonly int $maxTries,
         private readonly int $retryDelay,
     ) {
@@ -20,14 +20,14 @@ class RetryableSessionManager implements SessionManagerInterface
 
     public function renewSession(): void
     {
-        $this->sessionManager->renewSession();
+        $this->contextManager->renewSession();
     }
 
     public function request(string $method, string $url): ResponseInterface
     {
         for ($try = 1; $try <= $this->maxTries; ++$try) {
             try {
-                return $this->sessionManager->request($method, $url);
+                return $this->contextManager->request($method, $url);
             } catch (\Exception $e) {
                 if ($try < $this->maxTries) {
                     // Restart session and give it another try when an API exception happened

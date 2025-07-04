@@ -11,7 +11,7 @@ use Scheb\YahooFinanceApi\Context\Storage\SessionContextStorageInterface;
 /**
  * @final
  */
-class SessionManager implements SessionManagerInterface
+class ContextManager implements ContextManagerInterface
 {
     public function __construct(
         private readonly SessionContextStorageInterface $sessionContextStorage,

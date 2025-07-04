@@ -10,7 +10,7 @@ use Psr\Http\Message\ResponseInterface;
 /**
  * @final
  */
-interface SessionManagerInterface
+interface ContextManagerInterface
 {
     public function renewSession(): void;
 
