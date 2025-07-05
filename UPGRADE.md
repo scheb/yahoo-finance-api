@@ -29,6 +29,14 @@ $guzzleClientOptions = [/* ... */];
 $client = ApiClientFactory::createApiClient($guzzleClientOptions);
 ```
 
+The `UserAgent` class has been removed. Previously a random user agent from a hardcoded list was set. Now, if you want
+to set a user agent, pass it as a header in the client options.
+
+```php
+$guzzleClientOptions = ['headers' => ['User-Agent' => 'your user agent']];
+$client = ApiClientFactory::createApiClient($guzzleClientOptions);
+```
+
 When using [curl-impersonate)](https://github.com/lexiforest/curl-impersonate), you no longer need to set the
 `User-Agent` as the library will automatically make sure the correct one is used.
 
