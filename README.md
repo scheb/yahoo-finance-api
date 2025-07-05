@@ -13,7 +13,9 @@ scheb/yahoo-finance-api
 
 Since YQL APIs have been discontinued in November 2017, this client is using non-official API endpoints for quotes, search and historical data.
 
-⚠️ **WARNING:** These non-official APIs cannot be assumed stable and might break any time. Also, you might violate Yahoo's terms of service. So use them at your own risk.
+> [!WARNING]
+> These non-official APIs cannot be assumed stable and might break any time. Also, you might violate Yahoo's terms of
+> service. So use them at your own risk.
 
 ## Installation
 
