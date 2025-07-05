@@ -33,7 +33,7 @@ The `UserAgent` class has been removed. Previously a random user agent from a ha
 to set a user agent, pass it as a header in the client options.
 
 ```php
-$guzzleClientOptions = ['headers' => ['User-Agent' => 'your user agent']];
+$guzzleClientOptions = ['headers' => ['User-Agent' => 'MyApp/1.0']];
 $client = ApiClientFactory::createApiClient($guzzleClientOptions);
 ```
 

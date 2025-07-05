@@ -17,6 +17,14 @@ Since YQL APIs have been discontinued in November 2017, this client is using non
 > These non-official APIs cannot be assumed stable and might break any time. Also, you might violate Yahoo's terms of
 > service. So use them at your own risk.
 
+- [Installation](#installation)
+- [Usage](#usage)
+- [Configuration](#configuration)
+- [Version Guidance](#version-guidance)
+- [License](#license)
+- [Contributing](#contributing)
+- [Support Me](#support-me)
+
 ## Installation
 
 Download via Composer:
@@ -25,7 +33,7 @@ Download via Composer:
 composer require scheb/yahoo-finance-api
 ```
 
-Alternatively you can also add the package directly to composer.json:
+Alternatively, you can also add the package directly to composer.json:
 
 ```json
 {
@@ -101,6 +109,91 @@ $quotes = $client->getQuotes(["AAPL", "GOOG"]);
 // Returns an array of Scheb\YahooFinanceApi\Results\OptionChain
 $optionChain = $client->getOptionChain("AAPL");
 $optionChain = $client->getOptionChain("AAPL", new \DateTime("2021-01-01"));
+```
+
+## Configuration
+
+### User Agent
+
+You can customize the User-Agent header by passing it in the Guzzle client options:
+
+```php
+$guzzleClientOptions = ['headers' => ['User-Agent' => 'MyApp/1.0']];
+$client = ApiClientFactory::createApiClient($guzzleClientOptions);
+```
+
+### Using curl-impersonate
+
+This library supports [curl-impersonate](https://github.com/lexiforest/curl-impersonate) to mimic real browser behavior.
+When using curl-impersonate, the library automatically removes the default User-Agent header to let curl-impersonate
+handle it.
+
+To use curl-impersonate:
+
+1. Install curl-impersonate on your system
+   * Typically, you'd want to download the `libcurl-*` package for the respective system architecture and extract it
+   * Follow the [Using libcurl-impersonate in PHP scripts](https://github.com/lexiforest/curl-impersonate/blob/main/docs/07_with_php.md) guide
+2. When execution your application, set the required environment variables:
+
+```bash
+export LD_PRELOAD=/path/to/curl-impersonate/libcurl-impersonate.so
+export CURL_IMPERSONATE=chrome136  # or another browser version
+```
+
+3. Create your API client normally - no additional configuration needed:
+
+```php
+$client = ApiClientFactory::createApiClient();
+```
+
+The library will automatically detect the `CURL_IMPERSONATE` environment variable and configure the HTTP client
+accordingly.
+
+### Retry Feature
+
+The library includes a built-in retry mechanism that can automatically retry failed requests. Configure it when creating
+the client:
+
+```php
+$client = ApiClientFactory::createApiClient(
+    retries: 3,        // Number of retry attempts (default: 0)
+    retryDelay: 1000,  // Delay between retries in milliseconds (default: 0)
+);
+```
+
+When a request fails, the library will:
+
+1. Wait for the specified delay
+2. Renew the session context (fetch new set of cookies and crumb value)
+3. Retry the request
+4. Repeat until success or max retries reached
+
+### Context Cache Feature
+
+The library supports caching session contexts (cookies and crumb value) to improve performance and reduce HTTP requests.
+This is especially useful in high-traffic applications or when making multiple requests.
+
+To use caching, you need a PSR-6 cache implementation, e.g. you could use `symfony/cache`:
+
+```bash
+composer require symfony/cache
+```
+
+Then configure the cache. In this example, a simple file-based cache is used:
+
+```php
+use Scheb\YahooFinanceApi\ApiClientFactory;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+
+// File-based cache from symfony/cache
+$cache = new FilesystemAdapter();
+
+// Create API client with caching
+$client = ApiClientFactory::createApiClient(
+    cache: $cache,              // PSR-6 cache implementation
+    cacheTtl: 3600,             // Cache TTL in seconds (optional, default: 3600)
+    cacheKey: 'my_cache_key'    // Custom cache key (optional)
+);
 ```
 
 Version Guidance
