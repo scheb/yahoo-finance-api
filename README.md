@@ -1,6 +1,13 @@
 scheb/yahoo-finance-api
 =======================
 
+### ⚠ Unmaintained version
+
+Please upgrade your project to a recent version. See [version guidance](https://github.com/scheb/yahoo-finance-api#version-guidance)
+on the default branch for maintained versions.
+
+---
+
 **This is a PHP client for Yahoo Finance API.**
 
 [![Build Status](https://github.com/scheb/yahoo-finance-api/actions/workflows/ci.yaml/badge.svg?branch=4.x)](https://github.com/scheb/yahoo-finance-api/actions?query=workflow%3ACI+branch%3A4.x)
@@ -100,21 +107,6 @@ $quotes = $client->getQuotes(["AAPL", "GOOG"]);
 $optionChain = $client->getOptionChain("AAPL");
 $optionChain = $client->getOptionChain("AAPL", new \DateTime("2021-01-01"));
 ```
-
-Version Guidance
-----------------
-
-| Version        | Status     | PHP Version |
-|----------------|------------|-------------|
-| [1.x][v1-repo] | EOL        |>= 5.3.0     |
-| [2.x][v2-repo] | EOL        |>= 5.6.0     |
-| [3.x][v3-repo] | EOL        |>= 5.6.0     |
-| [4.x][v4-repo] | Maintained |>= 7.1.3     |
-
-[v1-repo]: https://github.com/scheb/yahoo-finance-api/tree/1.x
-[v2-repo]: https://github.com/scheb/yahoo-finance-api/tree/2.x
-[v3-repo]: https://github.com/scheb/yahoo-finance-api/tree/3.x
-[v4-repo]: https://github.com/scheb/yahoo-finance-api/tree/4.x
 
 License
 -------
