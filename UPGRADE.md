@@ -29,8 +29,8 @@ $guzzleClientOptions = [/* ... */];
 $client = ApiClientFactory::createApiClient($guzzleClientOptions);
 ```
 
-When using [curl-impersonate)](https://github.com/lwthiker/curl-impersonate), you no longer need to set the `User-Agent`
-as the library will automatically make sure the correct one is used.
+When using [curl-impersonate)](https://github.com/lexiforest/curl-impersonate), you no longer need to set the
+`User-Agent` as the library will automatically make sure the correct one is used.
 
 ## From 3.x to 4.x
 
