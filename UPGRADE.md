@@ -16,7 +16,7 @@ instance will be automatically created with these options.
 
 Before:
 
-```
+```php
 $guzzleClientOptions = [/* ... */];
 $guzzleClient = new Client($guzzleClientOptions);
 $client = ApiClientFactory::createApiClient($guzzleClient);
@@ -24,7 +24,7 @@ $client = ApiClientFactory::createApiClient($guzzleClient);
 
 After:
 
-```
+```php
 $guzzleClientOptions = [/* ... */];
 $client = ApiClientFactory::createApiClient($guzzleClientOptions);
 ```
