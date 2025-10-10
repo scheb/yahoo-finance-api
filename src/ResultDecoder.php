@@ -135,20 +135,26 @@ class ResultDecoder
     {
     }
 
-    public function transformSearchResult(string $responseBody): array
+    public function transformSearchResult(string $responseBody, bool $filterOnError = false): array
     {
         $decoded = json_decode($responseBody, true);
         if (!isset($decoded['quotes']) || !\is_array($decoded['quotes'])) {
             throw new ApiException('Yahoo Search API returned an invalid response', ApiException::INVALID_RESPONSE);
         }
 
-        return array_map(fn (array $item): SearchResult => $this->createSearchResultFromJson($item), $decoded['quotes']);
+        return array_filter(
+            array_map(fn (array $item): SearchResult|bool => $this->createSearchResultFromJson($item, $filterOnError), $decoded['quotes']),
+            fn (SearchResult|bool $result) => false !== $result,
+        );
     }
 
-    private function createSearchResultFromJson(array $json): SearchResult
+    private function createSearchResultFromJson(array $json, bool $filterOnError = false): SearchResult|bool
     {
         $missingFields = array_diff(self::SEARCH_RESULT_FIELDS, array_keys($json));
         if ([] !== $missingFields) {
+            if ($filterOnError) {
+                return false;
+            }
             throw new ApiException(\sprintf('Search result is missing fields: %s', implode(', ', $missingFields)), ApiException::INVALID_RESPONSE);
         }
 

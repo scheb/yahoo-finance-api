@@ -515,6 +515,58 @@ class ResultDecoderTest extends TestCase
     }
 
     #[Test]
+    public function transformSearchResult_jsonWithMissedFieldAndFilterOnError_filterInvalidResults(): void
+    {
+        $jsonArray = [
+            'quotes' => [
+                [
+                    'symbol' => 'AAPL',
+                    'shortname' => 'Apple Inc.',
+                    'exchange' => 'NMS',
+                    'quoteType' => 'EQUITY',
+                    'exchDisp' => 'NASDAQ',
+                    'typeDisp' => 'Equity',
+                ],
+                ['shortname' => 'Invalid Item'], // Missing required fields
+                [
+                    'symbol' => 'GOOGL',
+                    'shortname' => 'Alphabet Inc.',
+                    'exchange' => 'NMS',
+                    'quoteType' => 'EQUITY',
+                    'exchDisp' => 'NASDAQ',
+                    'typeDisp' => 'Equity',
+                ],
+            ],
+        ];
+
+        $returnedResult = $this->resultDecoder->transformSearchResult(json_encode($jsonArray), filterOnError: true);
+
+        $this->assertIsArray($returnedResult);
+        $this->assertCount(2, $returnedResult); // Only 2 valid results
+        $this->assertContainsOnlyInstancesOf(SearchResult::class, $returnedResult);
+
+        $expectedFirstItem = new SearchResult(
+            'AAPL',
+            'Apple Inc.',
+            'NMS',
+            'EQUITY',
+            'NASDAQ',
+            'Equity'
+        );
+        $this->assertEquals($expectedFirstItem, $returnedResult[0]);
+
+        $expectedSecondItem = new SearchResult(
+            'GOOGL',
+            'Alphabet Inc.',
+            'NMS',
+            'EQUITY',
+            'NASDAQ',
+            'Equity'
+        );
+        $this->assertEquals($expectedSecondItem, $returnedResult[2]);
+    }
+
+    #[Test]
     #[DataProvider('provideTransformQuotesInvalidResult')]
     public function transformOptionChains_jsonGiven_createArrayOfInvalidResult(array $responseBody): void
     {
