@@ -23,7 +23,7 @@ class ResultDecoder
     public const HISTORICAL_DATA_HEADER_LINE = ['Date', 'Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume'];
     public const DIVIDEND_DATA_HEADER_LINE = ['Date', 'Dividends'];
     public const SPLIT_DATA_HEADER_LINE = ['Date', 'Stock Splits'];
-    public const SEARCH_RESULT_FIELDS = ['symbol', 'shortname', 'exchange', 'quoteType', 'exchDisp', 'typeDisp'];
+    public const SEARCH_RESULT_FIELDS = ['symbol', 'exchange', 'quoteType', 'exchDisp', 'typeDisp'];
 
     public const OPTION_CHAIN_FIELDS_MAP = [
         'underlyingSymbol' => ValueMapperInterface::TYPE_STRING,
@@ -135,32 +135,26 @@ class ResultDecoder
     {
     }
 
-    public function transformSearchResult(string $responseBody, bool $filterOnError = false): array
+    public function transformSearchResult(string $responseBody): array
     {
         $decoded = json_decode($responseBody, true);
         if (!isset($decoded['quotes']) || !\is_array($decoded['quotes'])) {
             throw new ApiException('Yahoo Search API returned an invalid response', ApiException::INVALID_RESPONSE);
         }
 
-        return array_filter(
-            array_map(fn (array $item): SearchResult|bool => $this->createSearchResultFromJson($item, $filterOnError), $decoded['quotes']),
-            fn (SearchResult|bool $result) => false !== $result,
-        );
+        return array_map(fn (array $item): SearchResult => $this->createSearchResultFromJson($item), $decoded['quotes']);
     }
 
-    private function createSearchResultFromJson(array $json, bool $filterOnError = false): SearchResult|bool
+    private function createSearchResultFromJson(array $json): SearchResult
     {
         $missingFields = array_diff(self::SEARCH_RESULT_FIELDS, array_keys($json));
         if ([] !== $missingFields) {
-            if ($filterOnError) {
-                return false;
-            }
             throw new ApiException(\sprintf('Search result is missing fields: %s', implode(', ', $missingFields)), ApiException::INVALID_RESPONSE);
         }
 
         return new SearchResult(
             $json['symbol'],
-            $json['shortname'],
+            $json['shortname'] ?? null,
             $json['exchange'],
             $json['quoteType'],
             $json['exchDisp'],

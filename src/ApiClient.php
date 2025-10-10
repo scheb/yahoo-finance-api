@@ -39,7 +39,7 @@ class ApiClient
      *
      * @throws GuzzleException|ApiException
      */
-    public function search(string $searchTerm, string $locale = 'en-US', int $limit = 10, bool $filterOnError = false): array
+    public function search(string $searchTerm, string $locale = 'en-US', int $limit = 10): array
     {
         $url = 'https://query{queryServer}.finance.yahoo.com/v1/finance/search?'
             .'q='.urlencode($searchTerm)
@@ -49,7 +49,7 @@ class ApiClient
 
         $response = $this->contextManager->request('GET', $url);
 
-        return $this->resultDecoder->transformSearchResult((string) $response->getBody(), $filterOnError);
+        return $this->resultDecoder->transformSearchResult((string) $response->getBody());
     }
 
     /**
@@ -83,7 +83,8 @@ class ApiClient
         $responseBody = $this->getHistoricalDataResponse($symbol, self::INTERVAL_1_MONTH, $startDate, $endDate, self::FILTER_DIVIDENDS);
 
         $historicData = $this->resultDecoder->transformDividendDataResult($responseBody);
-        usort($historicData, fn (DividendData $a, DividendData $b): int => // Data is not necessary in order, so ensure ascending order by date
+        usort($historicData, fn (DividendData $a, DividendData $b): int =>
+            // Data is not necessary in order, so ensure ascending order by date
             $a->getDate() <=> $b->getDate());
 
         return $historicData;
@@ -103,7 +104,8 @@ class ApiClient
         $responseBody = $this->getHistoricalDataResponse($symbol, self::INTERVAL_1_MONTH, $startDate, $endDate, self::FILTER_SPLITS);
 
         $historicData = $this->resultDecoder->transformSplitDataResult($responseBody);
-        usort($historicData, fn (SplitData $a, SplitData $b): int => // Data is not necessary in order, so ensure ascending order by date
+        usort($historicData, fn (SplitData $a, SplitData $b): int =>
+            // Data is not necessary in order, so ensure ascending order by date
             $a->getDate() <=> $b->getDate());
 
         return $historicData;

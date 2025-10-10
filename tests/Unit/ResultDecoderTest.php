@@ -515,55 +515,36 @@ class ResultDecoderTest extends TestCase
     }
 
     #[Test]
-    public function transformSearchResult_jsonWithMissedFieldAndFilterOnError_filterInvalidResults(): void
+    public function transformSearchResult_jsonWithoutShortname_createSearchResultWithNullShortname(): void
     {
         $jsonArray = [
             'quotes' => [
                 [
                     'symbol' => 'AAPL',
-                    'shortname' => 'Apple Inc.',
                     'exchange' => 'NMS',
                     'quoteType' => 'EQUITY',
                     'exchDisp' => 'NASDAQ',
                     'typeDisp' => 'Equity',
-                ],
-                ['shortname' => 'Invalid Item'], // Missing required fields
-                [
-                    'symbol' => 'GOOGL',
-                    'shortname' => 'Alphabet Inc.',
-                    'exchange' => 'NMS',
-                    'quoteType' => 'EQUITY',
-                    'exchDisp' => 'NASDAQ',
-                    'typeDisp' => 'Equity',
+                    // shortname is intentionally missing
                 ],
             ],
         ];
 
-        $returnedResult = $this->resultDecoder->transformSearchResult(json_encode($jsonArray), filterOnError: true);
+        $returnedResult = $this->resultDecoder->transformSearchResult(json_encode($jsonArray));
 
         $this->assertIsArray($returnedResult);
-        $this->assertCount(2, $returnedResult); // Only 2 valid results
+        $this->assertCount(1, $returnedResult);
         $this->assertContainsOnlyInstancesOf(SearchResult::class, $returnedResult);
 
-        $expectedFirstItem = new SearchResult(
+        $expectedItem = new SearchResult(
             'AAPL',
-            'Apple Inc.',
+            null, // shortname should be null
             'NMS',
             'EQUITY',
             'NASDAQ',
             'Equity'
         );
-        $this->assertEquals($expectedFirstItem, $returnedResult[0]);
-
-        $expectedSecondItem = new SearchResult(
-            'GOOGL',
-            'Alphabet Inc.',
-            'NMS',
-            'EQUITY',
-            'NASDAQ',
-            'Equity'
-        );
-        $this->assertEquals($expectedSecondItem, $returnedResult[2]);
+        $this->assertEquals($expectedItem, $returnedResult[0]);
     }
 
     #[Test]
