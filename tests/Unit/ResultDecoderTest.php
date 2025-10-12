@@ -515,6 +515,39 @@ class ResultDecoderTest extends TestCase
     }
 
     #[Test]
+    public function transformSearchResult_jsonWithoutShortname_createSearchResultWithNullShortname(): void
+    {
+        $jsonArray = [
+            'quotes' => [
+                [
+                    'symbol' => 'AAPL',
+                    'exchange' => 'NMS',
+                    'quoteType' => 'EQUITY',
+                    'exchDisp' => 'NASDAQ',
+                    'typeDisp' => 'Equity',
+                    // shortname is intentionally missing
+                ],
+            ],
+        ];
+
+        $returnedResult = $this->resultDecoder->transformSearchResult(json_encode($jsonArray));
+
+        $this->assertIsArray($returnedResult);
+        $this->assertCount(1, $returnedResult);
+        $this->assertContainsOnlyInstancesOf(SearchResult::class, $returnedResult);
+
+        $expectedItem = new SearchResult(
+            'AAPL',
+            null, // shortname should be null
+            'NMS',
+            'EQUITY',
+            'NASDAQ',
+            'Equity'
+        );
+        $this->assertEquals($expectedItem, $returnedResult[0]);
+    }
+
+    #[Test]
     #[DataProvider('provideTransformQuotesInvalidResult')]
     public function transformOptionChains_jsonGiven_createArrayOfInvalidResult(array $responseBody): void
     {

@@ -23,7 +23,7 @@ class ResultDecoder
     public const HISTORICAL_DATA_HEADER_LINE = ['Date', 'Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume'];
     public const DIVIDEND_DATA_HEADER_LINE = ['Date', 'Dividends'];
     public const SPLIT_DATA_HEADER_LINE = ['Date', 'Stock Splits'];
-    public const SEARCH_RESULT_FIELDS = ['symbol', 'shortname', 'exchange', 'quoteType', 'exchDisp', 'typeDisp'];
+    public const SEARCH_RESULT_FIELDS = ['symbol', 'exchange', 'quoteType', 'exchDisp', 'typeDisp'];
 
     public const OPTION_CHAIN_FIELDS_MAP = [
         'underlyingSymbol' => ValueMapperInterface::TYPE_STRING,
@@ -154,7 +154,7 @@ class ResultDecoder
 
         return new SearchResult(
             $json['symbol'],
-            $json['shortname'],
+            $json['shortname'] ?? null,
             $json['exchange'],
             $json['quoteType'],
             $json['exchDisp'],
