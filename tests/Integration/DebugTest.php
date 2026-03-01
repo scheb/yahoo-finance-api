@@ -20,8 +20,12 @@ class DebugTest extends TestCase
             new CrumbProvider(new CookieProvider())
         );
 
-        $response = $contextManager->request('GET', 'https://echo.free.beeceptor.com');
-        echo $response->getBody();
+        try {
+            $response = $contextManager->request('GET', 'https://echo.free.beeceptor.com');
+            echo $response->getBody();
+        } catch (\Throwable $e) {
+            $this->markTestSkipped('Skipped test after exception '.\get_class($e).': ('.$e->getCode().') '.$e->getMessage());
+        }
 
         $this->assertTrue(true);
     }
