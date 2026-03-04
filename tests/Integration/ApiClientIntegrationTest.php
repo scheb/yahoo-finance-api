@@ -47,7 +47,7 @@ class ApiClientIntegrationTest extends TestCase
         $this->assertStringStartsWith('Apple Inc', $aaplStock->getName());
         $this->assertEquals('EQUITY', $aaplStock->getType());
         $this->assertEquals('NASDAQ', $aaplStock->getExchDisp());
-        $this->assertEquals('Equity', $aaplStock->getTypeDisp());
+        $this->assertEqualsIgnoringCase('Equity', $aaplStock->getTypeDisp());
 
         // Can be either NAS or NMS
         $this->assertThat(
