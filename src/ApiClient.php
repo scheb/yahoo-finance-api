@@ -39,7 +39,7 @@ class ApiClient
      *
      * @throws GuzzleException|ApiException
      */
-    public function search(string $searchTerm, string $region = 'US', string $locale = 'en-US', int $limit = 10): array
+    public function search(string $searchTerm, string $locale = 'en-US', int $limit = 10, string $region = 'US'): array
     {
         $url = 'https://query{queryServer}.finance.yahoo.com/v1/finance/search?'
             .'q='.urlencode($searchTerm)
