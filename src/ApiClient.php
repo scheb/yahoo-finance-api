@@ -39,12 +39,12 @@ class ApiClient
      *
      * @throws GuzzleException|ApiException
      */
-    public function search(string $searchTerm, string $locale = 'en-US', int $limit = 10): array
+    public function search(string $searchTerm, string $locale = 'en-US', int $limit = 10, string $region = 'US'): array
     {
         $url = 'https://query{queryServer}.finance.yahoo.com/v1/finance/search?'
             .'q='.urlencode($searchTerm)
             .'&lang='.urlencode($locale)
-            .'&region=US&quotesCount='.$limit
+            .'&region='.urlencode($region).'&quotesCount='.$limit
             .'&quotesQueryId=tss_match_phrase_query&multiQuoteQueryId=multi_quote_single_token_query&enableCb=false&enableNavLinks=true&enableCulturalAssets=true&enableNews=false&enableResearchReports=false&enableLists=false&listsCount=0&recommendCount=0&enablePrivateCompany=true';
 
         $response = $this->contextManager->request('GET', $url);
