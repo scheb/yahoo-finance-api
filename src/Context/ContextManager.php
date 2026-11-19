@@ -42,6 +42,7 @@ class ContextManager implements ContextManagerInterface
             $requestOptions = ['cookies' => $sessionContext->cookies];
         }
 
+        /** @psalm-suppress TaintedInput */
         $response = $sessionContext->httpClient->request($method, $url, $requestOptions);
 
         // Store the new session context when it changed
